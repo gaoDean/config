@@ -1,0 +1,98 @@
+.en.cmr
+.nr PS 12
+.nr VS 19
+.fspecial R CMSY S1 S CMEX10
+.fspecial I CMMI
+.pl 11.4i
+.blm PP
+
+
+.rn AU at
+.rn TL tt
+.rn LH lh
+.am tt
+\s+8
+..
+.de cc.beg
+.	sp .5
+.	nf
+.	lg 0
+.	in 1m
+.	ft CB
+.	ad l
+.	>>
+.	cl #235
+..
+.de cc.end
+.	in
+.	lg 1
+.	cl 0
+.	sp .5
+..
+.de mh
+.	sp
+.	LP
+.	ne 2
+\m[#237]\fI\\$1\fP\m[]
+.	IP
+..
+.rn SH SH_
+.de sh
+.	post.mark "\\$1"
+.	SH_ "\\$1"
+..
+.\" ln. 644
+.de (l
+.br
+.sp \\n(bsu
+.@D 3 \\$1 \\$2
+.@M
+..
+.de )l
+.br
+.ev
+.sp \\n(bsu+\\n(.Lv-1v
+.nr ?k 0
+..
+.\" ln. 673
+.de r
+.nr _F \\n(.f
+.ul 0
+.ft 1
+.if \\n(.$ \&\\$1\f\\n(_F\\$2
+.rr _F
+..
+.de i
+.nr _F \\n(.f
+.ul 0
+.ft 2
+.if \\n(.$ \&\\$1\f\\n(_F\\$2
+.rr _F
+..
+.de b
+.nr _F \\n(.f
+.ul 0
+.ie t \
+.	ft 3
+.el \
+.	ul 10000
+.if \\n(.$ \&\\$1\f\\n(_F\\$2
+.if \\n(.$ \
+.	ul 0
+.rr _F
+..
+.de u
+\&\\$1\l'|0\(ul'\\$2
+..
+.de bi
+.ft 2
+.ie t \&\k~\\$1\h'|\\n~u+(\\n(.su/3u)'\\$1\fP\\$2
+.el \&\\$1\fP\\$2
+..
+.EQ
+define ( @{ left "(" @
+define ) @right ")" }@
+define times 'cdot'
+define compose @{vcenter roman " \N’openbullet’ "}@
+delim $$
+.EN

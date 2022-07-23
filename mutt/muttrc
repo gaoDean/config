@@ -1,0 +1,7 @@
+# vim: filetype=neomuttrc
+source /usr/local/share/mutt-wizard/mutt-wizard.muttrc
+bind index,pager \CO sidebar-open       # Ctrl-Shift-O - Open Highlighted Mailbox
+
+source ~/.mutt/gruvbox/colors-gruvbox-shuber.muttrc
+source ~/.mutt/gruvbox/colors-gruvbox-shuber-extended.muttrc
+macro index,pager i1 '<sync-mailbox><enter-command>source /Users/deangao/.config/mutt/accounts/gao.dean@hotmail.com.muttrc<enter><change-folder>!<enter>;<check-stats>' "switch to gao.dean@hotmail.com"

@@ -1,0 +1,12 @@
+account gao.dean@hotmail.com
+host smtp.office365.com
+port 587
+from gao.dean@hotmail.com
+user gao.dean@hotmail.com
+passwordeval "pass gao.dean@hotmail.com"
+auth on
+tls on
+tls_trust_file	/etc/ssl/cert.pem
+logfile /Users/deangao/.config/msmtp/msmtp.log
+# tls_starttls
+
