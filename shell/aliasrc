@@ -7,7 +7,6 @@
 [ -f "$XINITRC" ] && alias startx="startx $XINITRC"
 
 
-se() { cd ~/.local/bin; $EDITOR $(fzf) ;}
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
@@ -16,8 +15,6 @@ alias \
 	rm="rm -vI" \
 	bc="bc -ql" \
 	mkd="mkdir -pv" \
-	yt="yt-dlp --embed-metadata -i" \
-	yta="yt -x -f bestaudio/best" \
 	ffmpeg="ffmpeg -hide_banner"
 
 # Colorize commands when possible.
@@ -33,12 +30,11 @@ alias \
 	ka="killall" \
 	g="git" \
 	trem="transmission-remote" \
-	YT="youtube-viewer" \
-	sdn="shutdown -h now" \
+	sdn="pmset sleepnow" \
+	rsn="sudo shutdown -r now" \
 	e="$EDITOR" \
 	v="$EDITOR" \
 	b="brew" \
-	t='f() {echo -e "$1\n$(cat ~/.todo)" > ~/.todo};f'
 	bb="brew formulae | fzf"
 	xi="sudo xbps-install" \
 	xr="sudo xbps-remove -R" \
@@ -50,10 +46,43 @@ alias \
 	tq="tt -notheme -quotes en" \
 	tl="ls -a ~/.local/share/Trash/files" \
 	te="rm -rf ~/.local/share/Trash/files/* && rm -rf ~/.local/share/Trash/info/*" \
-	cf="git --git-dir=/Users/deangao/repos/per/dotfiles/ --work-tree=/Users/deangao/.config"
+	to="nvim ~/dox/todo"
 
 alias \
 	lf="lfub" \
 	magit="nvim -c MagitOnly" \
 	ref="shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" \
 	weath="less -S ${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport" \
+
+se() { cd ~/.local/bin; $EDITOR $(fzf) ;}
+fef () { for file in $(fd); $1 $file $2 }
+timezsh() { for i in $(seq 1 10); do time zsh -i -c exit; done }
+n ()
+{
+	if [ -n $NNNLVL ] && [ "${NNNLVL:-0}" -ge 1 ]; then
+		echo "nnn is already running"
+		return
+	fi
+	export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+	nnn -c "$@"
+	if [ -f "$NNN_TMPFILE" ]; then
+		. "$NNN_TMPFILE"
+		rm -f "$NNN_TMPFILE" > /dev/null
+	fi
+}
+gitall()
+{
+	git add .;
+	git status -s;
+	git commit -m "$1"
+	STATUS=$(git status -s);
+	if [ -z "$STATUS" ]; then
+		echo "\nfully commited\n"
+	else
+		echo "$STATUS"
+	fi
+}
+hide() { tar -zcf output.tar.gz $1; mv output.tar.gz $2 }
+show() { tar -zxf $1 }
+ymd() { vim ~/repos/per/personal/dia/di/$(date +%F).md }
+t() { echo -e "$1\n$(cat ~/dox/todo)" > ~/dox/todo }
