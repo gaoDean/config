@@ -1,4 +1,5 @@
 nvim/plugged
+nvim/undo
 go
 node_modules
 NuGet

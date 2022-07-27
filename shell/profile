@@ -6,6 +6,7 @@
 # to clean up.
 
 # Adds `~/.local/bin` to $PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 # unsetopt PROMPT_SP
 
@@ -41,103 +42,41 @@ export WEECHAT_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/weechat"
 export MBSYNCRC="${XDG_CONFIG_HOME:-$HOME/.config}/mbsync/config"
 export ELECTRUMDIR="${XDG_DATA_HOME:-$HOME/.local/share}/electrum"
 
-# Other program settings:
-# export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
-# export DICS="/usr/share/stardict/dic/"
-# export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
-export LESS=-R
-# export LESS_TERMCAP_mb="$(printf '%b' '[1;31m')"
-# export LESS_TERMCAP_md="$(printf '%b' '[1;36m')"
-# export LESS_TERMCAP_me="$(printf '%b' '[0m')"
-# export LESS_TERMCAP_so="$(printf '%b' '[01;44;33m')"
-# export LESS_TERMCAP_se="$(printf '%b' '[0m')"
-# export LESS_TERMCAP_us="$(printf '%b' '[1;32m')"
-# export LESS_TERMCAP_ue="$(printf '%b' '[0m')"
-export LESSOPEN="| /usr/bin/highlight -O ansi %s 2>/dev/null"
-# export QT_QPA_PLATFORMTHEME="gtk2"	# Have QT use gtk2 theme.
-# export MOZ_USE_XINPUT2="1"		# Mozilla smooth scrolling/touchpads.
-# export AWT_TOOLKIT="MToolkit wmname LG3D"	#May have to install wmname
-# export _JAVA_AWT_WM_NONREPARENTING=1	# Fix for Java applications in dwm
 
-# This is the list for lf icons:
-# export LF_ICONS="di=📁:\
-# fi=📃:\
-# tw=🤝:\
-# ow=📂:\
-# ln=⛓:\
-# or=❌:\
-# ex=🎯:\
-# *.txt=✍:\
-# *.mom=✍:\
-# *.me=✍:\
-# *.ms=✍:\
-# *.png=🖼:\
-# *.webp=🖼:\
-# *.ico=🖼:\
-# *.jpg=📸:\
-# *.jpe=📸:\
-# *.jpeg=📸:\
-# *.gif=🖼:\
-# *.svg=🗺:\
-# *.tif=🖼:\
-# *.tiff=🖼:\
-# *.xcf=🖌:\
-# *.html=🌎:\
-# *.xml=📰:\
-# *.gpg=🔒:\
-# *.css=🎨:\
-# *.pdf=📚:\
-# *.djvu=📚:\
-# *.epub=📚:\
-# *.csv=📓:\
-# *.xlsx=📓:\
-# *.tex=📜:\
-# *.md=📘:\
-# *.r=📊:\
-# *.R=📊:\
-# *.rmd=📊:\
-# *.Rmd=📊:\
-# *.m=📊:\
-# *.mp3=🎵:\
-# *.opus=🎵:\
-# *.ogg=🎵:\
-# *.m4a=🎵:\
-# *.flac=🎼:\
-# *.wav=🎼:\
-# *.mkv=🎥:\
-# *.mp4=🎥:\
-# *.webm=🎥:\
-# *.mpeg=🎥:\
-# *.avi=🎥:\
-# *.mov=🎥:\
-# *.mpg=🎥:\
-# *.wmv=🎥:\
-# *.m4b=🎥:\
-# *.flv=🎥:\
-# *.zip=📦:\
-# *.rar=📦:\
-# *.7z=📦:\
-# *.tar.gz=📦:\
-# *.z64=🎮:\
-# *.v64=🎮:\
-# *.n64=🎮:\
-# *.gba=🎮:\
-# *.nes=🎮:\
-# *.gdi=🎮:\
-# *.1=ℹ:\
-# *.nfo=ℹ:\
-# *.info=ℹ:\
-# *.log=📙:\
-# *.iso=📀:\
-# *.img=📀:\
-# *.bib=🎓:\
-# *.ged=👪:\
-# *.part=💔:\
-# *.torrent=🔽:\
-# *.jar=♨:\
-# *.java=♨:\
-# "
-#
+# == plugin config ==
+
+RED="09"
+GREEN="0a"
+YELLOW="0b"
+BLUE="0c"
+MAGENTA="0d"
+CYAN="0e"
+WHITE="0f"
+BLK="00" CHR="00" DIR="0e" EXE="0b" REG="00" HARDLINK="0e" LINK="0a" MISSING="00" ORPHAN="09" FIFO="0e" SOCK="00" OTHER="05"
+DIR=$BLUE
+EXE=$GREEN
+SOCK=$MAGENTA
+FIFO=$YELLOW
+LINK=$CYAN
+export NNN_FCOLORS="$BLK$CHR$DIR$EXE$REG$HARDLINK$LINK$MISSING$ORPHAN$FIFO$SOCK$OTHER"
+export NNN_READER=preview
+export NNN_OPENER=nuke
+export NNN_TRASH=2
+
+export FZF_DEFAULT_COMMAND="fd . -t f --hidden --follow --exclude .git --strip-cwd-prefix"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd . -t d --follow --strip-cwd-prefix"
+export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+--color=fg:7,hl:11
+--color=fg+:15,bg+:0,hl+:3
+--color=info:14,prompt:12,pointer:11
+--color=marker:4,spinner:#73d0ff,header:#d4bfff'
+
+# Other program settings:
+export LESS=-R
+export LESSOPEN="| /usr/bin/highlight -O ansi %s 2>/dev/null"
+
 
 [ ! -f ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ] && setsid shortcuts >/dev/null 2>&1
 

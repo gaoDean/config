@@ -272,7 +272,7 @@ hi def link cUserFunctionPointer cFunction
 syn match cDelimiter    "="
 
 syn match cTypedef "\h\w*_t\w\@!"
-syn match cTypedefUnnamed "[A-Z][A-z]*\s\+\%([)-9A-z]\+.*[;-@!-/]\)\@=" contains=cType
+syn match cTypedefUnnamed "[A-Z][A-z)-9]*\s\+\%([)-9A-z]\+.*[;-@!-/]\)\@=" contains=cType
 
 
 " Booleans

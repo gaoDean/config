@@ -32,6 +32,7 @@
 	set.splitbelow = true
 	set.splitright = true
 	set.termguicolors = true
+	set.undodir = "/Users/deangao/.config/nvim/undo"
 	set.undofile = true
 
 	set.showmode = false
@@ -63,6 +64,7 @@
 	au("BufWritePre", "*", "%s/\\s\\+$//e")
 	au("BufEnter", "*.ms", "set ft=nroff")
 	au("BufEnter", "*.hs", "set expandtab")
+	au("BufEnter", "bib", "set ft=rbib")
 	au("FileType", "*", "setlocal formatoptions-=c formatoptions-=r formatoptions-=o formatoptions+=j")
 	au("VimEnter", "*", [[if eval("@%") == "" | lua require("fzf-lua").oldfiles({ winopts = { hl = { border = "GruvboxBg0", } } })]])
 	-- au("FileType", "nroff", [[:Goyo]])

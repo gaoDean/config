@@ -89,6 +89,23 @@
 .ie t \&\k~\\$1\h'|\\n~u+(\\n(.su/3u)'\\$1\fP\\$2
 .el \&\\$1\fP\\$2
 ..
+.de np
+.if '\\n($p'-1' \
+.nr $p 0
+.nr $p +1
+.@p \w'\0(000)\0'u
+.ti -\w'\0(000)\0'u
+\0(\\n($p)\h'|\w'\0(000)\0'u'\c
+..
+.de bu
+.br
+.if '\\n($p'-1' \
+.ns
+.nr $p 0-1
+.@p \w'\0\(bu\0'u
+.ti -\w'\0\(bu\0'u
+\0\(bu\0\c
+..
 .EQ
 define ( @{ left "(" @
 define ) @right ")" }@

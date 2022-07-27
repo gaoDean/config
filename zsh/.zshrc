@@ -1,52 +1,40 @@
-sed -n '/---/!p;//q' ~/dox/todo
+sed -n '/---/!p;//q' ~/Documents/todo
 
-RED="09"
-GREEN="0a"
-YELLOW="0b"
-BLUE="0c"
-MAGENTA="0d"
-CYAN="0e"
-WHITE="0f"
-BLK="00" CHR="00" DIR="0e" EXE="0b" REG="00" HARDLINK="0e" LINK="0a" MISSING="00" ORPHAN="09" FIFO="0e" SOCK="00" OTHER="05"
-DIR=$BLUE
-EXE=$GREEN
-SOCK=$MAGENTA
-FIFO=$YELLOW
-LINK=$CYAN
+PS1="> "
 
 set -o vi
+setopt interactive_comments
 
-# == config ==
-
-export EDITOR=nvim
-export PATH="/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-
-# == plugin config ==
-
-export NNN_FCOLORS="$BLK$CHR$DIR$EXE$REG$HARDLINK$LINK$MISSING$ORPHAN$FIFO$SOCK$OTHER"
-export NNN_READER=preview
-export NNN_OPENER=nuke
-export NNN_TRASH=2
-
-GIT_FILES='git rev-parse --show-toplevel 2> /dev/null'
-export FZF_DEFAULT_COMMAND="fd . -t f --hidden --follow --exclude .git --strip-cwd-prefix"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="fd . -t d --follow --strip-cwd-prefix"
-export FZF_DEFAULT_OPTS='--border'
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
---color=fg:7,hl:11
---color=fg+:15,bg+:0,hl+:3
---color=info:14,prompt:12,pointer:11
---color=marker:4,spinner:#73d0ff,header:#d4bfff'
+HISTSIZE=1000
+SAVEHIST=1000
+HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/history"
 
 # == bindings ==
+
 bindkey ^S fzf-file-widget
+
+# == functions ==
+
+# Change cursor shape for different vi modes.
+function zle-keymap-select () {
+    case $KEYMAP in
+        vicmd) echo -ne '\e[1 q';;      # block
+        viins|main) echo -ne '\e[5 q';; # beam
+    esac
+}
+zle -N zle-keymap-select
+zle-line-init() {
+    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+    echo -ne "\e[5 q"
+}
+zle -N zle-line-init
+echo -ne '\e[5 q' # Use beam shape cursor on startup.
+preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
 # == source ==
 
-source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
-[[ ! -f ${XDG_CONFIG_HOME:-$HOME/.config}/p10k/p10k.zsh ]] || source ${XDG_CONFIG_HOME:-$HOME/.config}/p10k/p10k.zsh
+# source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
+# [[ ! -f ${XDG_CONFIG_HOME:-$HOME/.config}/p10k/p10k.zsh ]] || source ${XDG_CONFIG_HOME:-$HOME/.config}/p10k/p10k.zsh
 
 [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh
 
@@ -55,7 +43,8 @@ source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc"
 
-zstyle ':completion:*' completer _complete _ignored
-zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}'
-zstyle :compinstall filename '/Users/deangao/.zshrc'
-autoload -Uz compinit && compinit
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+_comp_options+=(globdots)		# Include hidden files.

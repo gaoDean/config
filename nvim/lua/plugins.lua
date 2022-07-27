@@ -8,7 +8,6 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 vim.call('plug#end')
 
 -- ========================================================= --
-
 require("fzf-lua").setup({
 	winopts = {
 		preview = { hidden = "hidden" },

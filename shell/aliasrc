@@ -19,34 +19,34 @@ alias \
 
 # Colorize commands when possible.
 alias \
-	ls="ls -hG --color=auto" \
+	ls="ls -hG --color=auto -F" \
 	grep="grep --color=auto" \
-	diff="diff --color=auto" \
+	# diff="diff --color=auto" \
 	ccat="highlight --out-format=ansi" \
 	ip="ip -color=auto"
 
 # These common commands are just too long! Abbreviate them.
 alias \
 	ka="killall" \
+	lsa="ls -a" \
 	g="git" \
+	gc="git commit -m" \
+	ga="git add" \
+	gp="git push" \
+	gst="git status -s" \
+	gra="git remote add" \
 	trem="transmission-remote" \
 	sdn="pmset sleepnow" \
 	rsn="sudo shutdown -r now" \
 	e="$EDITOR" \
 	v="$EDITOR" \
 	b="brew" \
-	bb="brew formulae | fzf"
+	bb="brew formulae | fzf" \
+	# bi="brew leaves | xargs -n1 brew desc"
 	xi="sudo xbps-install" \
 	xr="sudo xbps-remove -R" \
 	xq="xbps-query" \
 	z="zathura"
-
-alias \
-	tw="tt -theme gruvbox -bold" \
-	tq="tt -notheme -quotes en" \
-	tl="ls -a ~/.local/share/Trash/files" \
-	te="rm -rf ~/.local/share/Trash/files/* && rm -rf ~/.local/share/Trash/info/*" \
-	to="nvim ~/dox/todo"
 
 alias \
 	lf="lfub" \
@@ -85,4 +85,4 @@ gitall()
 hide() { tar -zcf output.tar.gz $1; mv output.tar.gz $2 }
 show() { tar -zxf $1 }
 ymd() { vim ~/repos/per/personal/dia/di/$(date +%F).md }
-t() { echo -e "$1\n$(cat ~/dox/todo)" > ~/dox/todo }
+t() { echo -e "$1\n$(cat ~/Documents/todo)" > ~/Documents/todo }
