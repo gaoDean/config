@@ -1,7 +1,9 @@
 -- let
 	local let = vim.g
 	let.mapleader = " "
-	vim.cmd("colorscheme gruvbox")
+	vim.cmd([[
+	colorscheme gruvbox
+	]])
 
 	-- gruvbox
 		let.gruvbox_italic = 1
@@ -56,6 +58,7 @@
 	set.shiftwidth = tw
 	set.shiftround = true
 
+
 -- commands
 	function au(evt, pat, cmd) -- (string|table), (string|table), (string)
 		vim.api.nvim_create_autocmd(evt, { pattern = pat, command = cmd, })
@@ -63,6 +66,9 @@
 	au("ColorScheme", "*", "source ~/nvim/syntax/nroff.vim")
 	au("BufWritePre", "*", "%s/\\s\\+$//e")
 	au("BufEnter", "*.ms", "set ft=nroff")
+	au("BufEnter", "*.ms", "nnoremap j gj")
+	au("BufEnter", "*.ms", "nnoremap k gk")
+	au("BufEnter", "*.ms", "set spell")
 	au("BufEnter", "*.hs", "set expandtab")
 	au("BufEnter", "bib", "set ft=rbib")
 	au("FileType", "*", "setlocal formatoptions-=c formatoptions-=r formatoptions-=o formatoptions+=j")

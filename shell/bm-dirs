@@ -12,4 +12,10 @@ ce  /usr/local/Cellar
 ub  $HOME/sym #subjects
 re  $HOME/repos
 tf  $HOME/.local/share/Trash/files # trash files
+one $HOME/one/Year9
+nv  $HOME/.config/nvim
+foo $HOME/repos/rea/footnotes/math/algebra2
+not $HOME/repos/rea/footnotes/other
+rea $HOME/repos/rea
+rds $HOME/repos/rea/reads
 

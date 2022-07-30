@@ -39,14 +39,19 @@ alias \
 	sdn="pmset sleepnow" \
 	rsn="sudo shutdown -r now" \
 	e="$EDITOR" \
-	v="$EDITOR" \
 	b="brew" \
-	bb="brew formulae | fzf" \
-	# bi="brew leaves | xargs -n1 brew desc"
+	bi="brew formulae | fzf" \
+	bb="brew leaves | xargs -n1 brew desc" \
 	xi="sudo xbps-install" \
 	xr="sudo xbps-remove -R" \
 	xq="xbps-query" \
 	z="zathura"
+
+alias \
+	tw="tt -theme warm-neon -bold" \
+	tq="tt -notheme -quotes en" \
+	tl="ls $HOME/.local/share/Trash/files" \
+	te="rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*" \
 
 alias \
 	lf="lfub" \

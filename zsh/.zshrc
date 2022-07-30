@@ -37,6 +37,7 @@ preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 # [[ ! -f ${XDG_CONFIG_HOME:-$HOME/.config}/p10k/p10k.zsh ]] || source ${XDG_CONFIG_HOME:-$HOME/.config}/p10k/p10k.zsh
 
 [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh
+[ -f /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh ] && source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
 
 # Load aliases and shortcuts if existent.
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
