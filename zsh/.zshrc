@@ -8,7 +8,6 @@ setopt interactive_comments
 HISTSIZE=1000
 SAVEHIST=1000
 HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/history"
-
 # == bindings ==
 
 bindkey ^S fzf-file-widget
@@ -38,14 +37,19 @@ preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
 [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh
 [ -f /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh ] && source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
+[ -f $HOME/repos/oth/shellfirm/shell-plugins/shellfirm.plugin.zsh ] && source $HOME/repos/oth/shellfirm/shell-plugins/shellfirm.plugin.zsh
+
 
 # Load aliases and shortcuts if existent.
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc"
-
-autoload -U compinit
+zmodload zsh/zprof
 zstyle ':completion:*' menu select
-zmodload zsh/complist
-compinit
+# zmodload zsh/complist
+autoload -Uz compinit
+for dump in ~/.zcompdump(N.mh+24); do
+  compinit
+done
+compinit -C
 _comp_options+=(globdots)		# Include hidden files.

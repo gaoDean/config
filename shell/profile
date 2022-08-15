@@ -7,6 +7,7 @@
 
 # Adds `~/.local/bin` to $PATH
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 
 # unsetopt PROMPT_SP
 
@@ -77,7 +78,7 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 export LESS=-R
 export LESSOPEN="| /usr/bin/highlight -O ansi %s 2>/dev/null"
 export YSU_MODE=ALL
-export YSU_HARDCORE=1
+# export YSU_HARDCORE=1
 export YSU_MESSAGE_FORMAT="use \"%alias\"."
 export YSU_HARDCORE_MESSAGE_FORMAT="please."
 

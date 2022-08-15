@@ -106,11 +106,17 @@
 .ti -\w'\0\(bu\0'u
 \0\(bu\0\c
 ..
+
+
 .EQ
 define ( @{ left "(" @
 define ) @right ")" }@
 define times 'cdot'
 define compose @{vcenter roman " \N’openbullet’ "}@
+define belongs '\(mo'
+define nobelongs '\(!m'
+define subset '\(ib'
+define lup 'lineup'
 delim $$
 .EN
 .PS
@@ -118,3 +124,4 @@ define setbit { boxwid = 0.2; boxht = 0.3 }
 define setsquare { boxwid = $1; boxht = $1 }
 define setbox { boxwid = $1; boxht = $2 }
 .PE
+

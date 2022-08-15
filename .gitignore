@@ -1,5 +1,6 @@
 nvim/plugged
 nvim/undo
+nnn
 go
 node_modules
 NuGet
@@ -7,3 +8,4 @@ ghc
 gtk-2.0
 haskell
 mac
+

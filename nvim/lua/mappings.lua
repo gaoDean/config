@@ -37,7 +37,6 @@
 	nmap("<leader>g", [[<cmd>Goyo<cr>]])
 
 	nmap("<leader>c", "zc")
-	nmap("<leader>d", [[<cmd>put=strftime('%a %d %b %Y')<cr>]])
 
 	nmap("<leader>m", "zo")
 	nmap("<leader>k", "zM")
@@ -49,10 +48,9 @@
 	imap("{<CR>", "{<CR>}<ESC>O" )
 	imap("{;<CR>", "{<CR>};<ESC>O")
 	imap("<c-d>", [[<cmd>put=strftime('%a %d %b %Y')<cr>%O Viewed ]])
-
+	imap("<cr>", [[<cr><cmd>lua require('func').autolist()<cr>]])
 
 	vmap("J", ":m '>+1<cr>gv=gv")
 	vmap("K", ":m '<-2<cr>gv=gv")
 	nmap("<leader>j", "q:")
 	nmap("q:", "<nop>");
-

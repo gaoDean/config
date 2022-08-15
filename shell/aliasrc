@@ -15,7 +15,9 @@ alias \
 	rm="rm -vI" \
 	bc="bc -ql" \
 	mkd="mkdir -pv" \
-	ffmpeg="ffmpeg -hide_banner"
+	ffmpeg="ffmpeg -hide_banner" \
+	sed="sed -E" \
+	du="du -h" \
 
 # Colorize commands when possible.
 alias \
@@ -23,16 +25,21 @@ alias \
 	grep="grep --color=auto" \
 	# diff="diff --color=auto" \
 	ccat="highlight --out-format=ansi" \
-	ip="ip -color=auto"
+	ip="ip -color=auto" \
 
 # These common commands are just too long! Abbreviate them.
 alias \
 	ka="killall" \
 	lsa="ls -a" \
 	g="git" \
-	gc="git commit -m" \
-	ga="git add" \
-	gp="git push" \
+	gc="git commit -q -m" \
+	ga="git add . && git status -s" \
+	gb="git branch" \
+	gA="git add -A && git status -s" \
+	gaa="git add -A && git commit -m 'update' && git push" \
+	gp="git push -q" \
+	gl="git log origin/main..HEAD --oneline" \
+	gla="git log origin/master..HEAD --oneline" \
 	gst="git status -s" \
 	gra="git remote add" \
 	trem="transmission-remote" \
@@ -42,13 +49,14 @@ alias \
 	b="brew" \
 	bi="brew formulae | fzf" \
 	bb="brew leaves | xargs -n1 brew desc" \
+	ba="brew update && brew upgrade && brew autoremove && brew cleanup" \
 	xi="sudo xbps-install" \
 	xr="sudo xbps-remove -R" \
 	xq="xbps-query" \
-	z="zathura"
+	za="zathura" \
 
 alias \
-	tw="tt -theme warm-neon -bold" \
+	tw="tt -theme gruvbox-real -bold" \
 	tq="tt -notheme -quotes en" \
 	tl="ls $HOME/.local/share/Trash/files" \
 	te="rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*" \
@@ -60,7 +68,7 @@ alias \
 	weath="less -S ${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport" \
 
 se() { cd ~/.local/bin; $EDITOR $(fzf) ;}
-fef () { for file in $(fd); $1 $file $2 }
+fef () { for file in $(fd); do $1 $file $2; done }
 timezsh() { for i in $(seq 1 10); do time zsh -i -c exit; done }
 n ()
 {
@@ -75,18 +83,7 @@ n ()
 		rm -f "$NNN_TMPFILE" > /dev/null
 	fi
 }
-gitall()
-{
-	git add .;
-	git status -s;
-	git commit -m "$1"
-	STATUS=$(git status -s);
-	if [ -z "$STATUS" ]; then
-		echo "\nfully commited\n"
-	else
-		echo "$STATUS"
-	fi
-}
+gL () { git log $1..HEAD --oneline }
 hide() { tar -zcf output.tar.gz $1; mv output.tar.gz $2 }
 show() { tar -zxf $1 }
 ymd() { vim ~/repos/per/personal/dia/di/$(date +%F).md }
