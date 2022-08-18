@@ -35,6 +35,7 @@
 	nmap("<leader>s", [[<cmd>lua vim.fn.jobstop(job_id)<cr>]])
 	nmap("<leader>n", [[<cmd>NnnPicker<cr>]])
 	nmap("<leader>g", [[<cmd>Goyo<cr>]])
+	nmap("<leader>i", [[<cmd>Limelight!!<cr>]])
 
 	nmap("<leader>c", "zc")
 
@@ -45,10 +46,10 @@
 	nmap("<leader>l", "<c-w>w")
 	nmap("<leader>h", "<c-w>W")
 
+
 	imap("{<CR>", "{<CR>}<ESC>O" )
 	imap("{;<CR>", "{<CR>};<ESC>O")
-	imap("<c-d>", [[<cmd>put=strftime('%a %d %b %Y')<cr>%O Viewed ]])
-	imap("<cr>", [[<cr><cmd>lua require('func').autolist()<cr>]])
+	imap("<c-z>", [[<cmd>put=strftime('%a %d %b %Y')<cr>%O Viewed ]])
 
 	vmap("J", ":m '>+1<cr>gv=gv")
 	vmap("K", ":m '<-2<cr>gv=gv")

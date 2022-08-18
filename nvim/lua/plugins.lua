@@ -2,12 +2,16 @@ local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.config/nvim/plugged')
 	Plug 'gruvbox-community/gruvbox'
 	Plug 'junegunn/goyo.vim'
+	Plug 'junegunn/limelight.vim'
+	-- Plug 'gaoDean/autolist.nvim'
+	Plug '~/repos/rea/autolist.nvim'
 	Plug 'echasnovski/mini.nvim'
 	Plug 'luukvbaal/nnn.nvim'
 	Plug('ibhagwan/fzf-lua', {branch = 'main'})
 vim.call('plug#end')
 
 -- ========================================================= --
+require("autolist").setup({})
 require("fzf-lua").setup({
 	winopts = {
 		preview = { hidden = "hidden" },

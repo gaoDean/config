@@ -1,5 +1,6 @@
 hash -d cac=/Users/deangao/.cache 
 hash -d cf=/Users/deangao/.config 
+hash -d cfn=/Users/deangao/.config/nvim 
 hash -d D=/Users/deangao/Downloads 
 hash -d d=/Users/deangao/Documents 
 hash -d dt=/Users/deangao/.local/share 

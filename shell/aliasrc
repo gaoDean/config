@@ -33,6 +33,7 @@ alias \
 	lsa="ls -a" \
 	g="git" \
 	gc="git commit -q -m" \
+	gC="git checkout" \
 	ga="git add . && git status -s" \
 	gb="git branch" \
 	gA="git add -A && git status -s" \
