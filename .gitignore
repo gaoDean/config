@@ -1,0 +1,13 @@
+/*/
+.*
+.*/
+
+!/alacritty
+!/shell
+!/zsh
+!/zathura
+!/roff
+!/macchina
+!/git
+!/fzf
+!.gitignore
