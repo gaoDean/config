@@ -1,0 +1,91 @@
+#!/bin/sh
+
+# Use neovim for vim if present.
+[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+
+# Use $XINITRC variable if file exists.
+[ -f "$XINITRC" ] && alias startx="startx $XINITRC"
+
+
+
+# Verbosity and settings that you pretty much just always are going to want.
+alias \
+	cp="cp -iv" \
+	mv="mv -iv" \
+	rm="rm -vI" \
+	bc="bc -ql" \
+	mkd="mkdir -pv" \
+	ffmpeg="ffmpeg -hide_banner" \
+	sed="sed -E" \
+	du="du -h" \
+
+# Colorize commands when possible.
+alias \
+	ls="ls -hG --color=auto -F" \
+	grep="grep --color=auto" \
+	# diff="diff --color=auto" \
+	ccat="highlight --out-format=ansi" \
+	ip="ip -color=auto" \
+
+# These common commands are just too long! Abbreviate them.
+alias \
+	ka="killall" \
+	lsa="ls -a" \
+	g="git" \
+	gc="git commit -q -m" \
+	gC="git checkout" \
+	ga="git add . && git status -s" \
+	gb="git branch" \
+	gA="git add -A && git status -s" \
+	gaa="git add -A && git commit -m 'update' && git push" \
+	gp="git push -q" \
+	gl="git log origin/main..HEAD --oneline" \
+	gla="git log origin/master..HEAD --oneline" \
+	gst="git status -s" \
+	gra="git remote add" \
+	trem="transmission-remote" \
+	sdn="pmset sleepnow" \
+	rsn="sudo shutdown -r now" \
+	e="$EDITOR" \
+	b="brew" \
+	bi="brew formulae | fzf" \
+	bb="brew leaves | xargs -n1 brew desc" \
+	ba="brew update && brew upgrade && brew autoremove && brew cleanup" \
+	xi="sudo xbps-install" \
+	xr="sudo xbps-remove -R" \
+	xq="xbps-query" \
+	za="zathura" \
+
+alias \
+	tw="tt -theme gruvbox-real -bold" \
+	tq="tt -notheme -quotes en" \
+	tl="ls $HOME/.local/share/Trash/files" \
+	te="rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*" \
+
+alias \
+	lf="lfub" \
+	magit="nvim -c MagitOnly" \
+	ref="shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" \
+	weath="less -S ${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport" \
+
+se() { cd ~/.local/bin; $EDITOR $(fzf) ;}
+fef () { for file in $(fd); do $1 $file $2; done }
+timezsh() { for i in $(seq 1 10); do time zsh -i -c exit; done }
+n ()
+{
+	if [ -n $NNNLVL ] && [ "${NNNLVL:-0}" -ge 1 ]; then
+		echo "nnn is already running"
+		return
+	fi
+	export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+	nnn -c "$@"
+	if [ -f "$NNN_TMPFILE" ]; then
+		. "$NNN_TMPFILE"
+		rm -f "$NNN_TMPFILE" > /dev/null
+	fi
+}
+gL () { git log $1..HEAD --oneline }
+hide() { tar -zcf output.tar.gz $1; mv output.tar.gz $2 }
+show() { tar -zxf $1 }
+ymd() { vim ~/repos/per/personal/dia/di/$(date +%F).md }
+t() { echo -e "$1\n$(cat ~/Documents/todo)" > ~/Documents/todo }
