@@ -1,0 +1,31 @@
+# vim: ft=conf
+
+# nroff
+*.ms setl ft=nroff spell
+*.ms nnoremap j gj
+*.ms nnoremap k gk
+
+# markdown
+*.md nnoremap j gj
+*.md nnoremap k gk
+*.md setl spell
+
+# html
+*.html nnoremap j gj
+*.html nnoremap k gk
+*.html setl tabstop=2 shiftwidth=2
+
+# amber
+*.amber setl ft=amber tabstop=2 shiftwidth=2 list
+
+# gcss
+*.gcss setl ft=css expandtab shiftwidth=2 list
+
+# roff bib
+*.bib set ft=rbib
+
+# shell
+*.sh set ft=bash
+
+# all
+* setl formatoptions-=c formatoptions+=j # its a buffer only option
