@@ -2,6 +2,7 @@
 cac ${XDG_CACHE_HOME:-$HOME/.cache}
 cf  ${XDG_CONFIG_HOME:-$HOME/.config}
 cfn ${XDG_CONFIG_HOME:-$HOME/.config}/nvim
+cfq ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/pack/
 D   ${XDG_DOWNLOAD_DIR:-$HOME/Downloads}
 d   ${XDG_DOCUMENTS_DIR:-$HOME/Documents}
 dt  ${XDG_DATA_HOME:-$HOME/.local/share}

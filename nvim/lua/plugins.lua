@@ -1,14 +1,13 @@
-local Plug = vim.fn['plug#']
-vim.call('plug#begin', '~/.config/nvim/plugged')
-	Plug 'gruvbox-community/gruvbox'
-	Plug 'junegunn/goyo.vim'
-	Plug 'junegunn/limelight.vim'
-	-- Plug 'gaoDean/autolist.nvim'
-	Plug '~/repos/rea/autolist.nvim'
-	Plug 'echasnovski/mini.nvim'
-	Plug 'luukvbaal/nnn.nvim'
-	Plug('ibhagwan/fzf-lua', {branch = 'main'})
-vim.call('plug#end')
+require "paq" {
+	"savq/paq-nvim";
+	"gruvbox-community/gruvbox";
+	"junegunn/goyo.vim";
+	"junegunn/limelight.vim";
+	-- "gaoDean/autolist.nvim";
+	"echasnovski/mini.nvim";
+	"luukvbaal/nnn.nvim";
+	{"ibhagwan/fzf-lua", branch = "main"};
+}
 
 -- ========================================================= --
 require("autolist").setup({})

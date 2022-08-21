@@ -2,6 +2,7 @@
 alias cac="cd /Users/deangao/.cache && pwd" \
 cf="cd /Users/deangao/.config && pwd" \
 cfn="cd /Users/deangao/.config/nvim && pwd" \
+cfq="cd /Users/deangao/.local/share/nvim/site/pack/ && pwd" \
 D="cd /Users/deangao/Downloads && pwd" \
 d="cd /Users/deangao/Documents && pwd" \
 dt="cd /Users/deangao/.local/share && pwd" \

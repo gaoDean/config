@@ -26,7 +26,8 @@ font:
     family: JetBrainsMono Nerd Font
     style: Bold Italic
 
-  size: 24.5
+  #size: 26
+  size: 26
 
 # Colors (Tomorrow Night)
 colors:
