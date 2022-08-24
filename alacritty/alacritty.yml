@@ -1,8 +1,9 @@
 window:
   #opacity: 0.3
-  #opacity: 1.0
-  #opacity: 0.7
+  opacity: 0.7
   opacity: 0.8
+  opacity: 0.9
+  # opacity: 1.0
   decorations: none
   # padding:
   #    x: 6
@@ -29,36 +30,6 @@ font:
   #size: 26
   size: 26
 
-# Colors (Tomorrow Night)
-colors:
-  # Default colors
-   primary:
-      background: '#292d3e'
-      foreground: '#d0d0d0'
-
-  # Normal colors
-   normal:
-      black:   '#292d3e'
-      red:     '#f07178'
-      green:   '#c3e88d'
-      yellow:  '#ffcb6b'
-      blue:    '#82aaff'
-      magenta: '#c792ea'
-      cyan:    '#89ddff'
-        #white:   '#ffe585'
-
-      white:   '#d0d0d0'
-
-
-  # Bright colors
-   bright:
-      black:   '#434758'
-      red:     '#ff8b92'
-      green:   '#ddffa7'
-      yellow:  '#ffe585'
-      blue:    '#9cc4ff'
-      magenta: '#e1acff'
-      cyan:    '#a3f7ff'
 # Colors (Gruvbox dark)
 colors:
   # Default colors
@@ -73,11 +44,11 @@ colors:
     black:   '0x282828'
     red:     '0xcc241d'
     green:   '0x98971a'
-    yellow:  '0xd79921'
+    yellow:  '0xe3c59a'
     blue:    '0x458588'
     magenta: '0xb16286'
     cyan:    '0x689d6a'
-    white:   '0xa89984'
+    white:   '0xebdbb2'
 
   # Bright colors
   bright:

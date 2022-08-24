@@ -18,6 +18,8 @@ alias \
 	ffmpeg="ffmpeg -hide_banner" \
 	sed="sed -E" \
 	du="du -h" \
+	sc="sc-im" \
+	abook="abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook" \
 
 # Colorize commands when possible.
 alias \
@@ -39,7 +41,7 @@ alias \
 	gA="git add -A && git status -s" \
 	gaa="git add -A && git commit -m 'update' && git push" \
 	gp="git push -q" \
-	gl="git log origin/main..HEAD --oneline" \
+	gl="git log --oneline" \
 	gla="git log origin/master..HEAD --oneline" \
 	gst="git status -s" \
 	gra="git remote add" \
@@ -51,10 +53,14 @@ alias \
 	bi="brew formulae | fzf" \
 	bb="brew leaves | xargs -n1 brew desc" \
 	ba="brew update && brew upgrade && brew autoremove && brew cleanup" \
+	bk="brew search --casks --desc '' | fzf" \
 	xi="sudo xbps-install" \
 	xr="sudo xbps-remove -R" \
 	xq="xbps-query" \
 	za="zathura" \
+	ms="mw -Y" \
+	mc="macchina" \
+	m="neomutt" \
 
 alias \
 	tw="tt -theme gruvbox-real -bold" \

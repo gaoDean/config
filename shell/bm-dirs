@@ -8,8 +8,7 @@ d   ${XDG_DOCUMENTS_DIR:-$HOME/Documents}
 dt  ${XDG_DATA_HOME:-$HOME/.local/share}
 h   $HOME
 pp  ${XDG_PICTURES_DIR:-$HOME/Pictures}
-sc  $HOME/.local/bin
-ce  /usr/local/Cellar
+sr  $HOME/.local/bin
 sub	$HOME/sub #subjects
 re  $HOME/repos
 tf  $HOME/.local/share/Trash/files # trash files
@@ -19,3 +18,6 @@ foo $HOME/repos/rea/footnotes/math/algebra2
 not $HOME/repos/rea/footnotes/other
 rea $HOME/repos/rea
 rds $HOME/repos/rea/reads
+sha $HOME/.local/share
+uls /usr/local/share
+ce  /usr/local/Cellar

@@ -1,0 +1,23 @@
+# vim: filetype=neomuttrc
+# muttrc file for account 137095@caulfieldgs.vic.edu.au
+set realname = "Dean Gao"
+set from = "137095@caulfieldgs.vic.edu.au"
+set sendmail = "msmtp -a 137095@caulfieldgs.vic.edu.au"
+alias me 137095 <137095@caulfieldgs.vic.edu.au>
+set folder = "/Users/deangao/.local/share/mail/137095@caulfieldgs.vic.edu.au"
+set header_cache = /Users/deangao/.cache/mutt-wizard/137095@caulfieldgs.vic.edu.au/headers
+set message_cachedir = /Users/deangao/.cache/mutt-wizard/137095@caulfieldgs.vic.edu.au/bodies
+set mbox_type = Maildir
+set hostname = "caulfieldgs.vic.edu.au"
+source /usr/local/share/mutt-wizard/switch.muttrc
+set spoolfile = +INBOX
+set postponed = +Drafts
+set trash = +Deleted
+set record = +Sent
+
+
+macro index o "<shell-escape>mw -y 137095@caulfieldgs.vic.edu.au<enter>" "run mbsync to sync 137095@caulfieldgs.vic.edu.au"
+macro index \eg "<enter-command>unset wait_key<enter><shell-escape>gpg --list-secret-keys; printf 'Enter email ID of user to publish: '; read eID; printf 'Enter fingerprint of GPG key to publish: '; read eFGPT; /usr/local/libexec/gpg-wks-client --create \$eFGPT \$eID | msmtp --read-envelope-from --read-recipients -a 137095@caulfieldgs.vic.edu.au<enter>"  "publish GPG key to WKS provider"
+macro index \eh "<pipe-message>/usr/local/libexec/gpg-wks-client --receive | msmtp --read-envelope-from --read-recipients -a 137095@caulfieldgs.vic.edu.au<enter>" "confirm GPG publication"
+
+mailboxes "=INBOX" "=Sent" "=Archive" "=Deleted" "=Drafts" "=Junk" "=Long" "=src"

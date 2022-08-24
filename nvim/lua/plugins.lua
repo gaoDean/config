@@ -10,7 +10,9 @@ require "paq" {
 }
 
 -- ========================================================= --
-require("autolist").setup({})
+require("autolist").setup({
+	invert_preferred_ul_marker = "*",
+})
 require("fzf-lua").setup({
 	winopts = {
 		preview = { hidden = "hidden" },
