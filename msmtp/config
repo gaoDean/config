@@ -20,4 +20,4 @@ auth on
 tls on
 tls_trust_file	/etc/ssl/cert.pem
 logfile /Users/deangao/.cache/msmtp/msmtp.log
-tls_starttls
+# tls_starttls off

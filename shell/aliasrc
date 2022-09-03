@@ -37,6 +37,7 @@ alias \
 	gc="git commit -q -m" \
 	gC="git checkout" \
 	ga="git add . && git status -s" \
+	gs="git select" \
 	gb="git branch" \
 	gA="git add -A && git status -s" \
 	gaa="git add -A && git commit -m 'update' && git push" \
@@ -46,7 +47,7 @@ alias \
 	gst="git status -s" \
 	gra="git remote add" \
 	trem="transmission-remote" \
-	sdn="pmset sleepnow" \
+	sp="pmset sleepnow" \
 	rsn="sudo shutdown -r now" \
 	e="$EDITOR" \
 	b="brew" \

@@ -58,7 +58,7 @@ set arrow_cursor = "no" # Change `color indicator` depending
 
 # Pager View Options
 set pager_format=" %n %T %s %*  %{!%d %b · %H:%M} %?X? %X?%P "
-set pager_index_lines = 10  # Shows 10 lines of index when pager is active
+# set pager_index_lines = 10  # Shows 10 lines of index when pager is active
 set pager_context = 3
 set pager_stop
 set menu_scroll
@@ -69,7 +69,7 @@ unset markers
 set header_cache = "~/.cache/mutt"
 set message_cachedir = "~/.cache/mutt"
 set query_command="abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook --mutt-query '%s'"
-macro pager A |'abook --add-email'\n
+macro pager A |'abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook --add-email'\n
 
 
 # set query_command = "khard email --parsable --search-in-source-files '%s'"

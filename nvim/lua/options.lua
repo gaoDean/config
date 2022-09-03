@@ -1,9 +1,7 @@
 -- let
 	local let = vim.g
+	let.is_posix = 1
 	let.mapleader = " "
-	vim.cmd([[
-	colorscheme gruvbox
-	]])
 
 	-- gruvbox
 		let.gruvbox_italic = 1
@@ -37,8 +35,7 @@
 	set.ignorecase = true
 	set.smartcase = true
 
-	local tw = 4
 	set.expandtab = false
-	set.tabstop = tw
-	set.shiftwidth = tw
+	set.tabstop = 4
+	set.shiftwidth = 4
 	set.shiftround = true

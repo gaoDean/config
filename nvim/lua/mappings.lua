@@ -34,8 +34,8 @@
 	nmap("<leader>t", [[<cmd>w | !compiler "%"<cr> | <cmd>lua pdfview()<cr>]])
 	nmap("<leader>s", [[<cmd>lua vim.fn.jobstop(job_id)<cr>]])
 	nmap("<leader>n", [[<cmd>NnnPicker<cr>]])
-	nmap("<leader>g", [[<cmd>Goyo<cr>]])
-	nmap("<leader>i", [[<cmd>Limelight!!<cr>]])
+	nmap("<leader>g", [[<cmd>ZenMode<cr>]])
+	nmap("<leader>i", [[<cmd>Twilight<cr>]])
 
 	nmap("<leader>c", "zc")
 
