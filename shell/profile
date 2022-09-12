@@ -83,6 +83,8 @@ export YSU_MODE=ALL
 export YSU_MESSAGE_FORMAT="use \"%alias\"."
 export YSU_HARDCORE_MESSAGE_FORMAT="please."
 
+export npm_config_prefix="$HOME/.local/share/npm"
 
+export TTBL_COLOR="*"
 
 [ ! -f ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ] && setsid shortcuts >/dev/null 2>&1

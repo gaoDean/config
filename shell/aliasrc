@@ -18,6 +18,7 @@ alias \
 	ffmpeg="ffmpeg -hide_banner" \
 	sed="sed -E" \
 	du="du -h" \
+	less="less --use-color" \
 	sc="sc-im" \
 	abook="abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook" \
 
@@ -64,8 +65,8 @@ alias \
 	m="neomutt" \
 
 alias \
-	tw="tt -theme gruvbox-real -bold" \
-	tq="tt -notheme -quotes en" \
+	tt="tt -theme chalkboard -bold -t 30" \
+	tq="tt -quotes en" \
 	tl="ls $HOME/.local/share/Trash/files" \
 	te="rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*" \
 
