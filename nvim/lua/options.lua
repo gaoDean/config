@@ -8,6 +8,8 @@
 		let.gruvbox_italicize_strings = 1
 		let.gruvbox_bold = 1
 		let.gruvbox_invert_selection = 0
+		-- so even if my whole config fails, i can still have gruvbox :)
+		vim.cmd([[ colorscheme gruvbox ]])
 -- opt
 	local set = vim.opt
 	-- set.textwidth = 80
@@ -15,6 +17,7 @@
 	set.mouse="n"
 	set.history = 1000
 	set.laststatus = 0
+	set.cmdheight = 0
 	set.linebreak = true
 	set.modeline = false
 	set.number = true

@@ -9,12 +9,13 @@ require "paq" {
 	-- "gaoDean/autolist.nvim";
 }
 
--- so even if my whole config fails, i can still have gruvbox :)
-vim.cmd([[ colorscheme gruvbox ]])
-
 -- ========================================================= --
 
-require("autolist").setup({})
+require("autolist").setup({
+	invert = {
+		indent = true,
+	}
+})
 
 require("twilight").setup({})
 

@@ -8,6 +8,7 @@
 # Adds `~/.local/bin` to $PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/share/go/bin:$PATH"
+export PATH="$HOME/.local/share/cargo/bin:$PATH"
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 
 # unsetopt PROMPT_SP

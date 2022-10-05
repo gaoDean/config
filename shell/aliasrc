@@ -43,7 +43,7 @@ alias \
 	gA="git add -A && git status -s" \
 	gaa="git add -A && git commit -m 'update' && git push" \
 	gp="git push -q" \
-	gl="git log --oneline" \
+	gl="git log --graph --color --decorate --oneline" \
 	gla="git log origin/master..HEAD --oneline" \
 	gst="git status -s" \
 	gra="git remote add" \
@@ -63,6 +63,8 @@ alias \
 	ms="mw -Y" \
 	mc="macchina" \
 	m="neomutt" \
+	tauri="npx tauri" \
+	f="set -o pipefail && fzf | nvim" \
 
 alias \
 	tt="tt -theme chalkboard -bold -t 30" \
