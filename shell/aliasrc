@@ -47,6 +47,7 @@ alias \
 	gla="git log origin/master..HEAD --oneline" \
 	gst="git status -s" \
 	gra="git remote add" \
+	cdd="cd .." \
 	trem="transmission-remote" \
 	sp="pmset sleepnow" \
 	rsn="sudo shutdown -r now" \
@@ -64,10 +65,10 @@ alias \
 	mc="macchina" \
 	m="neomutt" \
 	tauri="npx tauri" \
-	f="set -o pipefail && fzf | nvim" \
 
 alias \
 	tt="tt -theme chalkboard -bold -t 30" \
+	tte="tt -theme chalkboard -bold -t 30 -words 200en" \
 	tq="tt -quotes en" \
 	tl="ls $HOME/.local/share/Trash/files" \
 	te="rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*" \
@@ -99,3 +100,10 @@ hide() { tar -zcf output.tar.gz $1; mv output.tar.gz $2 }
 show() { tar -zxf $1 }
 ymd() { vim ~/repos/per/personal/dia/di/$(date +%F).md }
 t() { echo -e "$1\n$(cat ~/Documents/todo)" > ~/Documents/todo }
+f() {
+	full=$(fzf)
+	if [[ ! -z "$full" ]]; then
+		cd $(dirname "$full")
+		nvim $(basename "$full")
+	fi
+}
