@@ -28,12 +28,12 @@
 
 	nmap("<leader>f", [[<cmd>lua require('func').gitf()<cr>]])
 	nmap("<leader>x", [[<cmd>lua require('fzf-lua').grep()<cr>]])
-	nmap("<leader>,", [[<cmd>lua require('fzf-lua').files()<cr>]])
+	nmap("<leader>n", [[<cmd>lua require('fzf-lua').files()<cr>]])
 	nmap("<leader>o", [[<cmd>lua require('fzf-lua').oldfiles()<cr>]])
 	nmap("<leader>r", [[<cmd>w | !compiler "%"<cr>]])
 	nmap("<leader>t", [[<cmd>w | !compiler "%"<cr> | <cmd>lua pdfview()<cr>]])
 	nmap("<leader>s", [[<cmd>lua vim.fn.jobstop(job_id)<cr>]])
-	nmap("<leader>n", [[<cmd>NnnPicker<cr>]])
+	nmap("<leader>,", [[<cmd>NnnPicker<cr>]])
 	nmap("<leader>g", [[<cmd>ZenMode<cr>]])
 	nmap("<leader>i", [[<cmd>Twilight<cr>]])
 

@@ -6,6 +6,7 @@ require "paq" {
 	"ibhagwan/fzf-lua";
 	"luukvbaal/nnn.nvim";
 	"savq/paq-nvim";
+	"NvChad/nvim-colorizer.lua";
 	-- "gaoDean/autolist.nvim";
 }
 
@@ -14,6 +15,15 @@ require "paq" {
 require("autolist").setup({
 	invert = {
 		indent = true,
+	}
+})
+require("autolist").setup({
+	normal_mappings = {
+		recal = {
+			"dd",
+			"<c-k>",
+			"<c-j>"
+		}
 	}
 })
 
@@ -27,6 +37,19 @@ require("zen-mode").setup({
 			number = false, -- disable number column
 			relativenumber = false, -- disable relative numbers
 		},
+	},
+})
+
+require('colorizer').setup({
+	filetypes = {
+		'css',
+		'javascript',
+		'html',
+	},
+	user_default_options = {
+        css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+        -- Available modes for `mode`: foreground, background,  virtualtext
+        mode = "foreground", -- Set the display mode.
 	},
 })
 

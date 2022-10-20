@@ -17,6 +17,7 @@ nv="cd /Users/deangao/.config/nvim && pwd" \
 foo="cd /Users/deangao/repos/rea/footnotes/math/algebra2 && pwd" \
 not="cd /Users/deangao/repos/rea/footnotes/other && pwd" \
 rea="cd /Users/deangao/repos/rea && pwd" \
+oth="cd /Users/deangao/repos/oth && pwd" \
 rds="cd /Users/deangao/repos/rea/reads && pwd" \
 sha="cd /Users/deangao/.local/share && pwd" \
 uls="cd /usr/local/share && pwd" \

@@ -16,6 +16,7 @@ hash -d nv=/Users/deangao/.config/nvim
 hash -d foo=/Users/deangao/repos/rea/footnotes/math/algebra2 
 hash -d not=/Users/deangao/repos/rea/footnotes/other 
 hash -d rea=/Users/deangao/repos/rea 
+hash -d oth=/Users/deangao/repos/oth 
 hash -d rds=/Users/deangao/repos/rea/reads 
 hash -d sha=/Users/deangao/.local/share 
 hash -d uls=/usr/local/share 

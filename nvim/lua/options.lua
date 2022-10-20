@@ -14,6 +14,7 @@
 	local set = vim.opt
 	-- set.textwidth = 80
 	set.autochdir = true
+	set.wrap = true
 	set.mouse="n"
 	set.history = 1000
 	set.laststatus = 0

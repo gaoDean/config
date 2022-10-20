@@ -66,6 +66,8 @@ export NNN_READER=preview
 export NNN_OPENER=nuke
 export NNN_TRASH=2
 
+export LSCOLORS="ExGxFxDxCxFxFxFxFxFxFx"
+
 export FZF_DEFAULT_COMMAND="fd . -t f --hidden --follow --exclude .git --strip-cwd-prefix"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd . -t d --follow --strip-cwd-prefix"

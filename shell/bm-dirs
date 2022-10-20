@@ -17,6 +17,7 @@ nv  $HOME/.config/nvim
 foo $HOME/repos/rea/footnotes/math/algebra2
 not $HOME/repos/rea/footnotes/other
 rea $HOME/repos/rea
+oth $HOME/repos/oth
 rds $HOME/repos/rea/reads
 sha $HOME/.local/share
 uls /usr/local/share

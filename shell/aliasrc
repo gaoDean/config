@@ -10,74 +10,75 @@
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
-	cp="cp -iv" \
-	mv="mv -iv" \
-	rm="rm -vI" \
-	bc="bc -ql" \
-	mkd="mkdir -pv" \
-	ffmpeg="ffmpeg -hide_banner" \
-	sed="sed -E" \
-	du="du -h" \
-	less="less --use-color" \
-	sc="sc-im" \
-	abook="abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook" \
+	cp='cp -iv' \
+	mv='mv -iv' \
+	rm='rm -vI' \
+	bc='bc -ql' \
+	mkd='mkdir -pv' \
+	ffmpeg='ffmpeg -hide_banner' \
+	sed='sed -E' \
+	du='du -h' \
+	less='less --use-color' \
+	sc='sc-im' \
+	abook='abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook' \
 
 # Colorize commands when possible.
 alias \
-	ls="ls -hG --color=auto -F" \
-	grep="grep --color=auto" \
-	# diff="diff --color=auto" \
-	ccat="highlight --out-format=ansi" \
-	ip="ip -color=auto" \
+	ls='ls -hG --color=auto -F' \
+	grep='grep --color=auto' \
+	# diff='diff --color=auto' \
+	ccat='highlight --out-format=ansi' \
+	ip='ip -color=auto' \
 
 # These common commands are just too long! Abbreviate them.
 alias \
-	ka="killall" \
-	lsa="ls -a" \
-	g="git" \
-	gc="git commit -q -m" \
-	gC="git checkout" \
-	ga="git add . && git status -s" \
-	gs="git select" \
-	gb="git branch" \
-	gA="git add -A && git status -s" \
-	gaa="git add -A && git commit -m 'update' && git push" \
-	gp="git push -q" \
-	gl="git log --graph --color --decorate --oneline" \
-	gla="git log origin/master..HEAD --oneline" \
-	gst="git status -s" \
-	gra="git remote add" \
-	cdd="cd .." \
-	trem="transmission-remote" \
-	sp="pmset sleepnow" \
-	rsn="sudo shutdown -r now" \
-	e="$EDITOR" \
-	b="brew" \
-	bi="brew formulae | fzf" \
-	bb="brew leaves | xargs -n1 brew desc" \
-	ba="brew update && brew upgrade && brew autoremove && brew cleanup" \
-	bk="brew search --casks --desc '' | fzf" \
-	xi="sudo xbps-install" \
-	xr="sudo xbps-remove -R" \
-	xq="xbps-query" \
-	za="zathura" \
-	ms="mw -Y" \
-	mc="macchina" \
-	m="neomutt" \
-	tauri="npx tauri" \
+	ka='killall' \
+	lsa='ls -A' \
+	g='git' \
+	gr='cd $(git rev-parse --show-toplevel)' \
+	gc='git commit -q -m' \
+	gC='git checkout' \
+	ga='git add . && git status -s' \
+	gs='git select' \
+	gb='git branch' \
+	gA='git add -A && git status -s' \
+	gaa='git add -A && git commit -m 'update' && git push' \
+	gp='git push -q' \
+	gl='git log --graph --color --decorate --oneline' \
+	gla='git log origin/master..HEAD --oneline' \
+	gst='git status -s' \
+	gra='git remote add' \
+	cdd='cd ..' \
+	trem='transmission-remote' \
+	sp='pmset sleepnow' \
+	rsn='sudo shutdown -r now' \
+	e='$EDITOR' \
+	b='brew' \
+	bi='brew formulae | fzf' \
+	bb='brew leaves | xargs -n1 brew desc' \
+	ba='brew update && brew upgrade && brew autoremove && brew cleanup' \
+	bk='brew search --casks --desc '' | fzf' \
+	xi='sudo xbps-install' \
+	xr='sudo xbps-remove -R' \
+	xq='xbps-query' \
+	za='zathura' \
+	ms='mw -Y' \
+	mc='macchina' \
+	m='neomutt' \
+	tau='yarn tauri' \
 
 alias \
-	tt="tt -theme chalkboard -bold -t 30" \
-	tte="tt -theme chalkboard -bold -t 30 -words 200en" \
-	tq="tt -quotes en" \
-	tl="ls $HOME/.local/share/Trash/files" \
-	te="rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*" \
+	tt='tt -theme chalkboard -bold -t 30' \
+	tte='tt -theme chalkboard -bold -t 30 -words 200en' \
+	tq='tt -quotes en' \
+	tl='ls $HOME/.local/share/Trash/files' \
+	te='rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*' \
 
 alias \
-	lf="lfub" \
-	magit="nvim -c MagitOnly" \
-	ref="shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" \
-	weath="less -S ${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport" \
+	lf='lfub' \
+	magit='nvim -c MagitOnly' \
+	ref='shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc' \
+	weath='less -S ${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport' \
 
 se() { cd ~/.local/bin; $EDITOR $(fzf) ;}
 fef () { for file in $(fd); do $1 $file $2; done }
@@ -100,10 +101,16 @@ hide() { tar -zcf output.tar.gz $1; mv output.tar.gz $2 }
 show() { tar -zxf $1 }
 ymd() { vim ~/repos/per/personal/dia/di/$(date +%F).md }
 t() { echo -e "$1\n$(cat ~/Documents/todo)" > ~/Documents/todo }
-f() {
+fz() {
 	full=$(fzf)
 	if [[ ! -z "$full" ]]; then
 		cd $(dirname "$full")
 		nvim $(basename "$full")
+	fi
+}
+f() {
+	full=$(fzf)
+	if [[ ! -z "$full" ]]; then
+		nvim "$full"
 	fi
 }
