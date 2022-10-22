@@ -18,7 +18,6 @@
 	set.mouse="n"
 	set.history = 1000
 	set.laststatus = 0
-	set.cmdheight = 0
 	set.linebreak = true
 	set.modeline = false
 	set.number = true

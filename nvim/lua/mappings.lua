@@ -47,6 +47,12 @@
 	nmap("<leader>h", "<c-w>W")
 
 
+	imap("(<CR>", "(<CR>)<ESC>O" )
+	imap("(;<CR>", "(<CR>);<ESC>O")
+	imap("({<CR>", "({<CR>})<ESC>O")
+	imap("({;<CR>", "({<CR>});<ESC>O")
+	imap("[<CR>", "[<CR>]<ESC>O" )
+	imap("[;<CR>", "]<CR>];<ESC>O")
 	imap("{<CR>", "{<CR>}<ESC>O" )
 	imap("{;<CR>", "{<CR>};<ESC>O")
 	imap("<c-z>", [[<cmd>put=strftime('%a %d %b %Y')<cr>%O Viewed ]])
