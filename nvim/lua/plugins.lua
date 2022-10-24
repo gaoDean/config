@@ -1,33 +1,32 @@
 require "paq" {
 	"echasnovski/mini.nvim";
-	"folke/twilight.nvim";
+	-- "folke/twilight.nvim";
 	"folke/zen-mode.nvim";
-	"gruvbox-community/gruvbox";
+	-- "ellisonleao/gruvbox.nvim";
+	-- "gaoDean/gruvbox.nvim";
 	"ibhagwan/fzf-lua";
 	"luukvbaal/nnn.nvim";
 	"savq/paq-nvim";
 	"NvChad/nvim-colorizer.lua";
+	"nvim-treesitter/nvim-treesitter";
+  "nvim-treesitter/playground";
+	-- "luisiacc/gruvbox-baby";
+  "catppuccin/nvim";
 	-- "gaoDean/autolist.nvim";
 }
 
 -- ========================================================= --
+
+require("catppuccin").setup({
+  flavour = "macchiato" -- mocha, macchiato, frappe, latte
+})
+vim.api.nvim_command "colorscheme catppuccin"
 
 require("autolist").setup({
 	invert = {
 		indent = true,
 	}
 })
-require("autolist").setup({
-	normal_mappings = {
-		recal = {
-			"dd",
-			"<c-k>",
-			"<c-j>"
-		}
-	}
-})
-
-require("twilight").setup({})
 
 require("zen-mode").setup({
 	window = {
@@ -38,6 +37,26 @@ require("zen-mode").setup({
 			relativenumber = false, -- disable relative numbers
 		},
 	},
+})
+
+require('nvim-treesitter.configs').setup({
+  indent = { enable = true },
+  incremental_selection = { enable = true, },
+  playground = { enable = true },
+  ensure_installed = {
+	  "svelte",
+	  "javascript",
+	  "html",
+	  "lua",
+	  "rust",
+  },
+  sync_install = false,
+  auto_install = true,
+  highlight = {
+    enable = true,
+    disable = {"help"},
+    additional_vim_regex_highlighting = false,
+  },
 })
 
 require('colorizer').setup({

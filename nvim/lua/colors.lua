@@ -1,5 +1,5 @@
-vim.cmd([[
-	hi! link SignColumn GruvboxBg0
-	hi! link MsgArea GruvboxBg3
-	hi! EndOfBuffer guibg=bg guifg=bg
-]])
+-- vim.cmd([[
+-- 	hi! link SignColumn GruvboxBg0
+-- 	hi! link MsgArea GruvboxBg4
+-- 	hi! EndOfBuffer guibg=bg guifg=bg
+-- ]])
