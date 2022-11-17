@@ -2,16 +2,15 @@ require "paq" {
 	"echasnovski/mini.nvim";
 	-- "folke/twilight.nvim";
 	"folke/zen-mode.nvim";
-	-- "ellisonleao/gruvbox.nvim";
-	-- "gaoDean/gruvbox.nvim";
 	"ibhagwan/fzf-lua";
 	"luukvbaal/nnn.nvim";
 	"savq/paq-nvim";
 	"NvChad/nvim-colorizer.lua";
 	"nvim-treesitter/nvim-treesitter";
   "nvim-treesitter/playground";
-	-- "luisiacc/gruvbox-baby";
+  "windwp/nvim-ts-autotag";
   "catppuccin/nvim";
+  "numToStr/Fterm.nvim";
 	-- "gaoDean/autolist.nvim";
 }
 
@@ -43,6 +42,7 @@ require('nvim-treesitter.configs').setup({
   indent = { enable = true },
   incremental_selection = { enable = true, },
   playground = { enable = true },
+  autotag = { enable = true },
   ensure_installed = {
 	  "svelte",
 	  "javascript",
@@ -64,6 +64,7 @@ require('colorizer').setup({
 		'css',
 		'javascript',
 		'html',
+    'svelte',
 	},
 	user_default_options = {
         css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB

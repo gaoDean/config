@@ -26,6 +26,7 @@ alias \
 alias \
 	ls='ls -hG --color=auto -F' \
 	grep='grep --color=auto' \
+	tree='tree -C' \
 	# diff='diff --color=auto' \
 	ccat='highlight --out-format=ansi' \
 	ip='ip -color=auto' \
@@ -52,7 +53,7 @@ alias \
 	trem='transmission-remote' \
 	sp='pmset sleepnow' \
 	rsn='sudo shutdown -r now' \
-	e='$EDITOR' \
+	e='$EDITOR --' \
 	b='brew' \
 	bi='brew formulae | fzf' \
 	bb='brew leaves | xargs -n1 brew desc' \
@@ -66,10 +67,13 @@ alias \
 	mc='macchina' \
 	m='neomutt' \
 	tau='yarn tauri' \
+	pip='pip3' \
+	py='python3' \
+	hc='heif-convert' \
 
 alias \
-	tt='tt -theme chalkboard -bold -t 30' \
-	tte='tt -theme chalkboard -bold -t 30 -words 200en' \
+	tt='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 200en' \
+	tte='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 1000en' \
 	tq='tt -quotes en' \
 	tl='ls $HOME/.local/share/Trash/files' \
 	te='rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*' \

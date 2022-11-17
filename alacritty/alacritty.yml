@@ -2,8 +2,8 @@ window:
   #opacity: 0.3
   # opacity: 0.7
   # opacity: 0.8
-  # opacity: 0.9
-  opacity: 1.0
+  opacity: 0.9
+  # opacity: 1.0
   decorations: none
   # padding:
   #    x: 6
@@ -603,6 +603,8 @@ key_bindings:
   #- { key: Return,   mods: Alt,           action: ToggleFullscreen }
 
   # (macOS only)
+  - { key: Return,   mods: Command,   chars: "\x1b[13;2u" }
+  - { key: Return,   mods: Control, chars: "\x1b[13;5u" }
   - { key: K,              mods: Command, mode: ~Vi|~Search, chars: "\x0c"                 }
   - { key: K,              mods: Command, mode: ~Vi|~Search, action: ClearHistory          }
   - { key: Key0,           mods: Command,                    action: ResetFontSize         }

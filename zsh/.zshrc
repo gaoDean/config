@@ -48,7 +48,7 @@ preexec() { echo -ne '\e[6 q' ;} # Use beam shape cursor for each new prompt.
 
 [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh
 [ -f /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh ] && source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
-[ -f $HOME/repos/oth/shellfirm/shell-plugins/shellfirm.plugin.zsh ] && source $HOME/repos/oth/shellfirm/shell-plugins/shellfirm.plugin.zsh
+# [ -f $HOME/repos/oth/shellfirm/shell-plugins/shellfirm.plugin.zsh ] && source $HOME/repos/oth/shellfirm/shell-plugins/shellfirm.plugin.zsh
 
 
 # Load aliases and shortcuts if existent.

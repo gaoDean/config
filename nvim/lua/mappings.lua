@@ -27,9 +27,10 @@
 		end
 
 	nmap("<leader>f", [[<cmd>lua require('func').gitf()<cr>]])
-	nmap("<leader>x", [[<cmd>lua require('fzf-lua').grep()<cr>]])
+	nmap("<leader>a", [[<cmd>lua require('fzf-lua').buffers()<cr>]])
 	nmap("<leader>n", [[<cmd>lua require('fzf-lua').files()<cr>]])
 	nmap("<leader>o", [[<cmd>lua require('fzf-lua').oldfiles()<cr>]])
+	nmap("<leader>e", [[<cmd>lua require('FTerm').open()<cr>]])
 	nmap("<leader>r", [[<cmd>w | !compiler "%"<cr>]])
 	nmap("<leader>t", [[<cmd>w | !compiler "%"<cr> | <cmd>lua pdfview()<cr>]])
 	nmap("<leader>s", [[<cmd>lua vim.fn.jobstop(job_id)<cr>]])
@@ -47,11 +48,12 @@
 	nmap("<leader>l", "<c-w>w")
 	nmap("<leader>h", "<c-w>W")
 
-
+  imap("<S-CR>", "<CR><ESC>O")
 	imap("(<CR>", "(<CR>)<ESC>O" )
 	imap("(;<CR>", "(<CR>);<ESC>O")
 	imap("({<CR>", "({<CR>})<ESC>O")
 	imap("({;<CR>", "({<CR>});<ESC>O")
+	imap(">{;<CR>", "<space>=><space>{<CR>});<ESC>O")
 	imap("[<CR>", "[<CR>]<ESC>O" )
 	imap("[;<CR>", "]<CR>];<ESC>O")
 	imap("{<CR>", "{<CR>}<ESC>O" )
