@@ -1,6 +1,7 @@
 sed -n '/---/!p;//q' ~/Documents/todo
 
-PS1="> "
+autoload -U colors && colors
+PS1="%{$fg[grey]%}>%{$reset_color%} "
 
 set -o vi
 setopt interactive_comments

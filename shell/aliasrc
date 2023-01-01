@@ -35,7 +35,6 @@ alias \
 alias \
 	ka='killall' \
 	lsa='ls -A' \
-	g='git' \
 	gr='cd $(git rev-parse --show-toplevel)' \
 	gc='git commit -q -m' \
 	gC='git checkout' \
@@ -47,6 +46,7 @@ alias \
 	gp='git push -q' \
 	gl='git log --graph --color --decorate --oneline' \
 	gla='git log origin/master..HEAD --oneline' \
+	gd='git delete' \
 	gst='git status -s' \
 	gra='git remote add' \
 	cdd='cd ..' \
@@ -54,7 +54,6 @@ alias \
 	sp='pmset sleepnow' \
 	rsn='sudo shutdown -r now' \
 	e='$EDITOR --' \
-	b='brew' \
 	bi='brew formulae | fzf' \
 	bb='brew leaves | xargs -n1 brew desc' \
 	ba='brew update && brew upgrade && brew autoremove && brew cleanup' \
@@ -66,10 +65,10 @@ alias \
 	ms='mw -Y' \
 	mc='macchina' \
 	m='neomutt' \
-	tau='yarn tauri' \
 	pip='pip3' \
 	py='python3' \
 	hc='heif-convert' \
+	exc='elixir' \
 
 alias \
 	tt='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 200en' \

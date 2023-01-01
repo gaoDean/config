@@ -24,7 +24,10 @@ vim.api.nvim_command "colorscheme catppuccin"
 require("autolist").setup({
 	invert = {
 		indent = true,
-	}
+	},
+  normal_mappings = {
+    invert = { '<leader>i+[catch]' },
+  }
 })
 
 require("zen-mode").setup({
