@@ -120,6 +120,7 @@ f() {
 pas() {
 	full=$(pa list | fzf)
 	if [[ ! -z "$full" ]]; then
-		pa show "$full"
+		echo $(echo "$full" | cut -d: -f 2) $(pa show "$full")
+		pa show "$full" | pbcopy
 	fi
 }
