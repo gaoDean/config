@@ -122,5 +122,6 @@ pas() {
 	if [[ ! -z "$full" ]]; then
 		echo $(echo "$full" | cut -d: -f 2) $(pa show "$full")
 		pa show "$full" | pbcopy
+		(pbclear 30 &) &> /dev/null
 	fi
 }
