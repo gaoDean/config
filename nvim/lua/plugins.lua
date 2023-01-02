@@ -21,14 +21,30 @@ require("catppuccin").setup({
 })
 vim.api.nvim_command "colorscheme catppuccin"
 
-require("autolist").setup({
-	invert = {
-		indent = true,
-	},
-  normal_mappings = {
-    invert = { '<leader>i+[catch]' },
-  }
-})
+require("autolist").setup({})
+function create_mapping_hook(mode, mapping, hook, alias)
+  vim.keymap.set(
+    mode,
+    mapping,
+    function(motion)
+      local keys = hook(motion, alias or mapping)
+      if not keys then keys = "" end
+      return keys
+    end,
+    { expr = true}
+  )
+end
+
+create_mapping_hook("i", "<cr>", require("autolist").new)
+create_mapping_hook("i", "<tab>", require("autolist").indent)
+create_mapping_hook("i", "<s-tab>", require("autolist").indent, "<c-d>")
+create_mapping_hook("n", "dd", require("autolist").force_recalculate)
+create_mapping_hook("n", "o", require("autolist").new)
+create_mapping_hook("n", "O", require("autolist").new_before)
+create_mapping_hook("n", ">>", require("autolist").indent)
+create_mapping_hook("n", "<<", require("autolist").indent)
+create_mapping_hook("n", "<c-r>", require("autolist").force_recalculate)
+create_mapping_hook("n", "<leader>x", require("autolist").invert_entry)
 
 require("zen-mode").setup({
 	window = {

@@ -36,7 +36,7 @@
 	nmap("<leader>s", [[<cmd>lua vim.fn.jobstop(job_id)<cr>]])
 	nmap("<leader>,", [[<cmd>NnnPicker<cr>]])
 	nmap("<leader>g", [[<cmd>ZenMode<cr>]])
-	nmap("<leader>i", [[<cmd>Twilight<cr>]])
+	-- nmap("<leader>i", [[<cmd>Twilight<cr>]])
 	nmap("<leader>u", [[<cmd>TSUpdate<cr>]])
 
 	nmap("<leader>c", "zc")

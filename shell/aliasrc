@@ -117,3 +117,9 @@ f() {
 		nvim "$full"
 	fi
 }
+pas() {
+	full=$(pa list | fzf)
+	if [[ ! -z "$full" ]]; then
+		pa show "$full"
+	fi
+}
