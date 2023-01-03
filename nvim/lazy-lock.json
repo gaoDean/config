@@ -1,0 +1,11 @@
+{
+  "autolist.nvim": { "branch": "main", "commit": "5002ebc078f90dd9615869c38d9e12f9fd288ccf" },
+  "catppuccin": { "branch": "main", "commit": "3020af75aae098a77737d91ee37c7147c8450d99" },
+  "colorizer": { "branch": "master", "commit": "760e27df4dd966607e8fb7fd8b6b93e3c7d2e193" },
+  "fzf-lua": { "branch": "main", "commit": "7bb05a75eb04d3b7b74df0698a146c62877fc456" },
+  "lazy.nvim": { "branch": "main", "commit": "06db1ec3c6baa9460e42ef8ed4d2cc2613b194cb" },
+  "mini.nvim": { "branch": "main", "commit": "a2d436f4b8b7d59c0ebcf5a5fed39ccab0e68515" },
+  "nnn.nvim": { "branch": "master", "commit": "af12c528b58f44e371eb50d7685e2c97440ba4d5" },
+  "nvim-treesitter": { "branch": "master", "commit": "12e95e160d7d45b76a36bca6303dd8447ab77490" },
+  "nvim-ts-autotag": { "branch": "main", "commit": "fdefe46c6807441460f11f11a167a2baf8e4534b" }
+}
