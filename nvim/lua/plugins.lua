@@ -10,7 +10,7 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-require("lazy").setup({
+local plugins = {
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -46,7 +46,7 @@ require("lazy").setup({
       })
       -- Remap adding surrounding to Visual mode selection
       vim.api.nvim_del_keymap('x', 'ys')
-      vim.api.nvim_set_keymap('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { noremap = true })
+      -- vim.api.nvim_set_keymap('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { noremap = true })
       -- Make special mapping for "add surrounding for line"
       vim.api.nvim_set_keymap('n', 'yss', 'ys_', { noremap = false })
     end,
@@ -109,12 +109,21 @@ require("lazy").setup({
     },
   },
 	{
+		"Wansmer/treesj",
+		event = "VeryLazy",
+		config = function()
+			require("treesj").setup()
+			vim.keymap.set("n", "<leader>t", "<cmd>TSJToggle<cr>")
+		end,
+	},
+	{
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
       require('nvim-treesitter.configs').setup({
         indent = { enable = true },
-        incremental_selection = { enable = true, },
+				endwise = { enable = true },
+				incremental_selection = { enable = true, },
         playground = { enable = true },
         autotag = { enable = true },
         ensure_installed = { "lua" },
@@ -128,71 +137,82 @@ require("lazy").setup({
       })
     end,
     dependencies = {
-      "windwp/nvim-ts-autotag",
+			{
+				"windwp/nvim-ts-autotag",
+				lazy = true,
+			},
+			{
+				"RRethy/nvim-treesitter-endwise",
+				lazy = true,
+			},
     },
   },
   {
-    "gaoDean/autolist.nvim",
-    dev = false,
-    lazy = true,
-    config = function()
-      require("autolist").setup()
-      function create_mapping_hook(mode, mapping, hook, alias)
-        vim.keymap.set(
-          mode,
-          mapping,
-          function(motion)
-            local keys = hook(motion, alias or mapping)
-            if not keys then keys = "" end
-            return keys
-          end,
-          { expr = true}
-        )
-      end
+    "windwp/nvim-autopairs",
+		priority = 2,
+    config = {
+				check_ts = true,
+				map_c_w = true,
+		},
+  },
+	{
+		"gaoDean/autolist.nvim",
+		dev = true,
+		priority = 1,
+		ft = {
+			"markdown",
+			"text",
+			"tex",
+			"plaintex",
+		},
+		config = function()
+			local autolist = require("autolist")
+			autolist.setup()
+			autolist.create_mapping_hook("i", "<cr>", autolist.new)
+			autolist.create_mapping_hook("i", "<tab>", autolist.indent)
+			autolist.create_mapping_hook("i", "<s-tab>", autolist.indent, "<c-d>")
+			autolist.create_mapping_hook("n", "dd", autolist.force_recalculate)
+			autolist.create_mapping_hook("n", "o", autolist.new)
+			autolist.create_mapping_hook("n", "O", autolist.new_before)
+			autolist.create_mapping_hook("n", ">>", autolist.indent)
+			autolist.create_mapping_hook("n", "<<", autolist.indent)
+			autolist.create_mapping_hook("n", "<c-r>", autolist.force_recalculate)
+			autolist.create_mapping_hook("n", "<leader>x", autolist.invert_entry, "")
+		end,
+	},
+	{
+		"ggandor/leap.nvim",
+		event = "VeryLazy",
+		config = function()
+			local leap = require('leap')
+			-- leap.safe_labels = { "s", "t", "n", "m", "f", "u", "S", "T", "N", "M", "F", "U", "G", "L", "H" }
+			leap.safe_labels = {}
+			leap.labels = { "t", "n", "e", "r", "a", "s",
+				"i", "o", "g", "p", "h", "d", "m", "f", "l", "u",
+				"c", "v", "j", "k", "w", "q", "x", "b", "z", "y",
+				"T", "N", "E", "R", "A",
+				"S", "I", "O", "H", "D",
+			}
+			leap.add_default_mappings()
+		end
+	},
+	{
+		"folke/todo-comments.nvim",
+		event = "VeryLazy",
+		config = {
+			signs = false,
+		},
+		-- PERF: fully optimised
+		-- HACK: hmm, this looks a bit funky
+		-- TODO: what else?
+		-- NOTE: adding a note
+		-- FIX: this needs fixing
+		-- WARNING: ???
+	}
+}
 
-      create_mapping_hook("i", "<cr>", require("autolist").new)
-      create_mapping_hook("i", "<tab>", require("autolist").indent)
-      create_mapping_hook("i", "<s-tab>", require("autolist").indent, "<c-d>")
-      create_mapping_hook("n", "dd", require("autolist").force_recalculate)
-      create_mapping_hook("n", "o", require("autolist").new)
-      create_mapping_hook("n", "O", require("autolist").new_before)
-      create_mapping_hook("n", ">>", require("autolist").indent)
-      create_mapping_hook("n", "<<", require("autolist").indent)
-      create_mapping_hook("n", "<c-r>", require("autolist").force_recalculate)
-      create_mapping_hook("n", "<leader>x", require("autolist").invert_entry, "")
-    end,
-  }
-},
-{
+require("lazy").setup(plugins, {
   dev = {
     path = "~/repos/rea",
   }
-}
-)
-
--- ========================================================= --
---
--- require("autolist").setup({})
--- function create_mapping_hook(mode, mapping, hook, alias)
---   vim.keymap.set(
---     mode,
---     mapping,
---     function(motion)
---       local keys = hook(motion, alias or mapping)
---       if not keys then keys = "" end
---       return keys
---     end,
---     { expr = true}
---   )
--- end
---
--- create_mapping_hook("i", "<cr>", require("autolist").new)
--- create_mapping_hook("i", "<tab>", require("autolist").indent)
--- create_mapping_hook("i", "<s-tab>", require("autolist").indent, "<c-d>")
--- create_mapping_hook("n", "dd", require("autolist").force_recalculate)
--- create_mapping_hook("n", "o", require("autolist").new)
--- create_mapping_hook("n", "O", require("autolist").new_before)
--- create_mapping_hook("n", ">>", require("autolist").indent)
--- create_mapping_hook("n", "<<", require("autolist").indent)
--- create_mapping_hook("n", "<c-r>", require("autolist").force_recalculate)
--- create_mapping_hook("n", "<leader>x", require("autolist").invert_entry, "")
+})
