@@ -53,24 +53,31 @@ local plugins = {
   },
 	{
     "ibhagwan/fzf-lua",
-    lazy = true,
-    config = {
-      winopts = {
-        preview = { hidden = "hidden" },
-        width = 0.6,
-        height = 0.6,
-      },
-      files = {
-        cmd = vim.fn.getenv('FZF_DEFAULT_COMMAND'),
-      },
-      grep = {
-        cmd = "rg --color=never --files --hidden --follow -g '!.git'"
-      }
-    },
+		keys = {
+			{ "<leader>f", "<cmd>FzfLua git_files<cr>" },
+			{ "<leader>a", "<cmd>FzfLua grep_project<cr>" },
+			{ "<leader>n", "<cmd>FzfLua files<cr>" },
+			{ "<leader>o", "<cmd>FzfLua oldfiles<cr>" },
+		},
+		config = {
+			winopts = {
+				preview = { hidden = "hidden" },
+				width = 0.6,
+				height = 0.6,
+			},
+			files = {
+				cmd = vim.fn.getenv('FZF_DEFAULT_COMMAND'),
+			},
+			grep = {
+				cmd = "rg --color=always --hidden --follow -g '!{.git,node_modules}/'"
+			}
+		},
   },
 	{
     "luukvbaal/nnn.nvim",
-    event = "VeryLazy",
+		keys = {
+			{"<leader>,", "<cmd>NnnPicker<cr>"}
+		},
     config = {
       picker = {
         cmd = "nnn -c",

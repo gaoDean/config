@@ -1,5 +1,4 @@
 require("options")
-require("colors")
 require("mappings")
 require("plugins")
 require("commands")

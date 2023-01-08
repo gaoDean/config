@@ -1,8 +1,16 @@
 sed -n '/---/!p;//q' ~/Documents/todo
 
+autoload -Uz vcs_info
+precmd() { vcs_info }
+# Format the vcs_info_msg_0_ variable
+zstyle ':vcs_info:git:*' formats '/%b'
+
 autoload -U colors && colors
 # PS1="%{$fg[grey]%}>%{$reset_color%} "
-PS1="%{$fg[grey]%}%1d%{$reset_color%} "
+setopt PROMPT_SUBST
+
+PROMPT=' %{$fg[grey]%}%1~${vcs_info_msg_0_}%{$reset_color%} '
+# PROMPT='[%n@%m %1~]%F{green}(${vcs_info_msg_0_})%F{white}$ '
 
 set -o vi
 setopt interactive_comments
