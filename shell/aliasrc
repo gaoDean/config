@@ -69,6 +69,7 @@ alias \
 	py='python3' \
 	hc='heif-convert' \
 	exc='elixir' \
+	ult='ultra' \
 
 alias \
 	tt='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 200en' \
