@@ -6,6 +6,7 @@
 # to clean up.
 
 # Adds `~/.local/bin` to $PATH
+export PATH="$HOME/repos/bin/pa:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/share/go/bin:$PATH"
 export PATH="$HOME/.local/share/cargo/bin:$PATH"

@@ -126,3 +126,9 @@ pas() {
 		(pbclear 30 &) &> /dev/null
 	fi
 }
+pae() {
+	full=$(pa list | fzf)
+	if [[ ! -z "$full" ]]; then
+		pa edit "$full"
+	fi
+}

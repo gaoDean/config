@@ -100,6 +100,7 @@ local plugins = {
       'javascript',
       'html',
       'svelte',
+			'conf'
     },
     config = {
       filetypes = {
@@ -107,6 +108,7 @@ local plugins = {
         'javascript',
         'html',
         'svelte',
+				'conf'
       },
       user_default_options = {
         css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
