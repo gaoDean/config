@@ -20,3 +20,4 @@ nvim/undo
 !.gitignore
 !notmuch-config
 !README.md
+!aerc
