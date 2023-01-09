@@ -118,7 +118,7 @@ f() {
 		nvim "$full"
 	fi
 }
-pas() {
+pas() { # pa show
 	full=$(pa list | fzf)
 	if [[ ! -z "$full" ]]; then
 		echo $(echo "$full" | cut -d: -f 2) $(pa show "$full")
@@ -126,9 +126,19 @@ pas() {
 		(pbclear 30 &) &> /dev/null
 	fi
 }
-pae() {
+pae() { # pa edit
 	full=$(pa list | fzf)
 	if [[ ! -z "$full" ]]; then
 		pa edit "$full"
+	fi
+}
+par() { # pa rename
+	full=$(pa list | fzf)
+	if [[ ! -z "$full" ]]; then
+		echo "Changing ${full}"
+		pa show "$full" | pbcopy
+		(pbclear 30 &) &> /dev/null
+		read new_name
+		mv ~/.local/share/pa/passwords/"$full".age ~/.local/share/pa/passwords/"$new_name".age &> /dev/null
 	fi
 }
