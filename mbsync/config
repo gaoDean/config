@@ -3,7 +3,7 @@ IMAPStore gao.dean@hotmail.com-remote
 Host outlook.office365.com
 Port 993
 User gao.dean@hotmail.com
-PassCmd "cat $HOME/.local/share/password/gao.dean@hotmail.com"
+PassCmd "pa show hotmail_app_password:gao.dean@hotmail.com"
 AuthMechs LOGIN
 SSLType IMAPS
 CertificateFile /etc/ssl/cert.pem
@@ -29,7 +29,7 @@ IMAPStore 137095@caulfieldgs.vic.edu.au-remote
 Host outlook.office365.com
 Port 993
 User 137095@caulfieldgs.vic.edu.au
-PassCmd "cat $HOME/.local/share/password/137095@caulfieldgs.vic.edu.au"
+PassCmd "pa show cgs:137095@caulfieldgs.vic.edu.au"
 AuthMechs LOGIN
 SSLType IMAPS
 CertificateFile /etc/ssl/cert.pem
