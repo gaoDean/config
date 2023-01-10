@@ -1,4 +1,4 @@
-vim.opt_local.syntax="css"
-vim.opt_local.expandtab = true
-vim.opt_local.shiftwidth=2
-vim.opt_local.list = true
+vim.o.syntax="css"
+vim.o.expandtab = true
+vim.o.shiftwidth=2
+vim.o.list = true
