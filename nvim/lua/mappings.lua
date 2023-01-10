@@ -10,6 +10,7 @@ end
 vim.keymap.set("n", "<leader>r", [[<cmd>w | !compiler "%"<cr> | <cmd>lua pdfview()<cr>]])
 vim.keymap.set("n", "<leader>w", ":bn<cr>")
 vim.keymap.set("n", "<leader>q", ":bp<cr>")
+vim.keymap.set("n", "<leader>d", ":bd<cr>")
 vim.keymap.set("n", "<leader>l", "<c-w>w")
 vim.keymap.set("n", "<leader>h", "<c-w>W")
 vim.keymap.set("n", "q:", "<nop>");
