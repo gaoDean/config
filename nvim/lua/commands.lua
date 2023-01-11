@@ -18,3 +18,5 @@
 	au("FileType", "*", "set fo=qlj") -- buffer only option
 	au("FileType", "lua", "set fo+=r")
 	au("FileType", "mail", "set fo+=ta fo-=l")
+	au("FileType", "gitcommit", "set fo+=ta fo-=l")
+	au("FileType", "gitsendemail", "set fo+=ta fo-=l")
