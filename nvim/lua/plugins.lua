@@ -59,7 +59,7 @@ local plugins = {
 			{ "<leader>n", "<cmd>FzfLua files<cr>" },
 			{ "<leader>o", "<cmd>FzfLua oldfiles<cr>" },
 		},
-		config = {
+		opts = {
 			winopts = {
 				preview = { hidden = "hidden" },
 				width = 0.6,
@@ -78,7 +78,7 @@ local plugins = {
 		keys = {
 			{"<leader>,", "<cmd>NnnPicker<cr>"}
 		},
-    config = {
+    opts = {
       picker = {
         cmd = "nnn -c",
         style = {
@@ -100,9 +100,10 @@ local plugins = {
       'javascript',
       'html',
       'svelte',
-			'conf'
+			'conf',
+			'lua'
     },
-    config = {
+    opts = {
       filetypes = {
         'css',
         'javascript',
@@ -159,11 +160,41 @@ local plugins = {
   {
     "windwp/nvim-autopairs",
 		priority = 2,
-    config = {
+    opts = {
 				check_ts = true,
 				map_c_w = true,
 		},
   },
+	{
+		"ggandor/leap.nvim",
+		event = "VeryLazy",
+		config = function()
+			local leap = require('leap')
+			leap.add_default_mappings()
+			-- leap.opts.safe_labels = { "s", "t", "n", "m", "f", "u", "S", "T", "N", "M", "F", "U", "G", "L", "H" }
+			leap.opts.safe_labels = {}
+			leap.opts.labels = { "t", "n", "e", "r", "a", "s",
+				"i", "o", "g", "p", "h", "d", "m", "f", "l", "u",
+				"c", "v", "j", "k", "w", "q", "x", "b", "z", "y",
+				"T", "N", "E", "R", "A",
+				"S", "I", "O", "H", "D",
+			}
+			vim.api.nvim_set_hl(0, 'LeapLabelPrimary', { link = "Cursor" })
+		end
+	},
+	{
+		"folke/todo-comments.nvim",
+		event = "VeryLazy",
+		opts = {
+			signs = false,
+		},
+		-- PERF: fully optimised
+		-- HACK: hmm, this looks a bit funky
+		-- TODO: what else?
+		-- NOTE: adding a note
+		-- FIX: this needs fixing
+		-- WARNING: ???
+	},
 	{
 		"gaoDean/autolist.nvim",
 		dev = true,
@@ -196,34 +227,19 @@ local plugins = {
 		end,
 	},
 	{
-		"ggandor/leap.nvim",
-		event = "VeryLazy",
-		config = function()
-			local leap = require('leap')
-			-- leap.safe_labels = { "s", "t", "n", "m", "f", "u", "S", "T", "N", "M", "F", "U", "G", "L", "H" }
-			leap.safe_labels = {}
-			leap.labels = { "t", "n", "e", "r", "a", "s",
-				"i", "o", "g", "p", "h", "d", "m", "f", "l", "u",
-				"c", "v", "j", "k", "w", "q", "x", "b", "z", "y",
-				"T", "N", "E", "R", "A",
-				"S", "I", "O", "H", "D",
-			}
-			leap.add_default_mappings()
-		end
-	},
-	{
-		"folke/todo-comments.nvim",
-		event = "VeryLazy",
-		config = {
-			signs = false,
+		"gaoDean/cal.nvim",
+		keys = {
+			{ "<leader>c", ":lua require('cal').new()<cr>" }
 		},
-		-- PERF: fully optimised
-		-- HACK: hmm, this looks a bit funky
-		-- TODO: what else?
-		-- NOTE: adding a note
-		-- FIX: this needs fixing
-		-- WARNING: ???
-	}
+		dev = true,
+		config = true
+	},
+	-- {
+	-- 	"gaoDean/NeoCal",
+	-- 	dev = true,
+	-- 	config = function()
+	-- 	end
+	-- },
 }
 
 require("lazy").setup(plugins, {

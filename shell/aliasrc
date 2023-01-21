@@ -20,6 +20,7 @@ alias \
 	du='du -h' \
 	less='less --use-color' \
 	sc='sc-im' \
+	date='gdate' \
 	abook='abook --config $HOME/.config/abook/abookrc --datafile $HOME/.config/abook/addressbook' \
 
 # Colorize commands when possible.
@@ -54,7 +55,6 @@ alias \
 	sp='pmset sleepnow' \
 	rsn='sudo shutdown -r now' \
 	e='$EDITOR --' \
-	bi='brew formulae | fzf' \
 	bb='brew leaves | xargs -n1 brew desc' \
 	ba='brew update && brew upgrade && brew autoremove && brew cleanup' \
 	bk='brew search --casks --desc '' | fzf' \
@@ -64,12 +64,14 @@ alias \
 	za='zathura' \
 	ms='mw -Y' \
 	mc='macchina' \
-	m='neomutt' \
+	m='e ~/.reminders' \
 	pip='pip3' \
 	py='python3' \
 	hc='heif-convert' \
 	exc='elixir' \
 	ult='ultra' \
+	kh='khal' \
+	nh='nohup' \
 
 alias \
 	tt='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 200en' \
@@ -117,6 +119,17 @@ f() {
 	if [[ ! -z "$full" ]]; then
 		nvim "$full"
 	fi
+}
+bi() {
+	full=$(brew formulae | fzf)
+	if [[ ! -z "$full" ]]; then
+		echo "brew install ${full}" | pbcopy
+		brew info "$full"
+	fi
+}
+cfs() {
+	cd ~/.config
+	f
 }
 pas() { # pa show
 	full=$(pa list | fzf)
