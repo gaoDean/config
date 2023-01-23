@@ -10,8 +10,8 @@
 
 while read file
 do
-	cd $(dirname file);
-	git add -A;
-	git commit -m 'update';
-	git push;
+	dir=$(dirname file)
+	git -C "$dir" add -A
+	git -C "$dir" commit -m 'update'
+	git -C "$dir" push
 done < ~/.config/shell/gitdirs
