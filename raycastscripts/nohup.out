@@ -1,0 +1,10 @@
+nohup: up: No such file or directory
+Already up-to-date.
+Already up-to-date.
+nohup: Already: No such file or directory
+nohup: ba: No such file or directory
+nohup: ba: No such file or directory
+Already up-to-date.
+Error: Not upgrading 2 pinned packages:
+vim 9.0.1200, universal-ctags HEAD-934f60e
+==> No packages to upgrade

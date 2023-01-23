@@ -6,11 +6,11 @@
 # @raycast.mode silent
 #
 # Optional parameters:
-# @raycast.icon 🔎
+# @raycast.icon 🔑
 
 password=$(~/repos/bin/pa/pa list | choose)
 if [ -n "$password" ]; then
-	echo $(echo "$password" | cut -d: -f 2) $(~/repos/bin/pa/pa show "$full")
+	osascript type.scpt $(echo "$password" | cut -d: -f 2)
 	~/repos/bin/pa/pa show "$password" | pbcopy
 	(pbclear 30 &) &> /dev/null
 fi
