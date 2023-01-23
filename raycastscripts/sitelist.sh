@@ -2,13 +2,13 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Bookmarks
+# @raycast.title Sitelist
 # @raycast.mode silent
 #
 # Optional parameters:
-# @raycast.icon 📖
+# @raycast.icon 📑
 
-page=$(cat $(pwd)/bookmarks | choose | sed -E "s/^(.*)#.*/\1/")
+page=$(cat $(pwd)/sitelist | choose | sed -E "s/^(.*)#.*/\1/")
 if [ -n "$page" ]; then
 	open "$page"
 fi

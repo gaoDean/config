@@ -10,7 +10,10 @@
 
 password=$(~/repos/bin/pa/pa list | choose)
 if [ -n "$password" ]; then
-	osascript type.scpt $(echo "$password" | cut -d: -f 2)
+	username=$(echo "$password" | cut -d: -f 2)
+	if [ -n "$username" ]; then
+		osascript type.scpt "$username"
+	fi
 	~/repos/bin/pa/pa show "$password" | pbcopy
 	(~/.local/bin/pbclear 30 &) &> /dev/null
 fi
