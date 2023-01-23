@@ -72,6 +72,7 @@ alias \
 	ult='ultra' \
 	kh='khal' \
 	nh='nohup' \
+	nq='networkquality' \
 
 alias \
 	tt='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 200en' \
