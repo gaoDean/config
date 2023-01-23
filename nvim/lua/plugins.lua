@@ -226,20 +226,6 @@ local plugins = {
 			})
 		end,
 	},
-	{
-		"gaoDean/cal.nvim",
-		keys = {
-			{ "<leader>c", ":lua require('cal').new()<cr>" }
-		},
-		dev = true,
-		config = true
-	},
-	-- {
-	-- 	"gaoDean/NeoCal",
-	-- 	dev = true,
-	-- 	config = function()
-	-- 	end
-	-- },
 }
 
 require("lazy").setup(plugins, {
