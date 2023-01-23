@@ -132,6 +132,10 @@ cfs() {
 	cd ~/.config
 	f
 }
+cfr() {
+	cd ~/.config/raycastscripts
+	f
+}
 pas() { # pa show
 	full=$(pa list | fzf)
 	if [[ ! -z "$full" ]]; then

@@ -14,4 +14,4 @@ cfa	${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
 cfp	${XDG_CONFIG_HOME:-$HOME/.config}/shell/profile
 bib ${XDG_CONFIG_HOME:-$HOME/.config}/roff/bib
 cft ${XDG_CONFIG_HOME:-$HOME/.config}/alacritty/alacritty.yml # terminal
-mwb ${XDG_CONFIG_HOME:-$HOME/.config}/raycastscripts/choose/src/Webpages
+bm  ${XDG_CONFIG_HOME:-$HOME/.config}/raycastscripts/bookmarks # bookmarks

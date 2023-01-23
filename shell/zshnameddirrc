@@ -32,4 +32,4 @@ hash -d cfa=/Users/deangao/.config/shell/aliasrc
 hash -d cfp=/Users/deangao/.config/shell/profile 
 hash -d bib=/Users/deangao/.config/roff/bib 
 hash -d cft=/Users/deangao/.config/alacritty/alacritty.yml 
-hash -d mwb=/Users/deangao/.config/raycastscripts/choose/src/Webpages 
+hash -d bm=/Users/deangao/.config/raycastscripts/bookmarks 

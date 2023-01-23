@@ -8,4 +8,7 @@
 # Optional parameters:
 # @raycast.icon 🔎
 
-sh helper/choose.sh $(pwd)/webpage
+page=$(cat $(pwd)/bookmarks | choose | sed -E "s/^(.*)#.*/\1/")
+if [ -n "$page" ]; then
+	open "$page"
+fi
