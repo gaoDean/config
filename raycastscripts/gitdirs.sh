@@ -12,6 +12,6 @@ while read file
 do
 	dir=$(dirname file)
 	git -C "$dir" add -A
-	git -C "$dir" commit -m 'update'
-	git -C "$dir" push
+	git -C "$dir" commit -m 'update' -q
+	git -C "$dir" push -q
 done < ~/.config/shell/gitdirs
