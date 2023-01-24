@@ -11,5 +11,6 @@
   "nvim-treesitter-endwise": { "branch": "master", "commit": "0cf4601c330cf724769a2394df555a57d5fd3f34" },
   "nvim-ts-autotag": { "branch": "main", "commit": "fdefe46c6807441460f11f11a167a2baf8e4534b" },
   "todo-comments.nvim": { "branch": "main", "commit": "077c59586d9d0726b0696dc5680eb863f4e04bc5" },
-  "treesj": { "branch": "main", "commit": "ba9e816da2f0a436d9c10cfd878760974148860e" }
+  "treesj": { "branch": "main", "commit": "ba9e816da2f0a436d9c10cfd878760974148860e" },
+  "zen-mode.nvim": { "branch": "main", "commit": "38a660094dd023176ed4d6ecb1fe028546717f78" }
 }

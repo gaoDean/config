@@ -139,7 +139,7 @@ cfr() {
 pas() { # pa show
 	full=$(pa list | fzf)
 	if [[ ! -z "$full" ]]; then
-		echo $(echo "$full" | cut -d: -f 2) $(pa show "$full")
+		echo $(echo "$full" | cut -d: -f 2)
 		pa show "$full" | pbcopy
 		(pbclear 30 &) &> /dev/null
 	fi
@@ -159,4 +159,13 @@ par() { # pa rename
 		read new_name
 		mv ~/.local/share/pa/passwords/"$full".age ~/.local/share/pa/passwords/"$new_name".age &> /dev/null
 	fi
+}
+rep() {
+	pth=$(fd . ~/repos -t d --follow --maxdepth 2 | fzf)
+	if [ -n "$pth" ]; then
+		cd "$pth"
+	fi
+}
+khw() {
+	khal "$1" now week
 }

@@ -226,6 +226,23 @@ local plugins = {
 			})
 		end,
 	},
+	{
+		"folke/zen-mode.nvim",
+		lazy = false,
+		keys = {
+			{ "<leader>z", ":ZenMode<cr>"}
+		},
+		opts = {
+			window = {
+				backdrop = 1,
+				width = 80,
+				options = {
+					number = false, -- disable number column
+					relativenumber = false, -- disable relative numbers
+				},
+			},
+		}
+	},
 }
 
 require("lazy").setup(plugins, {

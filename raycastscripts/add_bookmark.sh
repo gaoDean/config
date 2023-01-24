@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Add Bookmark
@@ -7,7 +8,12 @@
 #
 # Optional parameters:
 # @raycast.icon 📖
+# @raycast.argument1 { "type": "text", "placeholder": "Description", "optional": true }
 
 osascript copyselected.scpt
-pbpaste >> bookmarks
+bookmark=$(pbpaste)
+if [ -n "$1" ]; then
+	bookmark="${bookmark} # ${1}"
+fi
+echo "$bookmark" >> bookmarks
 echo "Bookmark added"
