@@ -228,7 +228,6 @@ local plugins = {
 	},
 	{
 		"folke/zen-mode.nvim",
-		lazy = false,
 		keys = {
 			{ "<leader>z", ":ZenMode<cr>"}
 		},

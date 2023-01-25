@@ -19,7 +19,7 @@ if [ -z $(echo "$site" | grep "http") ]; then
 fi
 
 if [ -n "$1" ]; then
-	site="${site} # ${1}"
+	site="${1} | ${site}"
 fi
 echo "$site" >> sitelist
 echo "Site added"

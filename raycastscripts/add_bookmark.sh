@@ -20,7 +20,7 @@ if [ -z $(echo "$bookmark" | grep "http") ]; then
 fi
 
 if [ -n "$1" ]; then
-	bookmark="${bookmark} # ${1}"
+	bookmark="${1} | ${bookmark}"
 fi
 echo "$bookmark" >> bookmarks
 echo "Bookmark added"
