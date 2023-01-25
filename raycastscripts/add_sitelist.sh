@@ -9,8 +9,15 @@
 # @raycast.icon 📑
 # @raycast.argument1 { "type": "text", "placeholder": "Description", "optional": true }
 
+pbcopy < /dev/null
 osascript copyselected.scpt
 site=$(pbpaste)
+
+if [ -z $(echo "$site" | grep "http") ]; then
+	echo "No site selected"
+	exit 0
+fi
+
 if [ -n "$1" ]; then
 	site="${site} # ${1}"
 fi

@@ -10,8 +10,15 @@
 # @raycast.icon 📖
 # @raycast.argument1 { "type": "text", "placeholder": "Description", "optional": true }
 
+pbcopy < /dev/null
 osascript copyselected.scpt
 bookmark=$(pbpaste)
+
+if [ -z $(echo "$bookmark" | grep "http") ]; then
+	echo "No site selected"
+	exit 0
+fi
+
 if [ -n "$1" ]; then
 	bookmark="${bookmark} # ${1}"
 fi
