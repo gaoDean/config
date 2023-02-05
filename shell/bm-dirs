@@ -12,7 +12,7 @@ sr  $HOME/.local/bin
 sub	$HOME/sub #subjects
 re  $HOME/repos
 tf  $HOME/.local/share/Trash/files # trash files
-one $HOME/one/Year9
+one $HOME/one
 nv  $HOME/.config/nvim
 foo $HOME/repos/rea/footnotes/math/algebra2
 not $HOME/repos/rea/footnotes/other

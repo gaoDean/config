@@ -17,7 +17,7 @@ alias \
 	mkd='mkdir -pv' \
 	ffmpeg='ffmpeg -hide_banner' \
 	sed='sed -E' \
-	du='du -h' \
+	du='du -sh' \
 	less='less --use-color' \
 	sc='sc-im' \
 	date='gdate' \
@@ -34,6 +34,7 @@ alias \
 
 # These common commands are just too long! Abbreviate them.
 alias \
+	so='du * .* | sort -h' \
 	ka='killall' \
 	lsa='ls -A' \
 	gr='cd $(git rev-parse --show-toplevel)' \

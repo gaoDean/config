@@ -13,6 +13,7 @@ vim.keymap.set("n", "<leader>q", ":bp<cr>")
 vim.keymap.set("n", "<leader>d", ":bd<cr>")
 vim.keymap.set("n", "<leader>l", "<c-w>w")
 vim.keymap.set("n", "<leader>h", "<c-w>W")
+vim.keymap.set("n", "<leader>y", "gg\"*yG")
 vim.keymap.set("n", "q:", "<nop>");
 vim.keymap.set("v", "J", ":m '>+1<cr>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<cr>gv=gv")

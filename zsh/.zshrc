@@ -1,9 +1,9 @@
-sed -n '/---/!p;//q' ~/Documents/todo
+sed -n '/---/!p;//q' ~/Documents/rdm/todo
 
 autoload -Uz vcs_info
 precmd() { vcs_info }
 # Format the vcs_info_msg_0_ variable
-zstyle ':vcs_info:git:*' formats '/%b'
+zstyle ':vcs_info:git:*' formats '@%b'
 
 autoload -U colors && colors
 # PS1="%{$fg[grey]%}>%{$reset_color%} "
