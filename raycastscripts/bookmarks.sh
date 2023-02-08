@@ -8,7 +8,7 @@
 # Optional parameters:
 # @raycast.icon 📖
 
-page=$(cat $(pwd)/bookmarks |
+page=$(tac $(pwd)/bookmarks |
 	choose -c "F4DBD6" -w 45 |
 	sed -E "s/.* | (.*)/\1/")
 
