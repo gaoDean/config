@@ -3,7 +3,7 @@ function pdfview()
 	local path = vim.api.nvim_buf_get_name(0)
 	local fname = vim.fn.fnamemodify(path, ":t:r")
 	local dir = vim.fn.fnamemodify(path, ":p:h")
-	local outpath = ("%s/view/%s.pdf"):format(dir, fname)
+	local outpath = ("%s/%s.pdf"):format(dir, fname)
 	vim.fn.jobstart({ "zathura", outpath })
 end
 
