@@ -2,6 +2,7 @@
   "catppuccin": { "branch": "main", "commit": "ecfa842c38b937596c81fa8df2123de69b980081" },
   "colorizer": { "branch": "master", "commit": "760e27df4dd966607e8fb7fd8b6b93e3c7d2e193" },
   "fzf-lua": { "branch": "main", "commit": "d9c9574b38e90bbbd19b241ba7cf7cbcb9afc549" },
+  "image.nvim": { "branch": "main", "commit": "eef32a352d490374d19edfaef4bc0ad4f7a11074" },
   "lazy.nvim": { "branch": "main", "commit": "666ed7bf73eb5895253c1155bd29270b066cbdac" },
   "leap.nvim": { "branch": "main", "commit": "a968ab4250840dc879e805f918b4f3b892310a12" },
   "mini.nvim": { "branch": "main", "commit": "96e648cae35dfd361c9077bf79306dd05d23db2f" },
@@ -10,6 +11,7 @@
   "nvim-treesitter": { "branch": "master", "commit": "51d220e0bd8922caabcb3e5de936fc599a1bd210" },
   "nvim-treesitter-endwise": { "branch": "master", "commit": "0cf4601c330cf724769a2394df555a57d5fd3f34" },
   "nvim-ts-autotag": { "branch": "main", "commit": "fdefe46c6807441460f11f11a167a2baf8e4534b" },
+  "plenary.nvim": { "branch": "master", "commit": "9a0d3bf7b832818c042aaf30f692b081ddd58bd9" },
   "todo-comments.nvim": { "branch": "main", "commit": "077c59586d9d0726b0696dc5680eb863f4e04bc5" },
   "treesj": { "branch": "main", "commit": "ba9e816da2f0a436d9c10cfd878760974148860e" },
   "zen-mode.nvim": { "branch": "main", "commit": "38a660094dd023176ed4d6ecb1fe028546717f78" }

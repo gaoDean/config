@@ -80,7 +80,7 @@ alias \
 	tte='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 1000en' \
 	tq='tt -quotes en' \
 	tl='ls $HOME/.local/share/Trash/files' \
-	te='rm -fr $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/*' \
+	te='rm -rf $HOME/.local/share/Trash/files/* $HOME/.local/share/Trash/info/* ; rm -rf $HOME/.local/share/Trash/files/.* $HOME/.local/share/Trash/info/.*' \
 
 alias \
 	lf='lfub' \
