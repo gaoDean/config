@@ -3,16 +3,15 @@
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Update All Gitdirs
-# @raycast.mode silent
+# @raycast.mode fullOutput
 #
 # Optional parameters:
 # @raycast.icon 📄
 
-while read file
+while read dir
 do
-	dir=$(dirname file)
-	git -C "$dir" add -A
-	git -C "$dir" commit -m 'update'
-	git -C "$dir" push -q
+	git -C "$(eval dir)" add -A
+	git -C "$(eval dir)" commit -m 'update'
+	git -C "$(eval dir)" push -q
 done < ~/.config/shell/gitdirs
 echo "All gitdirs updated"
