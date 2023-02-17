@@ -10,8 +10,8 @@
 
 while read dir
 do
-	git -C "$(eval $dir)" add -A
-	git -C "$(eval $dir)" commit -m 'update'
-	git -C "$(eval $dir)" push -q
+	git -C ~/"$dir" add -A
+	git -C ~/"$dir" commit -m 'update'
+	git -C ~/"$dir" push -q
 done < ~/.config/shell/gitdirs
 echo "All gitdirs updated"
