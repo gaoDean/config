@@ -67,7 +67,7 @@ alias \
 	mc='macchina' \
 	m='e ~/.reminders' \
 	pip='pip3' \
-	py='python3' \
+	python='python3' \
 	hc='heif-convert' \
 	exc='elixir' \
 	ult='ultra' \

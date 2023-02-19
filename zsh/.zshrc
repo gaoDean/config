@@ -65,6 +65,8 @@ preexec() { echo -ne '\e[6 q' ;} # Use beam shape cursor for each new prompt.
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc"
+# source ~/repos/unu/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
 zmodload zsh/zprof
 zstyle ':completion:*' menu select
 # zmodload zsh/complist

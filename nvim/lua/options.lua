@@ -34,3 +34,5 @@ local let = vim.g
 	set.tabstop = 4
 	set.shiftwidth = 4
 	set.shiftround = true
+
+      -- vim.cmd([[colorscheme zellner]])
