@@ -231,6 +231,7 @@ local plugins = {
 		keys = {
 			{ "<leader>z", ":ZenMode<cr>"}
 		},
+		event = "BufEnter *.md",
 		opts = {
 			window = {
 				backdrop = 1,
@@ -240,6 +241,20 @@ local plugins = {
 					relativenumber = false, -- disable relative numbers
 				},
 			},
+			plugins = {
+				alacritty = {
+					enabled = true,
+					font = "32", -- font size
+				},
+			},
+		}
+	},
+	{
+		"keaising/im-select.nvim",
+		event = "BufEnter *.ch.md",
+		opts = {
+			default_im_select = "com.apple.keylayout.Australian",
+			default_command = "/usr/local/bin/im-select"
 		}
 	},
 }

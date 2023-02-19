@@ -2,6 +2,7 @@
   "catppuccin": { "branch": "main", "commit": "60f8f40df0db92b5715642b3ea7074380c4b7995" },
   "colorizer": { "branch": "master", "commit": "760e27df4dd966607e8fb7fd8b6b93e3c7d2e193" },
   "fzf-lua": { "branch": "main", "commit": "9a98006e62bda1a38f6c09c3d3bc97e723eca52b" },
+  "im-select.nvim": { "branch": "master", "commit": "f81077c246a5a8e8f4688d84adf91ec55accc218" },
   "lazy.nvim": { "branch": "main", "commit": "7339145a223dab7e7ddccf0986ffbf9d2cb804e8" },
   "leap.nvim": { "branch": "main", "commit": "9a69febb2e5a4f5f5a55dd2d7173098fde917bc5" },
   "mini.nvim": { "branch": "main", "commit": "369f16f29559cb15931d3d5acfcf253969f74066" },

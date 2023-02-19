@@ -11,7 +11,7 @@
 while read dir
 do
 	git -C ~/"$dir" add -A
-	git -C ~/"$dir" commit -m 'update'
+	git -C ~/"$dir" commit -m "update: $(gdate)"
 	git -C ~/"$dir" push -q
 done < ~/.config/shell/gitdirs
 echo "All gitdirs updated"

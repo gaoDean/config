@@ -20,6 +20,7 @@ export PATH="$PATH:$HOME/.local/share/go/bin"
 export EDITOR="nvim"
 
 # ~/ Clean-up:
+export OPENAI_API_KEY=$(~/repos/bin/pa/pa show openai_apikey:mr.deangao@gmail.com)
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
