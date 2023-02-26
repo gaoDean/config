@@ -11,16 +11,16 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 1000,
-    config = function()
-      require("catppuccin").setup({
-        flavour = "macchiato" -- mocha, macchiato, frappe, latte
-      })
-      vim.cmd([[colorscheme catppuccin]])
-    end,
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		priority = 1000,
+		config = function()
+			require("catppuccin").setup({
+				flavour = "macchiato", -- mocha, macchiato, frappe, latte
+			})
+			vim.cmd([[colorscheme catppuccin]])
+		end,
   },
   {
     "echasnovski/mini.nvim",
@@ -215,15 +215,9 @@ local plugins = {
 			autolist.create_mapping_hook("n", "O", autolist.new_before)
 			autolist.create_mapping_hook("n", ">>", autolist.indent)
 			autolist.create_mapping_hook("n", "<<", autolist.indent)
-			autolist.create_mapping_hook("n", "<C-r>", autolist.force_recalculate)
+			autolist.create_mapping_hook("n", "<C-r>", autolist.force_recalculate, "")
 			autolist.create_mapping_hook("n", "<leader>x", autolist.invert_entry, "")
-			autolist.create_mapping_hook("n", "<leader>x", autolist.invert_entry, "")
-			vim.api.nvim_create_autocmd("TextChanged", {
-				pattern = "*",
-				callback = function()
-					vim.cmd.normal({autolist.force_recalculate(nil, nil), bang = false})
-				end
-			})
+			autolist.create_mapping_hook("n", "dd", autolist.force_recalculate, "dd")
 		end,
 	},
 	{
@@ -235,7 +229,7 @@ local plugins = {
 		opts = {
 			window = {
 				backdrop = 1,
-				width = 80,
+				width = 0.7,
 				options = {
 					number = false, -- disable number column
 					relativenumber = false, -- disable relative numbers
@@ -256,6 +250,21 @@ local plugins = {
 			default_im_select = "com.apple.keylayout.Australian",
 			default_command = "/usr/local/bin/im-select"
 		}
+	},
+	{
+		dev = true,
+		"jbyuki/nabla.nvim",
+		keys = {
+			{ "<leader>b", ":lua require('nabla').popup()<CR>" },
+		},
+		ft = {
+			"markdown",
+			"latex",
+			"text"
+		},
+		config = function()
+			require("nabla").toggle_virt()
+		end
 	},
 }
 

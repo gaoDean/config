@@ -21,3 +21,6 @@
 	au("FileType", "mail", "set fo+=ta fo-=l")
 	au("FileType", "gitcommit", "set fo+=ta fo-=l")
 	au("FileType", "gitsendemail", "set fo+=ta fo-=l")
+
+	au("BufRead", "*.ch.md", "!termfontfamily Didot")
+	au("BufLeave", "*.ch.md", "!termfontfamily reset")

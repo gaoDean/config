@@ -6,6 +6,7 @@
   "lazy.nvim": { "branch": "main", "commit": "7339145a223dab7e7ddccf0986ffbf9d2cb804e8" },
   "leap.nvim": { "branch": "main", "commit": "9a69febb2e5a4f5f5a55dd2d7173098fde917bc5" },
   "mini.nvim": { "branch": "main", "commit": "369f16f29559cb15931d3d5acfcf253969f74066" },
+  "nabla.nvim": { "branch": "master", "commit": "ddbfc6e244e79db9280c535ee85c81388c5d1b46" },
   "nnn.nvim": { "branch": "master", "commit": "2fbf0582bc3073567593f376775d6804a6901772" },
   "nvim-autopairs": { "branch": "master", "commit": "bde7a1b4534e0a4c2451a738379cd628ba65eba7" },
   "nvim-treesitter": { "branch": "master", "commit": "93386fc725041487d6cac90f602a670a83fedcbc" },
