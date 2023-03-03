@@ -10,6 +10,7 @@
 # @raycast.argument1 { "type": "text", "placeholder": "Description", "optional": true }
 
 pbcopy < /dev/null
+osascript selectsearchbar.scpt
 osascript copyselected.scpt
 site=$(pbpaste)
 

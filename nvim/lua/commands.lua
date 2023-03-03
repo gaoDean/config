@@ -23,4 +23,5 @@
 	au("FileType", "gitsendemail", "set fo+=ta fo-=l")
 
 	au("BufRead", "*.ch.md", "!termfontfamily Didot")
+	au("BufRead", "*.ch.md", "set nospell nobreakindent")
 	au("BufLeave", "*.ch.md", "!termfontfamily reset")
