@@ -8,6 +8,7 @@
 # Optional parameters:
 # @raycast.icon 🔑
 
+killall -q choose
 password=$(~/repos/bin/pa/pa list | choose)
 if [ -n "$password" ]; then
 	username=$(echo "$password" | cut -d: -f 2)
