@@ -44,7 +44,6 @@ alias \
 	gs='git select' \
 	gb='git branch' \
 	gA='git add -A && git status -s' \
-	gaa='git add -A && git commit -m 'update' && git push' \
 	gp='git push -q' \
 	gl='git log --graph --color --decorate --oneline' \
 	gla='git log origin/master..HEAD --oneline' \
