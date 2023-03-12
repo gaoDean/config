@@ -19,7 +19,7 @@ not $HOME/repos/rea/footnotes/other
 rea $HOME/repos/rea
 oth $HOME/repos/oth
 unu $HOME/repos/unu
-rds $HOME/repos/rea/reads
 sha $HOME/.local/share
 uls /usr/local/share
 ce  /usr/local/Cellar
+rcs $HOME/.config/raycastscripts
