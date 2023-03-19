@@ -23,3 +23,5 @@ sha $HOME/.local/share
 uls /usr/local/share
 ce  /usr/local/Cellar
 rcs $HOME/.config/raycastscripts
+em  $HOME/.config/emacs
+dm  $HOME/.config/doom

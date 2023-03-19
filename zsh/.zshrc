@@ -10,7 +10,7 @@ autoload -U colors && colors
 setopt PROMPT_SUBST
 
 # PROMPT=' %{$fg[grey]%}%1~${vcs_info_msg_0_}%{$reset_color%} '
-PROMPT=' %{$fg[grey]%}%1d${vcs_info_msg_0_}%{$reset_color%} '
+PROMPT=' %{$fg[blue]%}%1d${vcs_info_msg_0_}%{$reset_color%} '
 
 set -o vi
 setopt interactive_comments
