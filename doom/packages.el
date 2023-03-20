@@ -51,3 +51,12 @@
 
 (package! beacon)
 (package! org-auto-tangle)
+(package! peep-dired)
+(package! dired-open)
+(package! dired-subtree)
+(package! all-the-icons-dired)
+(package! catppuccin-theme)
+(package! rainbow-mode)
+(package! org-autolist)
+(package! org-fragtog)
+(package! math-preview)
