@@ -41,7 +41,7 @@
         org-table-convert-region-max-lines 20000))
 
 (custom-set-faces!
-  `(org-superstar-header-bullet :font "FiraCode NF" :height 0.99 :weight light))
+  `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
 
 (defun dg/set-org-header-size ()
   (interactive)
@@ -64,7 +64,7 @@
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
   :config
-  (setq org-auto-tangle-default t))
+  (setq org-auto-tangle-default nil))
 
 (defun dg/insert-auto-tangle-tag ()
   "Insert auto-tangle tag in a literate config."
@@ -78,75 +78,124 @@
 
 (add-hook 'org-mode-hook 'org-autolist-mode)
 
-(setq math-preview-command "/Users/deangao/.local/share/npm/bin/math-preview")
+;; (setq math-preview-command "/Users/deangao/.local/share/npm/bin/math-preview")
 
-(defalias #'org-latex-preview #'math-preview-at-point)
-(defalias #'org-clear-latex-preview #'math-preview-clear-region)
+;; (defalias #'org-latex-preview #'math-preview-at-point)
+;; (defalias #'org-clear-latex-preview #'math-preview-clear-region)
+
+(setq org-startup-with-latex-preview t)
+(setq org-latex-create-formula-image-program 'dvisvgm)
+(after! org (plist-put org-format-latex-options :scale 2.2))
+
+(with-eval-after-load 'ox-latex
+(add-to-list 'org-latex-classes
+             '("org-plain-latex"
+               "\\documentclass{article}
+           [NO-DEFAULT-PACKAGES]
+           [PACKAGES]
+           [EXTRA]"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 (beacon-mode 1)
 
+(setq avy-timeout-seconds 0.2)
+
 ;; (setq fancy-splash-image "~/.config/doom/black-hole.png")
 
-(setf dired-kill-when-opening-new-dired-buffer t)
+(after! spell-fu
+  (setq spell-fu-idle-delay 0.5))  ; default is 0.25
+
+(add-hook 'after-init-hook 'benchmark-init/deactivate)
+
+(dirvish-override-dired-mode)
 
 (map! :leader
-      (:prefix ("d" . "dired")
-       :desc "Open dired" "d" #'dired
-       :desc "Dired jump to current" "j" #'dired-jump)
-      (:after dired
-       (:map dired-mode-map
-        :desc "Peep-dired image previews" "d p" #'peep-dired
-        :desc "Dired view file"           "d v" #'dired-view-file)))
+      (:prefix ("d" . "dirvish")
+       :desc "Open dirvish" "d" #'dired
+       :desc "Dirvish jump to current" "j" #'dired-jump))
+
+
+(use-package dirvish
+    :init
+    (dirvish-override-dired-mode)
+    :custom
+    (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+     '(("h" "~/"                          "Home")
+       ("d" "~/Downloads/"                "Downloads")
+       ("t" "~/.Trash"                    "Trash")))
+    :config
+    ;; (dirvish-peek-mode) ; Preview files in minibuffer
+    ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+    (setq dirvish-mode-line-format
+          '(:left (sort symlink) :right (omit yank index)))
+    (setq dirvish-attributes
+          '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg))
+    (setq delete-by-moving-to-trash t)
+    (setq dired-listing-switches
+          "-l --almost-all --human-readable --group-directories-first --no-group"))
+    ;; :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+    ;; (("C-c f" . dirvish-fd)
+    ;;  :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
+    ;;  ("a"   . dirvish-quick-access)
+    ;;  ("f"   . dirvish-file-info-menu)
+    ;;  ("y"   . dirvish-yank-menu)
+    ;;  ("N"   . dirvish-narrow)
+    ;;  ("^"   . dirvish-history-last)
+    ;;  ("h"   . dirvish-up-directory)
+    ;;  ("l"   . dirvish-open-file)
+    ;;  ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+    ;;  ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+    ;;  ("TAB" . dirvish-subtree-toggle)
+    ;;  ("M-f" . dirvish-history-go-forward)
+    ;;  ("M-b" . dirvish-history-go-backward)
+    ;;  ("M-l" . dirvish-ls-switches-menu)
+    ;;  ("M-m" . dirvish-mark-menu)
+    ;;  ("M-t" . dirvish-layout-toggle)
+    ;;  ("M-s" . dirvish-setup-menu)
+    ;;  ("M-e" . dirvish-emerge-menu)
+    ;;  ("M-j" . dirvish-fd-jump)))
 
 (evil-define-key 'normal dired-mode-map
-  (kbd "M-RET") 'dired-display-file
-  (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
-  (kbd "m") 'dired-mark
-  (kbd "t") 'dired-toggle-marks
-  (kbd "u") 'dired-unmark
-  (kbd "C") 'dired-do-copy
-  (kbd "D") 'dired-do-delete
-  (kbd "J") 'dired-goto-file
-  (kbd "M") 'dired-do-chmod
-  (kbd "O") 'dired-do-chown
-  (kbd "P") 'dired-do-print
-  (kbd "R") 'dired-do-rename
-  (kbd "T") 'dired-do-touch
-  (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
-  (kbd "Z") 'dired-do-compress
-  (kbd "+") 'dired-create-directory
-  (kbd "-") 'dired-do-kill-lines
   (kbd "% l") 'dired-downcase
   (kbd "% m") 'dired-mark-files-regexp
   (kbd "% u") 'dired-upcase
   (kbd "* %") 'dired-mark-files-regexp
   (kbd "* .") 'dired-mark-extension
   (kbd "* /") 'dired-mark-directories
-  (kbd "; d") 'epa-dired-do-decrypt
-  (kbd "; e") 'epa-dired-do-encrypt)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-;; With dired-open plugin, you can launch external programs for certain extensions
-;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
-(setq dired-open-extensions '(("gif" . "sxiv")
-                              ("jpg" . "sxiv")
-                              ("png" . "sxiv")
-                              ("mkv" . "mpv")
-                              ("mp4" . "mpv")))
-
-(evil-define-key 'normal peep-dired-mode-map
-  (kbd "j") 'peep-dired-next-file
-  (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+  (kbd "+") 'dired-create-directory
+  (kbd "-") 'dirvish-narrow
+  (kbd "<tab>") 'dirvish-toggle-subtree
+  (kbd "M") 'dirvish-mark-menu
+  (kbd "R") 'dirvish-renaming-menu
+  (kbd "a") 'dirvish-quick-access
+  (kbd "c") 'dirvish-chxxx-menu
+  (kbd "d") 'dired-do-delete
+  (kbd "f") 'dirvish-file-info-menu
+  (kbd "h") 'dired-up-directory
+  (kbd "l") 'dired-open-file
+  (kbd "m") 'dired-mark
+  (kbd "p") 'dirvish-yank
+  (kbd "r") 'dired-do-rename
+  (kbd "t") 'dired-do-touch
+  (kbd "u") 'dired-unmark
+  (kbd "v") 'dirvish-move
+  (kbd "y") 'dirvish-yank-menu
+  (kbd "z") 'dired-do-compress)
 
 (setq delete-by-moving-to-trash t
-      trash-directory "~/.local/share/Trash/files/")
+      trash-directory "~/.Trash")
 
 (set-face-attribute 'mode-line nil :font "Input-16")
 (setq doom-modeline-height 30     ;; sets modeline height
       doom-modeline-persp-name t  ;; adds perspective name to modeline
-      doom-modeline-persp-icon t) ;; adds folder icon next to persp name
+      doom-modeline-persp-icon t  ;; adds folder icon next to persp name
+      doom-modeline-enable-word-count t
+      doom-modeline-battery t
+      doom-modeline-percent-position nil)
 
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
   (lambda ()
@@ -155,16 +204,21 @@
      (rainbow-mode 1))))
 (after! rainbow-mode (global-rainbow-mode 1))
 
-(defun stop-using-minibuffer ()
-    "kill the minibuffer"
-    (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
-      (abort-recursive-edit)))
+;; (defun stop-using-minibuffer ()
+;;     "kill the minibuffer"
+;;     (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+;;       (abort-recursive-edit)))
 
-(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+;; (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
 (add-hook 'org-mode-hook 'mixed-pitch-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (add-hook 'org-mode-hook 'org-fragtog-mode)
 ;; (add-hook 'org-mode-hook '+zen/toggle)
 
-
+(map! :leader :desc "Open small vterm window" "o v" #'vterm)
+(map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
+(evil-define-key 'normal org-mode-map
+  (kbd "s-<return>") '+org/insert-item-below
+  (kbd "g j") 'evil-next-visual-line
+  (kbd "g k") 'evil-previous-visual-line)

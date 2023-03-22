@@ -2,6 +2,35 @@
 #+property: header-args :tangle config.el
 #+auto_tangle: t
 
+* Table of contents :TOC:
+- [[#intro][Intro]]
+- [[#user][User]]
+- [[#system][System]]
+- [[#theme][Theme]]
+  - [[#unhighlight-whitespace][Unhighlight whitespace]]
+- [[#fonts][Fonts]]
+- [[#org-mode][Org Mode]]
+  - [[#variables][Variables]]
+  - [[#header-size][Header size]]
+  - [[#org-auto-tangle][org-auto-tangle]]
+  - [[#org-autolist][org-autolist]]
+  - [[#math-preview][Math preview]]
+  - [[#export][Export]]
+- [[#beacon][Beacon]]
+- [[#avy][Avy]]
+- [[#dashboard][Dashboard]]
+- [[#spellcheck][Spellcheck]]
+- [[#startup-benchmark][Startup benchmark]]
+- [[#file-manager][File manager]]
+  - [[#dirvish][Dirvish]]
+  - [[#keybindings][Keybindings]]
+  - [[#making-deleted-files-go-to-trash-can][Making deleted files go to trash can]]
+- [[#modeline][Modeline]]
+- [[#rainbow-mode][Rainbow mode]]
+- [[#patches][Patches]]
+- [[#hooks][Hooks]]
+- [[#mappings][Mappings]]
+
 * Intro
 Place your private configuration here! Remember, you do not need to run 'doom
 sync' after modifying this file!
@@ -82,6 +111,7 @@ they are implemented.
 #+begin_src emacs-lisp
 (setenv "PATH" (concat (getenv "PATH") ":/usr/texbin"))
 (setq exec-path (append exec-path '("/usr/texbin")))
+
 #+end_src
 
 * Theme
@@ -144,7 +174,7 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
         org-table-convert-region-max-lines 20000))
 
 (custom-set-faces!
-  `(org-superstar-header-bullet :font "FiraCode NF" :height 0.99 :weight light))
+  `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
 #+end_src
 
 ** Header size
@@ -174,7 +204,7 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
   :config
-  (setq org-auto-tangle-default t))
+  (setq org-auto-tangle-default nil))
 
 (defun dg/insert-auto-tangle-tag ()
   "Insert auto-tangle tag in a literate config."
@@ -187,6 +217,9 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
       :desc "Insert auto_tangle tag" "i a" #'dg/insert-auto-tangle-tag)
 #+end_src
 
+#+RESULTS:
+: dg/insert-auto-tangle-tag
+
 ** org-autolist
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-autolist-mode)
@@ -194,10 +227,30 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
 
 ** Math preview
 #+begin_src emacs-lisp
-(setq math-preview-command "/Users/deangao/.local/share/npm/bin/math-preview")
+;; (setq math-preview-command "/Users/deangao/.local/share/npm/bin/math-preview")
 
-(defalias #'org-latex-preview #'math-preview-at-point)
-(defalias #'org-clear-latex-preview #'math-preview-clear-region)
+;; (defalias #'org-latex-preview #'math-preview-at-point)
+;; (defalias #'org-clear-latex-preview #'math-preview-clear-region)
+
+(setq org-startup-with-latex-preview t)
+(setq org-latex-create-formula-image-program 'dvisvgm)
+(after! org (plist-put org-format-latex-options :scale 2.2))
+#+end_src
+
+** Export
+#+begin_src emacs-lisp
+(with-eval-after-load 'ox-latex
+(add-to-list 'org-latex-classes
+             '("org-plain-latex"
+               "\\documentclass{article}
+           [NO-DEFAULT-PACKAGES]
+           [PACKAGES]
+           [EXTRA]"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+end_src
 
 * Beacon
@@ -207,133 +260,114 @@ Never lose your cursor.  When you scroll, your cursor will shine!  This is a glo
 (beacon-mode 1)
 #+end_src
 
+* Avy
+#+begin_src emacs-lisp
+(setq avy-timeout-seconds 0.2)
+#+end_src
+
 * Dashboard
 #+begin_src emacs-lisp
 ;; (setq fancy-splash-image "~/.config/doom/black-hole.png")
 #+end_src
 
-* Dired
-Dired is the file manager within Emacs.  Below, I setup keybindings for image previews (peep-dired).  Doom Emacs does not use 'SPC d' for any of its keybindings, so I've chosen the format of 'SPC d' plus 'key'.
-
-** Keep one buffer
+* Spellcheck
 #+begin_src emacs-lisp
-(setf dired-kill-when-opening-new-dired-buffer t)
+(after! spell-fu
+  (setq spell-fu-idle-delay 0.5))  ; default is 0.25
 #+end_src
-** Keybindings To Open Dired
 
-| COMMAND    | DESCRIPTION                        | KEYBINDING |
-|------------+------------------------------------+------------|
-| dired      | /Open dired file manager/            | SPC d d    |
-| dired-jump | /Jump to current directory in dired/ | SPC d j    |
+* Startup benchmark
+#+begin_src emacs-lisp
+(add-hook 'after-init-hook 'benchmark-init/deactivate)
+#+end_src
 
-** Keybindings Within Dired
-*** Basic dired commands
-
-| COMMAND                | DESCRIPTION                                 | KEYBINDING |
-|------------------------+---------------------------------------------+------------|
-| dired-view-file        | /View file in dired/                          | SPC d v    |
-| dired-up-directory     | /Go up in directory tree/                     | h          |
-| dired-find-file        | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line        | /Move down to next line/                      | j          |
-| dired-previous-line    | /Move up to previous line/                    | k          |
-| dired-mark             | /Mark file at point/                          | m          |
-| dired-unmark           | /Unmark file at point/                        | u          |
-| dired-do-copy          | /Copy current file or marked files/           | C          |
-| dired-do-rename        | /Rename current file or marked files/         | R          |
-| dired-hide-details     | /Toggle detailed listings on/off/             | (          |
-| dired-git-info-mode    | /Toggle git information on/off/               | )          |
-| dired-create-directory | /Create new empty directory/                  | +          |
-| dired-diff             | /Compare file at point with another/          | =          |
-| dired-subtree-toggle   | /Toggle viewing subtree at point/             | TAB        |
-
-*** Dired commands using regex
-
-| COMMAND                 | DESCRIPTION                | KEYBINDING |
-|-------------------------+----------------------------+------------|
-| dired-mark-files-regexp | /Mark files using regex/     | % m        |
-| dired-do-copy-regexp    | /Copy files using regex/     | % C        |
-| dired-do-rename-regexp  | /Rename files using regex/   | % R        |
-| dired-mark-files-regexp | /Mark all files using regex/ | * %        |
-
-*** File permissions and ownership
-
-| COMMAND         | DESCRIPTION                      | KEYBINDING |
-|-----------------+----------------------------------+------------|
-| dired-do-chgrp  | /Change the group of marked files/ | g G        |
-| dired-do-chmod  | /Change the mode of marked files/  | M          |
-| dired-do-chown  | /Change the owner of marked files/ | O          |
-| dired-do-rename | /Rename file or all marked files/  | R          |
+* File manager
+** Dirvish
+#+begin_src emacs-lisp
+(dirvish-override-dired-mode)
+#+end_src
 
 ** Keybindings
 
 #+begin_src emacs-lisp
 (map! :leader
-      (:prefix ("d" . "dired")
-       :desc "Open dired" "d" #'dired
-       :desc "Dired jump to current" "j" #'dired-jump)
-      (:after dired
-       (:map dired-mode-map
-        :desc "Peep-dired image previews" "d p" #'peep-dired
-        :desc "Dired view file"           "d v" #'dired-view-file)))
+      (:prefix ("d" . "dirvish")
+       :desc "Open dirvish" "d" #'dired
+       :desc "Dirvish jump to current" "j" #'dired-jump))
+
+
+(use-package dirvish
+    :init
+    (dirvish-override-dired-mode)
+    :custom
+    (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+     '(("h" "~/"                          "Home")
+       ("d" "~/Downloads/"                "Downloads")
+       ("t" "~/.Trash"                    "Trash")))
+    :config
+    ;; (dirvish-peek-mode) ; Preview files in minibuffer
+    ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+    (setq dirvish-mode-line-format
+          '(:left (sort symlink) :right (omit yank index)))
+    (setq dirvish-attributes
+          '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg))
+    (setq delete-by-moving-to-trash t)
+    (setq dired-listing-switches
+          "-l --almost-all --human-readable --group-directories-first --no-group"))
+    ;; :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+    ;; (("C-c f" . dirvish-fd)
+    ;;  :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
+    ;;  ("a"   . dirvish-quick-access)
+    ;;  ("f"   . dirvish-file-info-menu)
+    ;;  ("y"   . dirvish-yank-menu)
+    ;;  ("N"   . dirvish-narrow)
+    ;;  ("^"   . dirvish-history-last)
+    ;;  ("h"   . dirvish-up-directory)
+    ;;  ("l"   . dirvish-open-file)
+    ;;  ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+    ;;  ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+    ;;  ("TAB" . dirvish-subtree-toggle)
+    ;;  ("M-f" . dirvish-history-go-forward)
+    ;;  ("M-b" . dirvish-history-go-backward)
+    ;;  ("M-l" . dirvish-ls-switches-menu)
+    ;;  ("M-m" . dirvish-mark-menu)
+    ;;  ("M-t" . dirvish-layout-toggle)
+    ;;  ("M-s" . dirvish-setup-menu)
+    ;;  ("M-e" . dirvish-emerge-menu)
+    ;;  ("M-j" . dirvish-fd-jump)))
 
 (evil-define-key 'normal dired-mode-map
-  (kbd "M-RET") 'dired-display-file
-  (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
-  (kbd "m") 'dired-mark
-  (kbd "t") 'dired-toggle-marks
-  (kbd "u") 'dired-unmark
-  (kbd "C") 'dired-do-copy
-  (kbd "D") 'dired-do-delete
-  (kbd "J") 'dired-goto-file
-  (kbd "M") 'dired-do-chmod
-  (kbd "O") 'dired-do-chown
-  (kbd "P") 'dired-do-print
-  (kbd "R") 'dired-do-rename
-  (kbd "T") 'dired-do-touch
-  (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
-  (kbd "Z") 'dired-do-compress
-  (kbd "+") 'dired-create-directory
-  (kbd "-") 'dired-do-kill-lines
   (kbd "% l") 'dired-downcase
   (kbd "% m") 'dired-mark-files-regexp
   (kbd "% u") 'dired-upcase
   (kbd "* %") 'dired-mark-files-regexp
   (kbd "* .") 'dired-mark-extension
   (kbd "* /") 'dired-mark-directories
-  (kbd "; d") 'epa-dired-do-decrypt
-  (kbd "; e") 'epa-dired-do-encrypt)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-;; With dired-open plugin, you can launch external programs for certain extensions
-;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
-(setq dired-open-extensions '(("gif" . "sxiv")
-                              ("jpg" . "sxiv")
-                              ("png" . "sxiv")
-                              ("mkv" . "mpv")
-                              ("mp4" . "mpv")))
+  (kbd "+") 'dired-create-directory
+  (kbd "-") 'dirvish-narrow
+  (kbd "<tab>") 'dirvish-toggle-subtree
+  (kbd "M") 'dirvish-mark-menu
+  (kbd "R") 'dirvish-renaming-menu
+  (kbd "a") 'dirvish-quick-access
+  (kbd "c") 'dirvish-chxxx-menu
+  (kbd "d") 'dired-do-delete
+  (kbd "f") 'dirvish-file-info-menu
+  (kbd "h") 'dired-up-directory
+  (kbd "l") 'dired-open-file
+  (kbd "m") 'dired-mark
+  (kbd "p") 'dirvish-yank
+  (kbd "r") 'dired-do-rename
+  (kbd "t") 'dired-do-touch
+  (kbd "u") 'dired-unmark
+  (kbd "v") 'dirvish-move
+  (kbd "y") 'dirvish-yank-menu
+  (kbd "z") 'dired-do-compress)
 #+end_src
-
-** Keybindings Within Dired With Peep-Dired-Mode Enabled
-If peep-dired is enabled, you will get image previews as you go up/down with 'j' and 'k'
-
-| COMMAND              | DESCRIPTION                              | KEYBINDING |
-|----------------------+------------------------------------------+------------|
-| peep-dired           | /Toggle previews within dired/             | SPC d p    |
-| peep-dired-next-file | /Move to next file in peep-dired-mode/     | j          |
-| peep-dired-prev-file | /Move to previous file in peep-dired-mode/ | k          |
-
-#+BEGIN_SRC emacs-lisp
-(evil-define-key 'normal peep-dired-mode-map
-  (kbd "j") 'peep-dired-next-file
-  (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-#+END_SRC
 
 ** Making deleted files go to trash can
 #+begin_src emacs-lisp
 (setq delete-by-moving-to-trash t
-      trash-directory "~/.local/share/Trash/files/")
+      trash-directory "~/.Trash")
 #+end_src
 
 * Modeline
@@ -344,11 +378,14 @@ https://github.com/seagle0128/doom-modeline
 (set-face-attribute 'mode-line nil :font "Input-16")
 (setq doom-modeline-height 30     ;; sets modeline height
       doom-modeline-persp-name t  ;; adds perspective name to modeline
-      doom-modeline-persp-icon t) ;; adds folder icon next to persp name
+      doom-modeline-persp-icon t  ;; adds folder icon next to persp name
+      doom-modeline-enable-word-count t
+      doom-modeline-battery t
+      doom-modeline-percent-position nil)
 #+end_src
 
 * Rainbow mode
-Rainbox mode displays the actual color for any hex value color.  It's such a nice feature that I wanted it turned on all the time, regardless of what mode I am in.  The following creates a global minor mode for rainbow-mode and enables it (exception: org-agenda-mode since rainbow-mode destroys all highlighting in org-agenda).
+Rainbox mode displays the actual color for any hex value color.
 
 #+begin_src emacs-lisp
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
@@ -361,12 +398,12 @@ Rainbox mode displays the actual color for any hex value color.  It's such a nic
 
 * Patches
 #+begin_src emacs-lisp
-(defun stop-using-minibuffer ()
-    "kill the minibuffer"
-    (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
-      (abort-recursive-edit)))
+;; (defun stop-using-minibuffer ()
+;;     "kill the minibuffer"
+;;     (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+;;       (abort-recursive-edit)))
 
-(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+;; (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 #+end_src
 
 * Hooks
@@ -379,4 +416,11 @@ Rainbox mode displays the actual color for any hex value color.  It's such a nic
 
 * Mappings
 #+begin_src emacs-lisp
+(map! :leader :desc "Open small vterm window" "o v" #'vterm)
+(map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
+(evil-define-key 'normal org-mode-map
+  (kbd "s-<return>") '+org/insert-item-below
+  (kbd "g j") 'evil-next-visual-line
+  (kbd "g k") 'evil-previous-visual-line)
+
 #+end_src
