@@ -1,6 +1,9 @@
 (setq user-full-name "Dean Gao"
       user-mail-address "gao.dean@hotmail.com")
 
+;; (require 'benchmark-init)
+;; (add-hook 'doom-first-input-hook #'benchmark-init/deactivate)
+
 (setenv "PATH" (concat (getenv "PATH") ":/usr/texbin"))
 (setq exec-path (append exec-path '("/usr/texbin")))
 
@@ -108,8 +111,6 @@
 
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
-
-(add-hook 'after-init-hook 'benchmark-init/deactivate)
 
 (dirvish-override-dired-mode)
 

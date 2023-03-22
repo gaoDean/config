@@ -5,6 +5,7 @@
 * Table of contents :TOC:
 - [[#intro][Intro]]
 - [[#user][User]]
+- [[#startup-benchmark][Startup benchmark]]
 - [[#system][System]]
 - [[#theme][Theme]]
   - [[#unhighlight-whitespace][Unhighlight whitespace]]
@@ -20,7 +21,6 @@
 - [[#avy][Avy]]
 - [[#dashboard][Dashboard]]
 - [[#spellcheck][Spellcheck]]
-- [[#startup-benchmark][Startup benchmark]]
 - [[#file-manager][File manager]]
   - [[#dirvish][Dirvish]]
   - [[#keybindings][Keybindings]]
@@ -105,6 +105,12 @@ they are implemented.
 #+begin_src emacs-lisp
 (setq user-full-name "Dean Gao"
       user-mail-address "gao.dean@hotmail.com")
+#+end_src
+
+* Startup benchmark
+#+begin_src emacs-lisp
+;; (require 'benchmark-init)
+;; (add-hook 'doom-first-input-hook #'benchmark-init/deactivate)
 #+end_src
 
 * System
@@ -274,11 +280,6 @@ Never lose your cursor.  When you scroll, your cursor will shine!  This is a glo
 #+begin_src emacs-lisp
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
-#+end_src
-
-* Startup benchmark
-#+begin_src emacs-lisp
-(add-hook 'after-init-hook 'benchmark-init/deactivate)
 #+end_src
 
 * File manager

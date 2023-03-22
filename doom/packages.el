@@ -49,6 +49,8 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+
+(package! benchmark-init)
 (package! beacon)
 (package! org-auto-tangle)
 (package! peep-dired)
@@ -63,4 +65,3 @@
 (package! olivetti)
 (package! dirvish :recipe (:repo "isamert/dirvish"))
 (package! epresent)
-(package! benchmark-init)
