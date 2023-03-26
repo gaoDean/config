@@ -64,16 +64,20 @@
 (after! org
   (plist-put org-format-latex-options :scale 2.6))
 
-(setq org-highlight-latex-and-related '(latex script entities))
+(after! org
+  (setq org-highlight-latex-and-related '(latex script entities)))
+
+(after! org-fragtog-table (org-fragtog-table-mode))
 
 (after! org
   (setq org-directory "~/des/"
         org-ellipsis " ▼ "
         org-pretty-entities t
-        org-image-actual-width '(300)
+        org-superstar-item-bullet-alist '((?- . ?➤) (?+ . ?✦)) ; changes +/- symbols in item lists
         org-log-done 'time
         org-hide-emphasis-markers t
         org-table-convert-region-max-lines 20000))
+
 
 (custom-set-faces!
   `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
@@ -108,7 +112,7 @@
                '("orgox"
                  ;; (get-string-from-file "~/.config/doom/setupfile.sty")
                  "
-                \\documentclass[hidelinks]{amsart}
+                \\documentclass[hidelinks]{article}
                 [DEFAULT-PACKAGES]
                 [PACKAGES]
                 [EXTRA]"
@@ -129,8 +133,6 @@
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
 
-(dirvish-override-dired-mode)
-
 (use-package dirvish
     :init
     (dirvish-override-dired-mode)
@@ -138,6 +140,8 @@
     (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
      '(("h" "~/"                          "Home")
        ("d" "~/Downloads/"                "Downloads")
+       ("v" "~/vau/"                      "vau")
+       ("r" "~/repos/"                    "repos")
        ("t" "~/.Trash"                    "Trash")))
     :config
     ;; (dirvish-peek-mode) ; Preview files in minibuffer
@@ -149,27 +153,6 @@
     (setq delete-by-moving-to-trash t)
     (setq dired-listing-switches
           "-l --almost-all --human-readable --group-directories-first --no-group"))
-    ;; :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
-    ;; (("C-c f" . dirvish-fd)
-    ;;  :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
-    ;;  ("a"   . dirvish-quick-access)
-    ;;  ("f"   . dirvish-file-info-menu)
-    ;;  ("y"   . dirvish-yank-menu)
-    ;;  ("N"   . dirvish-narrow)
-    ;;  ("^"   . dirvish-history-last)
-    ;;  ("h"   . dirvish-up-directory)
-    ;;  ("l"   . dirvish-open-file)
-    ;;  ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
-    ;;  ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
-    ;;  ("TAB" . dirvish-subtree-toggle)
-    ;;  ("M-f" . dirvish-history-go-forward)
-    ;;  ("M-b" . dirvish-history-go-backward)
-    ;;  ("M-l" . dirvish-ls-switches-menu)
-    ;;  ("M-m" . dirvish-mark-menu)
-    ;;  ("M-t" . dirvish-layout-toggle)
-    ;;  ("M-s" . dirvish-setup-menu)
-    ;;  ("M-e" . dirvish-emerge-menu)
-    ;;  ("M-j" . dirvish-fd-jump)))
 
 (evil-define-key 'normal dired-mode-map
   (kbd "% l") 'dired-downcase
@@ -238,8 +221,20 @@
 (add-hook 'org-mode-hook (lambda() (text-scale-increase 1)))
 ;; (add-hook 'org-mode-hook '+zen/toggle)
 
-(map! :leader :desc "Open small vterm window" "o v" #'vterm)
 (evil-define-key 'normal org-mode-map
   (kbd "s-<return>") 'org-meta-return
   (kbd "g j") 'evil-next-visual-line
   (kbd "g k") 'evil-previous-visual-line)
+
+(map! :leader
+      :desc "Open small vterm window" "o v" #'vterm
+      :desc "Grep" "c g" #'deadgrep)
+
+(after! embark
+  (defvar-keymap embark-table-actions
+    :doc "table.el functions"
+    :parent embark-general-map
+    "d" #'table-query-dimension
+    "w" #'table-widen-cell
+    "n" #'table-narrow-cell)
+  (add-to-list 'embark-keymap-alist '(org-table . embark-table-actions)))

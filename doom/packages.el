@@ -65,3 +65,6 @@
 (package! olivetti)
 (package! dirvish :recipe (:repo "isamert/dirvish"))
 (package! epresent)
+(package! org-fragtog-table
+ :recipe (:host github :repo "Yevgnen/org-fragtog-table"))
+(package! deadgrep)

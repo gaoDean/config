@@ -184,22 +184,29 @@ Latex preview
   (plist-put org-format-latex-options :scale 2.6))
 #+end_src
 *** Background colour
-So the background color isn't darker:
+So the background color isn't darker: https://stackoverflow.com/questions/17239273/org-mode-buffer-latex-syntax-highlighting
 #+begin_src elisp
-(setq org-highlight-latex-and-related '(latex script entities))
+(after! org
+  (setq org-highlight-latex-and-related '(latex script entities)))
+#+end_src
+*** Tables
+#+begin_src elisp
+(after! org-fragtog-table (org-fragtog-table-mode))
 #+end_src
 
 ** Variables
 I'm using FiraCode for the superstar header bullet because the bullet isn't as big in FiraCode and looks better
+
 #+begin_src elisp
 (after! org
   (setq org-directory "~/des/"
         org-ellipsis " ▼ "
         org-pretty-entities t
-        org-image-actual-width '(300)
+        org-superstar-item-bullet-alist '((?- . ?➤) (?+ . ?✦)) ; changes +/- symbols in item lists
         org-log-done 'time
         org-hide-emphasis-markers t
         org-table-convert-region-max-lines 20000))
+
 
 (custom-set-faces!
   `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
@@ -239,7 +246,7 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
                '("orgox"
                  ;; (get-string-from-file "~/.config/doom/setupfile.sty")
                  "
-                \\documentclass[hidelinks]{amsart}
+                \\documentclass[hidelinks]{article}
                 [DEFAULT-PACKAGES]
                 [PACKAGES]
                 [EXTRA]"
@@ -277,12 +284,8 @@ Never lose your cursor.  When you scroll, your cursor will shine!  This is a glo
 
 * File manager
 ** Dirvish
-#+begin_src elisp
-(dirvish-override-dired-mode)
-#+end_src
+To open Dirvish press: ~SPC o -~ or just ~SPC .~
 
-** Keybindings
-To open Dirvish press: ~SPC o -~
 #+begin_src elisp
 (use-package dirvish
     :init
@@ -291,6 +294,8 @@ To open Dirvish press: ~SPC o -~
     (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
      '(("h" "~/"                          "Home")
        ("d" "~/Downloads/"                "Downloads")
+       ("v" "~/vau/"                      "vau")
+       ("r" "~/repos/"                    "repos")
        ("t" "~/.Trash"                    "Trash")))
     :config
     ;; (dirvish-peek-mode) ; Preview files in minibuffer
@@ -302,27 +307,6 @@ To open Dirvish press: ~SPC o -~
     (setq delete-by-moving-to-trash t)
     (setq dired-listing-switches
           "-l --almost-all --human-readable --group-directories-first --no-group"))
-    ;; :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
-    ;; (("C-c f" . dirvish-fd)
-    ;;  :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
-    ;;  ("a"   . dirvish-quick-access)
-    ;;  ("f"   . dirvish-file-info-menu)
-    ;;  ("y"   . dirvish-yank-menu)
-    ;;  ("N"   . dirvish-narrow)
-    ;;  ("^"   . dirvish-history-last)
-    ;;  ("h"   . dirvish-up-directory)
-    ;;  ("l"   . dirvish-open-file)
-    ;;  ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
-    ;;  ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
-    ;;  ("TAB" . dirvish-subtree-toggle)
-    ;;  ("M-f" . dirvish-history-go-forward)
-    ;;  ("M-b" . dirvish-history-go-backward)
-    ;;  ("M-l" . dirvish-ls-switches-menu)
-    ;;  ("M-m" . dirvish-mark-menu)
-    ;;  ("M-t" . dirvish-layout-toggle)
-    ;;  ("M-s" . dirvish-setup-menu)
-    ;;  ("M-e" . dirvish-emerge-menu)
-    ;;  ("M-j" . dirvish-fd-jump)))
 
 (evil-define-key 'normal dired-mode-map
   (kbd "% l") 'dired-downcase
@@ -399,7 +383,11 @@ A text based screensaver
 #+begin_src elisp
 ;; (zone-when-idle 30)
 #+end_src
-
+** Helpful
+*** Functions
++ ~org-collect-keywords~ queries the headers of an org file
+*** Errors
++ ~No catch for tag: emacs-version-changed nil~ : rebuild doom emacs
 * Patches
 #+begin_src elisp
 ;; (defun stop-using-minibuffer ()
@@ -421,10 +409,21 @@ A text based screensaver
 
 * Mappings
 #+begin_src elisp
-(map! :leader :desc "Open small vterm window" "o v" #'vterm)
 (evil-define-key 'normal org-mode-map
   (kbd "s-<return>") 'org-meta-return
   (kbd "g j") 'evil-next-visual-line
   (kbd "g k") 'evil-previous-visual-line)
 
+(map! :leader
+      :desc "Open small vterm window" "o v" #'vterm
+      :desc "Grep" "c g" #'deadgrep)
+
+(after! embark
+  (defvar-keymap embark-table-actions
+    :doc "table.el functions"
+    :parent embark-general-map
+    "d" #'table-query-dimension
+    "w" #'table-widen-cell
+    "n" #'table-narrow-cell)
+  (add-to-list 'embark-keymap-alist '(org-table . embark-table-actions)))
 #+end_src
