@@ -1,5 +1,4 @@
 #+LaTeX_CLASS: org-plain-latex
-#+LaTeX_CLASS_OPTIONS: [letterpaper, 11pt]
 #+LATEX_HEADER: \usepackage{lmodern} % Ensures we have the right font
 
 #+LATEX_HEADER: \usepackage[T1]{fontenc}
@@ -7,11 +6,12 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{amsmath, amsthm, amssymb}
 #+LATEX_HEADER: \usepackage[table, xcdraw]{xcolor}
+#+LATEX_HEADER: \usepackage{longtable}
 
 % Colorizing links in a nicer way.
-#+LATEX_HEADER: \definecolor{bblue}{HTML}{0645AD}
-#+LATEX_HEADER: \usepackage[colorlinks]{hyperref}
-#+LATEX_HEADER: \hypersetup{colorlinks, linkcolor=blue, urlcolor=bblue}
+# #+LATEX_HEADER: \definecolor{bblue}{HTML}{0000EE}
+#+LATEX_HEADER: \usepackage[hidelinks=true]{hyperref}
+# #+LATEX_HEADER: \hypersetup{colorlinks, linkcolor=blue, urlcolor=bblue}
 
 % Moving up the title.
 #+LATEX_HEADER: \usepackage{titling}
@@ -25,7 +25,7 @@
 #+LATEX_HEADER: \usepackage{subfig} % Subfigures (not needed in Org I think)
 #+LATEX_HEADER: \usepackage{hyperref} % Links
 #+LATEX_HEADER: \usepackage{listings} % Code highlighting
-% Disables flush alighment on the right side. Personal preference.
+% Disables flush alignment on the right side. Personal preference.
 # #+LATEX_HEADER: \RaggedRight
 
 % Page geometry
@@ -77,3 +77,7 @@
 # %Subsubsection
 # #+LATEX_HEADER: \titleformat{\subsubsection} {\large}{\thesubsubsection}{1em}{#1}
 \titlespacing\subsubsection{0pt}{5pt}{-5pt} % left margin, space before subsection header, space after subsection header
+
+#+latex_header: \def\UrlBreaks{\do\/\do-\do_}
+#+latex_header: \usepackage{float}
+#+latex_header: \usepackage{soul}

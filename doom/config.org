@@ -1,35 +1,7 @@
 #+title: Config
 #+property: header-args :tangle config.el
 #+auto_tangle: t
-
-* Table of contents :TOC:
-- [[#intro][Intro]]
-- [[#user][User]]
-- [[#startup-benchmark][Startup benchmark]]
-- [[#system][System]]
-- [[#theme][Theme]]
-  - [[#unhighlight-whitespace][Unhighlight whitespace]]
-- [[#fonts][Fonts]]
-- [[#org-mode][Org Mode]]
-  - [[#variables][Variables]]
-  - [[#header-size][Header size]]
-  - [[#org-auto-tangle][org-auto-tangle]]
-  - [[#org-autolist][org-autolist]]
-  - [[#math-preview][Math preview]]
-  - [[#export][Export]]
-- [[#beacon][Beacon]]
-- [[#avy][Avy]]
-- [[#dashboard][Dashboard]]
-- [[#spellcheck][Spellcheck]]
-- [[#file-manager][File manager]]
-  - [[#dirvish][Dirvish]]
-  - [[#keybindings][Keybindings]]
-  - [[#making-deleted-files-go-to-trash-can][Making deleted files go to trash can]]
-- [[#modeline][Modeline]]
-- [[#rainbow-mode][Rainbow mode]]
-- [[#patches][Patches]]
-- [[#hooks][Hooks]]
-- [[#mappings][Mappings]]
+#+startup: overview
 
 * Intro
 Place your private configuration here! Remember, you do not need to run 'doom
@@ -102,28 +74,27 @@ You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 they are implemented.
 
 * User
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq user-full-name "Dean Gao"
       user-mail-address "gao.dean@hotmail.com")
 #+end_src
 
 * Startup benchmark
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; (require 'benchmark-init)
 ;; (add-hook 'doom-first-input-hook #'benchmark-init/deactivate)
 #+end_src
 
 * System
-#+begin_src emacs-lisp
-(setenv "PATH" (concat (getenv "PATH") ":/usr/texbin"))
-(setq exec-path (append exec-path '("/usr/texbin")))
-
+#+begin_src elisp
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2023/bin/universal-darwin"))
+(setq exec-path (append exec-path '("/usr/local/texlive/2023/bin/universal-darwin")))
 #+end_src
 
 * Theme
 Setting the theme to doom-one.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq doom-theme 'doom-one)
 ;; (setq doom-theme 'catppuccin)
 (setq catppuccin-flavor 'macchiato)
@@ -140,7 +111,7 @@ Setting the theme to doom-one.
 #+end_src
 
 ** Unhighlight whitespace
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq whitespace-mode nil)
 #+end_src
 
@@ -152,7 +123,7 @@ Settings related to fonts within Doom Emacs:
 + 'font-lock-comment-face' -- for comments.
 + 'font-lock-keyword-face' -- for keywords with special significance like 'setq' in elisp.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq doom-font (font-spec :family "Input" :size 18)
       doom-variable-pitch-font (font-spec :family "Open Sans" :size 18)
       doom-big-font (font-spec :family "Input" :size 26))
@@ -166,46 +137,10 @@ Settings related to fonts within Doom Emacs:
 #+end_src
 
 * Org Mode
-** Variables
-I'm using FiraCode for the superstar header bullet because the bullet isn't as big in FiraCode and looks better
-#+begin_src emacs-lisp
-(after! org
-  (setq org-directory "~/des/"
-        org-ellipsis " ▼ "
-        org-pretty-entities t
-        org-startup-with-inline-images t
-        org-image-actual-width '(300)
-        org-log-done 'time
-        org-hide-emphasis-markers t
-        org-table-convert-region-max-lines 20000))
-
-(custom-set-faces!
-  `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
-#+end_src
-
-** Header size
-#+begin_src emacs-lisp
-(defun dg/set-org-header-size ()
-  (interactive)
-  (with-eval-after-load 'org-faces (dolist
-      (face
-       '((org-level-1 1.4 "#51afef" ultra-bold)
-         (org-level-2 1.3 "#c678dd" extra-bold)
-         (org-level-3 1.2 "#98be65" bold)
-         (org-level-4 1.1 "#da8548" semi-bold)
-         (org-level-5 1.0 "#5699af" normal)
-         (org-level-6 1.0 "#a9a1e1" normal)
-         (org-level-7 1.0 "#46d9ff" normal)
-         (org-level-8 1.0 "#ff6c6b" normal)))
-    (set-face-attribute (nth 0 face) nil :font "Source Sans Pro" :weight (nth 3 face) :height (nth 1 face) :foreground (nth 2 face))))
-  (with-eval-after-load 'org-tables (set-face-attribute 'org-table nil :font doom-font :weight 'normal :height 1.0 :foreground "#bfafdf")))
-
-(dg/set-org-header-size)
-#+end_src
 ** org-auto-tangle
 =org-auto-tangle= allows you to add the option =#+auto_tangle: t= in your Org file so that it automatically tangles when you save the document.  I have made adding this to your file even easier by creating a function 'dt/insert-auto-tangle-tag' and setting it to a keybinding 'SPC i a'.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (use-package! org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
@@ -223,80 +158,132 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
       :desc "Insert auto_tangle tag" "i a" #'dg/insert-auto-tangle-tag)
 #+end_src
 
-#+RESULTS:
-: dg/insert-auto-tangle-tag
-
 ** org-autolist
-#+begin_src emacs-lisp
+Makes list keybindings function more like usual word processors
+
+#+begin_src elisp
 (add-hook 'org-mode-hook 'org-autolist-mode)
 #+end_src
-
-** Math preview
-#+begin_src emacs-lisp
-;; (setq math-preview-command "/Users/deangao/.local/share/npm/bin/math-preview")
-
-;; (defalias #'org-latex-preview #'math-preview-at-point)
-;; (defalias #'org-clear-latex-preview #'math-preview-clear-region)
-
-(setq org-startup-with-latex-preview t)
-(setq org-latex-create-formula-image-program 'dvisvgm)
-(after! org (plist-put org-format-latex-options :scale 2.2))
+** org-appear
+#+begin_src elisp
+(add-hook 'org-mode-hook 'org-appear-mode)
+(setq org-appear-autolinks t
+      org-appear-autosubmarkers t
+      org-appear-autoentities t
+      org-appear-autokeywords t
+      org-appear-inside-latex t
+      org-appear-delay 0.1)
 #+end_src
 
+** org-fragtog
+Latex preview
+#+begin_src elisp
+(setq org-startup-with-latex-preview t)
+(setq org-latex-create-formula-image-program 'dvisvgm)
+(after! org
+  (plist-put org-format-latex-options :scale 2.6))
+#+end_src
+*** Background colour
+So the background color isn't darker:
+#+begin_src elisp
+(setq org-highlight-latex-and-related '(latex script entities))
+#+end_src
+
+** Variables
+I'm using FiraCode for the superstar header bullet because the bullet isn't as big in FiraCode and looks better
+#+begin_src elisp
+(after! org
+  (setq org-directory "~/des/"
+        org-ellipsis " ▼ "
+        org-pretty-entities t
+        org-image-actual-width '(300)
+        org-log-done 'time
+        org-hide-emphasis-markers t
+        org-table-convert-region-max-lines 20000))
+
+(custom-set-faces!
+  `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
+#+end_src
+
+** Header size
+#+begin_src elisp
+(defun dg/set-org-header-size ()
+  (interactive)
+  (with-eval-after-load 'org-faces (dolist
+      (face
+       '((org-level-1 1.4 "#51afef" ultra-bold)
+         (org-level-2 1.3 "#c678dd" extra-bold)
+         (org-level-3 1.2 "#98be65" bold)
+         (org-level-4 1.1 "#da8548" semi-bold)
+         (org-level-5 1.0 "#5699af" normal)
+         (org-level-6 1.0 "#a9a1e1" normal)
+         (org-level-7 1.0 "#46d9ff" normal)
+         (org-level-8 1.0 "#ff6c6b" normal)))
+    (set-face-attribute (nth 0 face) nil :font "Source Sans Pro" :weight (nth 3 face) :height (nth 1 face) :foreground (nth 2 face))))
+  (with-eval-after-load 'org-tables (set-face-attribute 'org-table nil :font doom-font :weight 'normal :height 1.0 :foreground "#bfafdf")))
+
+(dg/set-org-header-size)
+#+end_src
 ** Export
-#+begin_src emacs-lisp
+#+begin_src elisp
+(after! org (setq org-latex-pdf-process (list "latexmk -f -xelatex -%latex -interaction=nonstopmode -output-directory=%o %f")))
 (with-eval-after-load 'ox-latex
-(add-to-list 'org-latex-classes
-             '("org-plain-latex"
-               "\\documentclass{article}
-           [NO-DEFAULT-PACKAGES]
-           [PACKAGES]
-           [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+  (defun get-string-from-file (filePath)
+    "Return file content as string."
+    (with-temp-buffer
+      (insert-file-contents filePath)
+      (buffer-string)))
+
+  (add-to-list 'org-latex-classes
+               '("orgox"
+                 ;; (get-string-from-file "~/.config/doom/setupfile.sty")
+                 "
+                \\documentclass[hidelinks]{amsart}
+                [DEFAULT-PACKAGES]
+                [PACKAGES]
+                [EXTRA]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+end_src
 
 * Beacon
 Never lose your cursor.  When you scroll, your cursor will shine!  This is a global minor-mode. Turn it on everywhere with:
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (beacon-mode 1)
 #+end_src
 
 * Avy
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq avy-timeout-seconds 0.2)
+;; (map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
+(map! :leader :desc "Avy jump" "j" #'avy-goto-char-2)
 #+end_src
 
 * Dashboard
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; (setq fancy-splash-image "~/.config/doom/black-hole.png")
 #+end_src
 
 * Spellcheck
-#+begin_src emacs-lisp
+#+begin_src elisp
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
 #+end_src
 
 * File manager
 ** Dirvish
-#+begin_src emacs-lisp
+#+begin_src elisp
 (dirvish-override-dired-mode)
 #+end_src
 
 ** Keybindings
-
-#+begin_src emacs-lisp
-(map! :leader
-      (:prefix ("d" . "dirvish")
-       :desc "Open dirvish" "d" #'dired
-       :desc "Dirvish jump to current" "j" #'dired-jump))
-
-
+To open Dirvish press: ~SPC o -~
+#+begin_src elisp
 (use-package dirvish
     :init
     (dirvish-override-dired-mode)
@@ -348,17 +335,18 @@ Never lose your cursor.  When you scroll, your cursor will shine!  This is a glo
   (kbd "-") 'dirvish-narrow
   (kbd "<tab>") 'dirvish-toggle-subtree
   (kbd "M") 'dirvish-mark-menu
-  (kbd "R") 'dirvish-renaming-menu
+  (kbd "S") 'dirvish-symlink
   (kbd "a") 'dirvish-quick-access
   (kbd "c") 'dirvish-chxxx-menu
   (kbd "d") 'dired-do-delete
+  (kbd "x") 'dired-do-delete
   (kbd "f") 'dirvish-file-info-menu
   (kbd "h") 'dired-up-directory
   (kbd "l") 'dired-open-file
   (kbd "m") 'dired-mark
   (kbd "p") 'dirvish-yank
   (kbd "r") 'dired-do-rename
-  (kbd "t") 'dired-do-touch
+  (kbd "t") 'dirvish-new-empty-file-a
   (kbd "u") 'dired-unmark
   (kbd "v") 'dirvish-move
   (kbd "y") 'dirvish-yank-menu
@@ -366,7 +354,7 @@ Never lose your cursor.  When you scroll, your cursor will shine!  This is a glo
 #+end_src
 
 ** Making deleted files go to trash can
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
 #+end_src
@@ -375,7 +363,7 @@ Never lose your cursor.  When you scroll, your cursor will shine!  This is a glo
 The modeline is the bottom status bar that appears in Emacs windows.  For more information on what is available to configure in the Doom modeline, check out:
 https://github.com/seagle0128/doom-modeline
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (set-face-attribute 'mode-line nil :font "Input-16")
 (setq doom-modeline-height 30     ;; sets modeline height
       doom-modeline-persp-name t  ;; adds perspective name to modeline
@@ -386,9 +374,9 @@ https://github.com/seagle0128/doom-modeline
 #+end_src
 
 * Rainbow mode
-Rainbox mode displays the actual color for any hex value color.
+Rainbow mode displays the actual color for any hex value color.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
   (lambda ()
     (when (not (memq major-mode
@@ -397,8 +385,23 @@ Rainbox mode displays the actual color for any hex value color.
 (after! rainbow-mode (global-rainbow-mode 1))
 #+end_src
 
+* Cool
+** Pong
+#+begin_src elisp
+(evil-define-key 'normal pong-mode-map
+  (kbd "n") 'pong-move-down
+  (kbd "e") 'pong-move-up
+  (kbd "t") 'pong-move-right
+  (kbd "r") 'pong-move-left)
+#+end_src
+** Zone
+A text based screensaver
+#+begin_src elisp
+;; (zone-when-idle 30)
+#+end_src
+
 * Patches
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; (defun stop-using-minibuffer ()
 ;;     "kill the minibuffer"
 ;;     (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
@@ -408,19 +411,19 @@ Rainbox mode displays the actual color for any hex value color.
 #+end_src
 
 * Hooks
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'org-mode-hook 'mixed-pitch-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (add-hook 'org-mode-hook 'org-fragtog-mode)
+(add-hook 'org-mode-hook (lambda() (text-scale-increase 1)))
 ;; (add-hook 'org-mode-hook '+zen/toggle)
 #+end_src
 
 * Mappings
-#+begin_src emacs-lisp
+#+begin_src elisp
 (map! :leader :desc "Open small vterm window" "o v" #'vterm)
-(map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
 (evil-define-key 'normal org-mode-map
-  (kbd "s-<return>") '+org/insert-item-below
+  (kbd "s-<return>") 'org-meta-return
   (kbd "g j") 'evil-next-visual-line
   (kbd "g k") 'evil-previous-visual-line)
 

@@ -73,6 +73,7 @@ alias \
 	kh='khal' \
 	nh='nohup' \
 	nq='networkquality' \
+	tectonic='tectonic -X' \
 
 alias \
 	tt='tt -theme ~/repos/oth/tt/themes/catppuccin -bold -t 30 -words 200en' \

@@ -4,8 +4,8 @@
 ;; (require 'benchmark-init)
 ;; (add-hook 'doom-first-input-hook #'benchmark-init/deactivate)
 
-(setenv "PATH" (concat (getenv "PATH") ":/usr/texbin"))
-(setq exec-path (append exec-path '("/usr/texbin")))
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2023/bin/universal-darwin"))
+(setq exec-path (append exec-path '("/usr/local/texlive/2023/bin/universal-darwin")))
 
 (setq doom-theme 'doom-one)
 ;; (setq doom-theme 'catppuccin)
@@ -33,11 +33,43 @@
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant italic))
 
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default nil))
+
+(defun dg/insert-auto-tangle-tag ()
+  "Insert auto-tangle tag in a literate config."
+  (interactive)
+  (evil-org-open-below 1)
+  (insert "#+auto_tangle: t ")
+  (evil-force-normal-state))
+
+(map! :leader
+      :desc "Insert auto_tangle tag" "i a" #'dg/insert-auto-tangle-tag)
+
+(add-hook 'org-mode-hook 'org-autolist-mode)
+
+(add-hook 'org-mode-hook 'org-appear-mode)
+(setq org-appear-autolinks t
+      org-appear-autosubmarkers t
+      org-appear-autoentities t
+      org-appear-autokeywords t
+      org-appear-inside-latex t
+      org-appear-delay 0.1)
+
+(setq org-startup-with-latex-preview t)
+(setq org-latex-create-formula-image-program 'dvisvgm)
+(after! org
+  (plist-put org-format-latex-options :scale 2.6))
+
+(setq org-highlight-latex-and-related '(latex script entities))
+
 (after! org
   (setq org-directory "~/des/"
         org-ellipsis " ▼ "
         org-pretty-entities t
-        org-startup-with-inline-images t
         org-image-actual-width '(300)
         org-log-done 'time
         org-hide-emphasis-markers t
@@ -63,49 +95,34 @@
 
 (dg/set-org-header-size)
 
-(use-package! org-auto-tangle
-  :defer t
-  :hook (org-mode . org-auto-tangle-mode)
-  :config
-  (setq org-auto-tangle-default nil))
-
-(defun dg/insert-auto-tangle-tag ()
-  "Insert auto-tangle tag in a literate config."
-  (interactive)
-  (evil-org-open-below 1)
-  (insert "#+auto_tangle: t ")
-  (evil-force-normal-state))
-
-(map! :leader
-      :desc "Insert auto_tangle tag" "i a" #'dg/insert-auto-tangle-tag)
-
-(add-hook 'org-mode-hook 'org-autolist-mode)
-
-;; (setq math-preview-command "/Users/deangao/.local/share/npm/bin/math-preview")
-
-;; (defalias #'org-latex-preview #'math-preview-at-point)
-;; (defalias #'org-clear-latex-preview #'math-preview-clear-region)
-
-(setq org-startup-with-latex-preview t)
-(setq org-latex-create-formula-image-program 'dvisvgm)
-(after! org (plist-put org-format-latex-options :scale 2.2))
-
+(after! org (setq org-latex-pdf-process (list "latexmk -f -xelatex -%latex -interaction=nonstopmode -output-directory=%o %f")))
 (with-eval-after-load 'ox-latex
-(add-to-list 'org-latex-classes
-             '("org-plain-latex"
-               "\\documentclass{article}
-           [NO-DEFAULT-PACKAGES]
-           [PACKAGES]
-           [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+  (defun get-string-from-file (filePath)
+    "Return file content as string."
+    (with-temp-buffer
+      (insert-file-contents filePath)
+      (buffer-string)))
+
+  (add-to-list 'org-latex-classes
+               '("orgox"
+                 ;; (get-string-from-file "~/.config/doom/setupfile.sty")
+                 "
+                \\documentclass[hidelinks]{amsart}
+                [DEFAULT-PACKAGES]
+                [PACKAGES]
+                [EXTRA]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 (beacon-mode 1)
 
 (setq avy-timeout-seconds 0.2)
+;; (map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
+(map! :leader :desc "Avy jump" "j" #'avy-goto-char-2)
 
 ;; (setq fancy-splash-image "~/.config/doom/black-hole.png")
 
@@ -113,12 +130,6 @@
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
 
 (dirvish-override-dired-mode)
-
-(map! :leader
-      (:prefix ("d" . "dirvish")
-       :desc "Open dirvish" "d" #'dired
-       :desc "Dirvish jump to current" "j" #'dired-jump))
-
 
 (use-package dirvish
     :init
@@ -171,17 +182,18 @@
   (kbd "-") 'dirvish-narrow
   (kbd "<tab>") 'dirvish-toggle-subtree
   (kbd "M") 'dirvish-mark-menu
-  (kbd "R") 'dirvish-renaming-menu
+  (kbd "S") 'dirvish-symlink
   (kbd "a") 'dirvish-quick-access
   (kbd "c") 'dirvish-chxxx-menu
   (kbd "d") 'dired-do-delete
+  (kbd "x") 'dired-do-delete
   (kbd "f") 'dirvish-file-info-menu
   (kbd "h") 'dired-up-directory
   (kbd "l") 'dired-open-file
   (kbd "m") 'dired-mark
   (kbd "p") 'dirvish-yank
   (kbd "r") 'dired-do-rename
-  (kbd "t") 'dired-do-touch
+  (kbd "t") 'dirvish-new-empty-file-a
   (kbd "u") 'dired-unmark
   (kbd "v") 'dirvish-move
   (kbd "y") 'dirvish-yank-menu
@@ -205,6 +217,14 @@
      (rainbow-mode 1))))
 (after! rainbow-mode (global-rainbow-mode 1))
 
+(evil-define-key 'normal pong-mode-map
+  (kbd "n") 'pong-move-down
+  (kbd "e") 'pong-move-up
+  (kbd "t") 'pong-move-right
+  (kbd "r") 'pong-move-left)
+
+;; (zone-when-idle 30)
+
 ;; (defun stop-using-minibuffer ()
 ;;     "kill the minibuffer"
 ;;     (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
@@ -215,11 +235,11 @@
 (add-hook 'org-mode-hook 'mixed-pitch-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (add-hook 'org-mode-hook 'org-fragtog-mode)
+(add-hook 'org-mode-hook (lambda() (text-scale-increase 1)))
 ;; (add-hook 'org-mode-hook '+zen/toggle)
 
 (map! :leader :desc "Open small vterm window" "o v" #'vterm)
-(map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
 (evil-define-key 'normal org-mode-map
-  (kbd "s-<return>") '+org/insert-item-below
+  (kbd "s-<return>") 'org-meta-return
   (kbd "g j") 'evil-next-visual-line
   (kbd "g k") 'evil-previous-visual-line)
