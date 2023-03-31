@@ -1,8 +1,6 @@
 #+latex_class: orgox
-#+latex_header: \usepackage{amsmath,amssymb,amsthm}
-#+latex_header: \usepackage{longtable}
 #+latex_header: \usepackage{hyphenat}
 #+latex_header: \usepackage{listings}
 #+latex_header: \usepackage{float}
-#+latex_header: \usepackage{soul}
+#+latex_header: \usepackage{placeins}
 #+latex_header: \def\UrlBreaks{\do\/\do-\do_}

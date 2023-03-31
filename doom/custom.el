@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(org-safe-remote-resources
    '("\\`https://i\\.pinimg\\.com\\(?:/\\|\\'\\)" "\\`https://i\\.ytimg\\.com\\(?:/\\|\\'\\)"))
- '(package-selected-packages '(auctex)))
+ '(package-selected-packages '(svelte-mode auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

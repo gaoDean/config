@@ -23,6 +23,9 @@
 
 (setq whitespace-mode nil)
 
+;; (set-face-background 'default "mac:windowBackgroundColor")
+;; (set-face-stipple 'default "alpha:80%")
+
 (setq doom-font (font-spec :family "Input" :size 18)
       doom-variable-pitch-font (font-spec :family "Open Sans" :size 18)
       doom-big-font (font-spec :family "Input" :size 26))
@@ -67,7 +70,18 @@
 (after! org
   (setq org-highlight-latex-and-related '(latex script entities)))
 
-(after! org-fragtog-table (org-fragtog-table-mode))
+(after! org-fragtog (org-fragtog-table-mode))
+
+(setq ob-mermaid-cli-path "/Users/deangao/.local/share/npm/bin/mmdc")
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((mermaid . t)
+   (latex . t)
+   (emacs-lisp . t)))
+(setq org-babel-default-header-args:mermaid
+      '((:results . "file")
+        (:exports . "results")
+        (:puppeteer-config-file . "/Users/deangao/.config/puppeteer/config.json")))
 
 (after! org
   (setq org-directory "~/des/"
@@ -77,7 +91,6 @@
         org-log-done 'time
         org-hide-emphasis-markers t
         org-table-convert-region-max-lines 20000))
-
 
 (custom-set-faces!
   `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
@@ -99,7 +112,23 @@
 
 (dg/set-org-header-size)
 
-(after! org (setq org-latex-pdf-process (list "latexmk -f -xelatex -%latex -interaction=nonstopmode -output-directory=%o %f")))
+(after! org
+  (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
+        org-latex-default-packages-alist
+        '(("AUTO" "inputenc" nil
+          ("pdflatex"))
+         ("T1" "fontenc" nil
+          ("pdflatex"))
+         ("" "graphicx" t)
+         ("" "longtable" t)
+         ("" "wrapfig" nil)
+         ("" "rotating" nil)
+         ("normalem" "ulem" t)
+         ("" "amsmath" t)
+         ("" "amssymb" t)
+         ("" "capt-of" nil)
+         ("" "hyperref" t))))
+
 (with-eval-after-load 'ox-latex
 
   (defun get-string-from-file (filePath)
@@ -128,7 +157,7 @@
 ;; (map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
 (map! :leader :desc "Avy jump" "j" #'avy-goto-char-2)
 
-;; (setq fancy-splash-image "~/.config/doom/black-hole.png")
+(setq fancy-splash-image "~/.config/doom/splash/emacs-big-e.svg")
 
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
@@ -184,6 +213,62 @@
 
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
+
+(setq visual-fill-column-width 80
+      visual-fill-column-center-text t)
+
+;; (use-package! eaf
+;;   :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
+;;   :commands (eaf-open)
+;;   :custom
+;;   (eaf-browser-continue-where-left-off t)
+;;   (eaf-browser-enable-adblocker t)
+;;   (browse-url-browser-function 'eaf-open-browser) ;; Make EAF Browser my default browser
+;;   :config
+;;   (require 'eaf-pdf-viewer)
+;;   (require 'eaf-all-the-icons)
+;;   (require 'eaf-demo)
+;;   (require 'eaf-evil)
+;;   (setq eaf-pdf-dark-mode nil)
+
+;;   (define-key key-translation-map (kbd "SPC")
+;;     (lambda (prompt)
+;;       (if (derived-mode-p 'eaf-mode)
+;;           (pcase eaf--buffer-app-name
+;;             ("browser" (if  (string= (eaf-call-sync "call_function" eaf--buffer-id "is_focus") "True")
+;;                            (kbd "SPC")
+;;                          (kbd eaf-evil-leader-key)))
+;;             ("pdf-viewer" (kbd eaf-evil-leader-key))
+;;             ("image-viewer" (kbd eaf-evil-leader-key))
+;;             (_  (kbd "SPC")))
+;;         (kbd "SPC")))))
+
+;; (use-package! eaf
+;;   :load-path "~/.config/emacs/site-lisp/emacs-application-framework/"
+;;   :commands (eaf-open)
+;;   :custom
+;;   (eaf-browser-continue-where-left-off t)
+;;   (eaf-browser-enable-adblocker t)
+;;   (browse-url-browser-function 'eaf-open-browser) ;; Make EAF Browser my default browser
+;;   :config
+;;   (require 'eaf-pdf-viewer)
+;;   (require 'eaf-all-the-icons)
+;;   (setq eaf-pdf-dark-mode nil)
+;;     ;; (require 'eaf-evil)
+;;     ;; (define-key key-translation-map (kbd "SPC")
+;;     ;;   (lambda (prompt)
+;;     ;;     (if (derived-mode-p 'eaf-mode)
+;;     ;;         (pcase eaf--buffer-app-name
+;;     ;;           ("browser" (if  (string= (eaf-call-sync "call_function" eaf--buffer-id "is_focus") "True")
+;;     ;;                          (kbd "SPC")
+;;     ;;                        (kbd eaf-evil-leader-key)))
+;;     ;;           ("pdf-viewer" (kbd eaf-evil-leader-key))
+;;     ;;           ("image-viewer" (kbd eaf-evil-leader-key))
+;;     ;;           (_  (kbd "SPC")))
+;;     ;;       (kbd "SPC")))))
+;;   )
+
+(setq svelte-tag-relative-indent nil)
 
 (set-face-attribute 'mode-line nil :font "Input-16")
 (setq doom-modeline-height 30     ;; sets modeline height
