@@ -7,27 +7,21 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2023/bin/universal-darwin"))
 (setq exec-path (append exec-path '("/usr/local/texlive/2023/bin/universal-darwin")))
 
-(setq doom-theme 'doom-one)
-;; (setq doom-theme 'catppuccin)
-(setq catppuccin-flavor 'macchiato)
+(setq doom-theme 'doom-moonlight)
+;; (setq doom-theme 'gruber-darker)
 
-(defun dg/toggle-dark-mode ()
-  (interactive)
-  (if (equal catppuccin-flavor 'latte)
-      (setq catppuccin-flavor 'macchiato)
-    (setq catppuccin-flavor 'latte))
-  (catppuccin-reload))
+;; (custom-set-faces!
+;;   `(default :background "#282c34"))
 
-(map! :leader
-      :desc "Toggle dark mode" "t d" #'dg/toggle-dark-mode)
-
-(setq whitespace-mode nil)
+(add-to-list 'default-frame-alist '(undecorated . t))
 
 ;; (set-face-background 'default "mac:windowBackgroundColor")
 ;; (set-face-stipple 'default "alpha:80%")
 
-(setq doom-font (font-spec :family "Input" :size 18)
-      doom-variable-pitch-font (font-spec :family "Open Sans" :size 18)
+(pixel-scroll-precision-mode)
+
+(setq doom-font (font-spec :family "Input" :size 20)
+      doom-variable-pitch-font (font-spec :family "Merriweather" :size 20)
       doom-big-font (font-spec :family "Input" :size 26))
 (after! doom-themes
   (setq doom-themes-enable-bold t
@@ -90,10 +84,12 @@
         org-superstar-item-bullet-alist '((?- . ?➤) (?+ . ?✦)) ; changes +/- symbols in item lists
         org-log-done 'time
         org-hide-emphasis-markers t
-        org-table-convert-region-max-lines 20000))
+        org-table-convert-region-max-lines 20000)
+(display-line-numbers-mode nil))
 
 (custom-set-faces!
-  `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light))
+  `(org-superstar-header-bullet :font "FiraCode NF" :height 1.1 :weight light)
+  `(org-ellipsis :height 0.8 :underline nil :foreground "#484848"))
 
 (defun dg/set-org-header-size ()
   (interactive)
@@ -153,11 +149,35 @@
 
 (beacon-mode 1)
 
+;; (setq treesit-extra-load-path '("~/.local/share/treesitter"))
+;; (require 'treesit)
+
+;; (after! treesit-auto
+;;   (global-treesit-auto-mode)
+;;   (setq treesit-auto-install 'prompt)
+
+;;   (setq svelte-tsauto-config
+;;         (make-treesit-auto-recipe
+;;          :lang 'svelte
+;;          :ts-mode 'svelte-ts-mode
+;;          :remap 'svelte-mode
+;;          :url "https://github.com/Himujjal/tree-sitter-svelte"
+;;          :revision "master"
+;;          :source-dir "src"))
+
+;;   (add-to-list 'treesit-auto-recipe-list svelte-tsauto-config))
+
+(after! eshell (eshell-vterm-mode)
+  (defalias 'eshell/v 'eshell-exec-visual))
+
 (setq avy-timeout-seconds 0.2)
 ;; (map! :leader :desc "Avy jump" "j" #'avy-goto-char-timer)
 (map! :leader :desc "Avy jump" "j" #'avy-goto-char-2)
 
-(setq fancy-splash-image "~/.config/doom/splash/emacs-big-e.svg")
+(setq web-mode-script-padding 0)
+(setq web-mode-style-padding 0)
+
+(setq fancy-splash-image "~/.config/doom/splash/emacs-big-e-padded.svg")
 
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
@@ -268,8 +288,6 @@
 ;;     ;;       (kbd "SPC")))))
 ;;   )
 
-(setq svelte-tag-relative-indent nil)
-
 (set-face-attribute 'mode-line nil :font "Input-16")
 (setq doom-modeline-height 30     ;; sets modeline height
       doom-modeline-persp-name t  ;; adds perspective name to modeline
@@ -293,6 +311,8 @@
 
 ;; (zone-when-idle 30)
 
+(after! typit (setq typit-test-time 30))
+
 ;; (defun stop-using-minibuffer ()
 ;;     "kill the minibuffer"
 ;;     (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
@@ -300,11 +320,13 @@
 
 ;; (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
-(add-hook 'org-mode-hook 'mixed-pitch-mode)
-(add-hook 'org-mode-hook 'visual-line-mode)
-(add-hook 'org-mode-hook 'org-fragtog-mode)
-(add-hook 'org-mode-hook (lambda() (text-scale-increase 1)))
-;; (add-hook 'org-mode-hook '+zen/toggle)
+(add-hook 'org-mode-hook (lambda()
+                           (display-line-numbers-mode -1)
+                           (text-scale-increase 1)
+                           (mixed-pitch-mode)
+                           (visual-line-mode)
+                           (org-fragtog-mode)
+                           (writeroom-mode)))
 
 (evil-define-key 'normal org-mode-map
   (kbd "s-<return>") 'org-meta-return

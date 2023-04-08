@@ -22,7 +22,6 @@ hash -d sha=/Users/deangao/.local/share
 hash -d uls=/usr/local/share 
 hash -d ce=/usr/local/Cellar 
 hash -d rcs=/Users/deangao/.config/raycastscripts 
-hash -d em=/Users/deangao/.config/emacs 
 hash -d dm=/Users/deangao/.config/doom 
 hash -d bf=/Users/deangao/.config/shell/bm-files 
 hash -d bd=/Users/deangao/.config/shell/bm-dirs 

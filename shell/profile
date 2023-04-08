@@ -19,7 +19,7 @@ export PATH="$PATH:$HOME/.local/share/go/bin"
 # unsetopt PROMPT_SP
 
 # Default programs:
-export EDITOR="nvim"
+export EDITOR="emacsclient"
 
 # ~/ Clean-up:
 export OPENAI_API_KEY=$(~/repos/bin/pa/pa show openai_apikey:mr.deangao@gmail.com)

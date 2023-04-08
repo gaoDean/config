@@ -23,7 +23,6 @@ sha="cd /Users/deangao/.local/share && pwd" \
 uls="cd /usr/local/share && pwd" \
 ce="cd /usr/local/Cellar && pwd" \
 rcs="cd /Users/deangao/.config/raycastscripts && pwd" \
-em="cd /Users/deangao/.config/emacs && pwd" \
 dm="cd /Users/deangao/.config/doom && pwd" \
 bf="$EDITOR /Users/deangao/.config/shell/bm-files" \
 bd="$EDITOR /Users/deangao/.config/shell/bm-dirs" \

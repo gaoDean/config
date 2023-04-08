@@ -76,3 +76,7 @@ for dump in ~/.zcompdump(N.mh+24); do
 done
 compinit -C
 _comp_options+=(globdots)		# Include hidden files.
+
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+    source ~/.zprofile
+fi
