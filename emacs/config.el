@@ -1,4 +1,5 @@
-(setq straight-check-for-modifications nil)
+;; (setq straight-check-for-modifications nil)
+(setq straight-vc-git-default-protocol 'ssh)
 (setq straight-repository-branch "develop")
 
 (defvar bootstrap-version)
@@ -17,10 +18,21 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
+(setq straight-host-usernames
+      '((github . "gaoDean")
+        (gitlab . "gaoDean")))
+
 (use-package general)
 (general-create-definer leader-def
                         ;; :prefix my-leader
                         :prefix "SPC")
+
+(use-package which-key
+  :init
+  (setq which-key-show-early-on-C-h t)
+  :config
+  (which-key-mode)
+  (which-key-setup-side-window-right))
 
 (use-package undo-fu)
 
@@ -78,12 +90,13 @@
       (nano-dark))
 
     (use-package nano-splash
-      :after nano-theme
-      :straight (nano-splash :type git :host github :repo "rougier/nano-splash")
+      :custom
+      (nano-splash-duration 20)
+      :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
       :config (nano-splash))
 
-    (use-package nano-minibuffer
-      :straight (nano-minibuffer :type git :host github :repo "rougier/nano-minibuffer"))
+    ;; (use-package nano-minibuffer
+    ;;   :straight (nano-minibuffer :type git :host github :repo "rougier/nano-minibuffer"))
 
     ;; (use-package nano-command
     ;;   :straight (nano-command :type git :host github :repo "rougier/nano-command"))
@@ -115,9 +128,7 @@
                               (tool-bar-lines . 0)
                               (menu-bar-lines . 1)))
 
-  (setq initial-frame-alist default-frame-alist)
-
-(run-with-timer 1.5 nil 'nano-splash)
+  ;; (setq initial-frame-alist default-frame-alist)
 
 (use-package mixed-pitch
   :hook text-mode)
@@ -204,29 +215,36 @@
   :hook (org-mode . org-auto-tangle-mode))
 
 (use-package avy
-  :after evil
-  :config
+  :custom
+  (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
+  :general
   (leader-def '(normal visual) "j" 'avy-goto-char-2))
 
-(use-package projectile
-    :defer t
-    :config
-    (projectile-mode)
-    (leader-def 'normal
-        "p p" 'projectile-switch-project
-        "p p" 'projectile-find-file))
-
 (use-package helpful
-  :config
+  :general
   (leader-def 'normal
+    "h F" 'describe-face
+    "h p" 'describe-package
     "h f" 'helpful-callable
     "h v" 'helpful-variable
     "h k" 'helpful-key
-    "h F" 'describe-face
     "h x" 'helpful-command
     "h ." 'helpful-at-point))
 
+(use-package magit
+  :general
+  (leader-def 'normal "g g" 'magit))
+
+(use-package projectile
+    :config
+    (projectile-mode)
+    :general
+    (leader-def 'normal
+        "p p" 'projectile-switch-project
+        "SPC" 'projectile-find-file))
+
 (use-package vertico
+  :straight (:files (:defaults "extensions/*"))
   :init
   (setq vertico-resize nil        ; How to resize the Vertico minibuffer window.
         vertico-count 8           ; Maximal number of candidates to show.
@@ -242,20 +260,22 @@
                 #(" %s " 0 4 (face vertico-group-title))
                 #(" " 0 1 (face vertico-group-separator
                                 display (space :align-to (- right (-1 . right-margin) (- +1)))))))
+  (vertico-mode)
 
   :config
-  (vertico-mode)
   (set-face-attribute 'vertico-group-separator nil
                       :strike-through t)
   (set-face-attribute 'vertico-current nil
                       :inherit '(nano-strong nano-subtle))
   (set-face-attribute 'completions-first-difference nil
                       :inherit '(nano-default))
-  (keymap-set vertico-map "?" #'minibuffer-completion-help)
-  (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
-  (keymap-set vertico-map "C-j" #'vertico-next)
-  (keymap-set vertico-map "C-k" #'vertico-previous)
-  (keymap-set vertico-map "M-TAB" #'minibuffer-complete))
+  :general
+  (:keymaps 'vertico-map
+           "?" 'minibuffer-completion-help
+           "M-RET" 'minibuffer-force-complete-and-exit
+           "C-j" 'vertico-next
+           "C-k" 'vertico-previous
+           "M-TAB" 'minibuffer-complete))
 
 (use-package savehist
   :config
@@ -280,34 +300,43 @@
 (use-package vertico-posframe
   :hook (vertico-mode . vertico-posframe-mode))
 
-(use-package which-key
+(use-package corfu
+  :straight (:files (:defaults "extensions/*"))
   :init
-  (setq which-key-show-early-on-C-h t)
+  (setq tab-always-indent 'complete)
+  (global-corfu-mode)
   :config
-  (which-key-mode)
-  (which-key-setup-side-window-right))
+  (defun corfu-enable-always-in-minibuffer ()
+    (unless (bound-and-true-p vertico--input))
+      (setq-local corfu-auto nil) 
+      (corfu-mode 1))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+  (keymap-set corfu-map "M-q" #'corfu-quick-complete)
+  (keymap-set corfu-map "C-q" #'corfu-quick-insert)
+  :custom
+  (corfu-cycle t)           ;; Enable cycling for `corfu-next/previous'
+  (corfu-preselect-first t) ;; Always preselect the prompt
+  (corfu-echo-delay '(1.0 0.5))
+  :general
+  (:keymaps 'corfu-map
+            "TAB" 'corfu-next
+            "S-TAB" 'corfu-previous))
 
-(use-package yasnippet-snippets)
-(use-package yasnippet
-  :config (yas-global-mode 1))
-
-(use-package magit
-  :config
-  (leader-def 'normal "g g" 'magit))
-
-(use-package company
+(use-package tempel
   :init
-  (setq company-backends '((company-capf company-yasnippet company-semantic company-keywords company-dabbrev-code)))
-  :hook (after-init . global-company-mode))
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
 
-(if (string-equal system-type "darwin")
-   (setq dired-use-ls-dired nil))
- (use-package dirvish
-      :straight (dirvish :type git :host github :repo "isamert/dirvish")
-    :init
-    (dirvish-override-dired-mode)
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf))
+
+(use-package tempel-collection)
+
+(use-package dirvish
+    :straight (dirvish :type git :host github :repo "isamert/dirvish")
     :custom
     (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
      '(("h" "~/"                          "Home")
@@ -315,47 +344,52 @@
        ("v" "~/vau/"                      "vau")
        ("r" "~/repos/"                    "repos")
        ("t" "~/.Trash"                    "Trash")))
-    :config
+    :init
+    (dirvish-override-dired-mode)
     ;; (dirvish-peek-mode) ; Preview files in minibuffer
     ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
     (setq dirvish-mode-line-format
-          '(:left (sort symlink) :right (omit yank index)))
-    (setq dirvish-attributes
-          '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg))
-    (setq delete-by-moving-to-trash t)
-    (setq dired-listing-switches
-          "-l --almost-all --human-readable --group-directories-first --no-group"))
-
-(general-def 'dired-mode-map
-  "% l"   'dired-downcase
-  "% m"   'dired-mark-files-regexp
-  "% u"   'dired-upcase
-  "* %"   'dired-mark-files-regexp
-  "* ."   'dired-mark-extension
-  "* /"   'dired-mark-directories
-  "+"     'dired-create-directory
-  "-"     'dirvish-narrow
-  "<tab>" 'dirvish-toggle-subtree
-  "M"     'dirvish-mark-menu
-  "S"     'dirvish-symlink
-  "a"     'dirvish-quick-access
-  "c"     'dirvish-chxxx-menu
-  "d"     'dired-do-delete
-  "x"     'dired-do-delete
-  "f"     'dirvish-file-info-menu
-  "h"     'dired-up-directory
-  "l"     'dired-open-file
-  "m"     'dired-mark
-  "p"     'dirvish-yank
-  "r"     'dired-do-rename
-  "t"     'dirvish-new-empty-file-a
-  "u"     'dired-unmark
-  "v"     'dirvish-move
-  "y"     'dirvish-yank-menu
-  "z"     'dired-do-compress)
+          '(:left (sort symlink) :right (omit yank index))
+    dirvish-attributes
+    '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
+    delete-by-moving-to-trash t
+    insert-directory-program "gls"
+    dired-use-ls-dired t
+    dired-listing-switches
+    "-l --almost-all --human-readable --group-directories-first --no-group")
+  :config
+(evil-define-key 'normal dired-mode-map
+  (kbd "% l") 'dired-downcase
+  (kbd "% m") 'dired-mark-files-regexp
+  (kbd "% u") 'dired-upcase
+  (kbd "* %") 'dired-mark-files-regexp
+  (kbd "* .") 'dired-mark-extension
+  (kbd "* /") 'dired-mark-directories
+  (kbd "+") 'dired-create-directory
+  (kbd "-") 'dirvish-narrow
+  (kbd "<tab>") 'dirvish-toggle-subtree
+  (kbd "M") 'dirvish-mark-menu
+  (kbd "S") 'dirvish-symlink
+  (kbd "a") 'dirvish-quick-access
+  (kbd "c") 'dirvish-chxxx-menu
+  (kbd "d") 'dired-do-delete
+  (kbd "x") 'dired-do-delete
+  (kbd "f") 'dirvish-file-info-menu
+  (kbd "h") 'dired-up-directory
+  (kbd "l") 'dired-open-file
+  (kbd "m") 'dired-mark
+  (kbd "p") 'dirvish-yank
+  (kbd "r") 'dired-do-rename
+  (kbd "t") 'dirvish-new-empty-file-a
+  (kbd "u") 'dired-unmark
+  (kbd "v") 'dirvish-move
+  (kbd "y") 'dirvish-yank-menu
+  (kbd "z") 'dired-do-compress))
 
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
+
+(set-register ?c (cons 'file "~/.config/emacs/config.org"))
 
 (defun dg/reload-init-file ()
   (interactive)
@@ -391,12 +425,14 @@
             "f r" 'recentf
 
             ;; emacs
-            "e r" 'dg/reload-init-file)
+            "e r" 'dg/reload-init-file
+            "r" 'jump-to-register)
 
 (general-define-key :states '(normal visual)
             "g j" 'evil-next-visual-line
-            "g j" 'evil-previous-visual-line)
+            "g j" 'evil-previous-visual-line
+            "C-u" 'evil-scroll-up)
 
-(general-define-key "C-v" 'evil-paste-after)
+(general-define-key 'override "C-v" 'evil-paste-after)
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)

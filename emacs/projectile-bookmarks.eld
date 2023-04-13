@@ -1,1 +1,1 @@
-("~/.config/")
+("~/.config/" "~/vau/" "~/.config/emacs/straight/repos/nano-splash/")

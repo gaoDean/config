@@ -1,0 +1,8 @@
+fundamental-mode ;; Available everywhere
+
+(today (format-time-string "%Y-%m-%d"))
+
+org-mode
+
+(elisp "#+begin_src elisp" n> r> n "#+end_src")
+(elsp "#+begin_src elisp" n> r> n "#+end_src")
