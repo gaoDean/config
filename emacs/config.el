@@ -1,5 +1,4 @@
 ;; (setq straight-check-for-modifications nil)
-(setq straight-vc-git-default-protocol 'ssh)
 (setq straight-repository-branch "develop")
 
 (defvar bootstrap-version)
@@ -21,6 +20,12 @@
 (setq straight-host-usernames
       '((github . "gaoDean")
         (gitlab . "gaoDean")))
+
+(setq mac-option-key-is-meta t
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'meta
+      mac-use-title-bar nil)
 
 (use-package general)
 (general-create-definer leader-def
@@ -67,92 +72,47 @@
   (evil-commentary-mode))
 
 (use-package nano-emacs
-      :straight (nano-emacs :type git :host github :repo "rougier/nano-emacs")
-      :no-require t
-      :init
-      (setq nano-font-family-monospaced "Input")
-      (setq nano-font-family-proportional "Merriweather")
-      (setq nano-font-size 20)
-      :config
-      (let ((inhibit-message t))
-        (message "Welcome to GNU Emacs / N Λ N O edition")
-        (message (format "Initialization time: %s" (emacs-init-time))))
+  :straight (nano-emacs :type git :host github :repo "rougier/nano-emacs")
+  :no-require t
+  :init
+  (require 'nano-layout)
+  (require 'nano-defaults)
+  (require 'nano-session))
 
-      (require 'nano-layout)
-      ;; (require 'nano-faces)
-      (require 'nano-defaults)
-      (require 'nano-session))
+(use-package nano-theme
+  :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
+  :custom-face
+  (nano-mono ((t (:family "Input Mono" :height 240))))
+  (nano-italic ((t (:family "Input Mono" :height 240 :slant italic))))
+  (nano-sans ((t (:family "Lato" :height 240))))
+  :config
+  (setq nano-fonts-use t)
+  (nano-dark))
 
+(use-package nano-splash
+  :custom
+  (nano-splash-duration 20)
+  :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
+  :config (nano-splash))
 
-    (use-package nano-theme
-      :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
-      :config
-      (nano-dark))
+(use-package nano-modeline
+  :straight (nano-modeline :type git :host github :repo "rougier/nano-modeline")
+  :config (nano-modeline-mode))
 
-    (use-package nano-splash
-      :custom
-      (nano-splash-duration 20)
-      :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
-      :config (nano-splash))
+(setq default-frame-alist '((min-height . 1)  '(height . 45)
+                          (min-width  . 1)  '(width  . 81)
+                          (vertical-scroll-bars . nil)
+                          (internal-border-width . 24)
+                          (undecorated . t)
+                          (tool-bar-lines . 0)
+                          (menu-bar-lines . 1)))
 
-    ;; (use-package nano-minibuffer
-    ;;   :straight (nano-minibuffer :type git :host github :repo "rougier/nano-minibuffer"))
-
-    ;; (use-package nano-command
-    ;;   :straight (nano-command :type git :host github :repo "rougier/nano-command"))
-
-    (use-package nano-modeline
-      :straight (nano-modeline :type git :host github :repo "rougier/nano-modeline")
-      :config (nano-modeline-mode))
-
-    ;; (require 'nano-theme)
-    ;; (require 'nano-theme-dark)
-    ;; (nano-theme-set-dark)
-    ;; (nano-refresh-theme)
-
-(when (eq system-type 'darwin)
-  (setq mac-option-key-is-meta t
-        mac-command-key-is-meta t
-        mac-command-modifier 'meta
-        mac-option-modifier 'meta
-        mac-use-title-bar nil))
-
-
-    ;; (require 'nano-counsel)
-
-  (setq default-frame-alist '((min-height . 1)  '(height . 45)
-                              (min-width  . 1)  '(width  . 81)
-                              (vertical-scroll-bars . nil)
-                              (internal-border-width . 24)
-                              (undecorated . t)
-                              (tool-bar-lines . 0)
-                              (menu-bar-lines . 1)))
-
-  ;; (setq initial-frame-alist default-frame-alist)
+(setq frame-resize-pixelwise t)
 
 (use-package mixed-pitch
   :hook text-mode)
 
 (use-package all-the-icons)
-
-(set-face-attribute 'default nil
-                    :family "Input"
-                    :weight 'light
-                    :height 250)
-
-(set-face-attribute 'bold nil
-                    :family "Input"
-                    :weight 'bold)
-
-(set-face-attribute 'italic nil
-                    :family "Input"
-                    :weight 'semilight
-                    :slant 'italic)
-
-(set-face-attribute 'bold-italic nil
-                    :family "Input"
-                    :weight 'bold
-                    :slant 'italic)
 
 (setq-default fill-column 80                          ; Default line width
                 sentence-end-double-space nil           ; Use a single space after dots
@@ -218,7 +178,8 @@
   :custom
   (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
   :general
-  (leader-def '(normal visual) "j" 'avy-goto-char-2))
+  (leader-def '(normal visual) "j" 'avy-goto-char-2)
+  (general-def "C-j" 'avy-goto-char-2))
 
 (use-package helpful
   :general
@@ -230,6 +191,8 @@
     "h k" 'helpful-key
     "h x" 'helpful-command
     "h ." 'helpful-at-point))
+
+(setq ido-ignore-buffers '("^ " "\*"))
 
 (use-package magit
   :general
@@ -335,6 +298,12 @@
 
 (use-package tempel-collection)
 
+(use-package shrink-path)
+(use-package eshell-vterm
+  :config
+  (defalias 'eshell/v 'eshell-exec-visual))
+(use-package eshell-up)
+
 (use-package dirvish
     :straight (dirvish :type git :host github :repo "isamert/dirvish")
     :custom
@@ -401,11 +370,12 @@
             "."   'find-file
 
             ;; buffers
-            "b b" 'switch-to-buffer
-            "b k" 'kill-some-buffers
+            "b b" 'ido-switch-buffer
+            "b B" 'bs-show
+            "b K" 'ido-kill-buffer
             "b k" 'kill-this-buffer
-            "b n" 'evil-next-buffer
-            "b p" 'evil-prev-buffer
+            "b n" 'bs-cycle-next
+            "b p" 'bs-cycle-previous
 
             ;; windows
             "w w" 'evil-window-next
@@ -433,6 +403,6 @@
             "g j" 'evil-previous-visual-line
             "C-u" 'evil-scroll-up)
 
-(general-define-key 'override "C-v" 'evil-paste-after)
+(general-define-key "C-v" 'evil-paste-after)
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)
