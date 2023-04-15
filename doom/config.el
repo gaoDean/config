@@ -135,7 +135,6 @@
 
   (add-to-list 'org-latex-classes
                '("orgox"
-                 ;; (get-string-from-file "~/.config/doom/setupfile.sty")
                  "
                 \\documentclass[hidelinks]{article}
                 [DEFAULT-PACKAGES]

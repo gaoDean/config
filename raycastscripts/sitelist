@@ -75,3 +75,6 @@ tikz gantt chart | https://tex.stackexchange.com/questions/344323/how-to-create-
 good persuasive on mobile restrictions | https://blogs.ischool.berkeley.edu/w231/2020/11/30/should-we-regulate-apps-like-we-do-addictive-drugs/
 syntax highlighting is bad | https://www.linusakesson.net/programming/syntaxhighlighting/index.php
 svelte forms example | https://learn.svelte.dev/tutorial/form-validation
+emacs init hooks | https://www.gnu.org/software/emacs/manual/html_node/elisp/Startup-Summary.html#Startup-Summary
+org mode get in-buffer settings header properties | https://emacs.stackexchange.com/questions/21713/how-to-get-property-values-from-org-file-headers
+early init emacs | https://github.com/willbchang/ward-emacs/blob/master/early-init.el#L14

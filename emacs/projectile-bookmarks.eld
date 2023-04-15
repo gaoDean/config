@@ -1,1 +1,1 @@
-("~/.config/" "~/vau/" "~/.config/emacs/straight/repos/nano-splash/")
+("~/.config/emacs/straight/repos/nano-theme/" "~/.config/doom/emacs/" "~/.config/alacritty/catppuccin/" "~/.config/" "~/vau/" "~/.config/emacs/straight/repos/nano-splash/")

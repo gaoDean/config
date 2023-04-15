@@ -278,7 +278,6 @@ I'm using FiraCode for the superstar header bullet because the bullet isn't as b
 
   (add-to-list 'org-latex-classes
                '("orgox"
-                 ;; (get-string-from-file "~/.config/doom/setupfile.sty")
                  "
                 \\documentclass[hidelinks]{article}
                 [DEFAULT-PACKAGES]
