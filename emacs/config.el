@@ -97,16 +97,11 @@
                                          (propertize "[M]" 'face `(:inherit face-faded)))))
                   (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
 (setq-default mode-line-format nil)
+(set-face-attribute 'header-line nil
+                    :underline nil
+                    :background nil)
 
-
-(defun dg/set-elegant-header-faces (&rest r)
-  (set-face-attribute 'header-line nil
-                      :underline nil
-                      :background nil))
-
-(with-eval-after-load 'nano-theme (dg/set-elegant-header-faces))
-(advice-add 'nano-dark :after #'dg/set-elegant-header-faces)
-(advice-add 'nano-light :after #'dg/set-elegant-header-faces)
+(set-face-background 'header-line nil)
 
 (setq user-full-name "Dean Gao"
       user-mail-address "gao.dean@hotmail.com")
@@ -228,7 +223,7 @@
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
-(use-package citeproc)
+(use-package citeproc :if (eq major-mode 'org-mode))
 
 (use-package avy
   :custom
@@ -430,6 +425,7 @@
         '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
         delete-by-moving-to-trash t
         insert-directory-program "gls"
+        dired-kill-when-opening-new-dired-buffer t
         dired-use-ls-dired t
         dired-listing-switches
         "-l --almost-all --human-readable --group-directories-first --no-group")

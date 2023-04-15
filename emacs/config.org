@@ -32,7 +32,7 @@
 
   ;; https://stackoverflow.com/questions/27758800/why-does-emacs-leave-a-gap-when-trying-to-maximize-the-frame
   (setq frame-resize-pixelwise t)
-  
+
   (setq use-short-answers t)
   (setq mac-command-modifier 'super
         mac-option-modifier 'meta)
@@ -78,6 +78,7 @@
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment   'utf-8)
+  
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'reverse
         uniquify-separator " • "
@@ -129,10 +130,6 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
   (setq straight-host-usernames
         '((github . "gaoDean")
           (gitlab . "gaoDean")))
-#+end_src
-** El Patch (disabled)
-#+begin_src elisp :tangle no
-(use-package el-patch)
 #+end_src
 * Benchmark
 #+begin_src elisp
@@ -219,14 +216,8 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
   (with-eval-after-load 'nano-splash
     (require 'nano-session))
 #+end_src
-** Nano Modeline (disabled)
-#+begin_src elisp :tangle no
-  (use-package nano-modeline
-    :straight (nano-modeline :type git :host github :repo "rougier/nano-modeline")
-    :hook pre-command)
-#+end_src
 ** Elegant Modeline
-Taken from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el][here]]
+Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el][here]]
 #+begin_src elisp
   (defun mode-line-render (left right)
     (let* ((available-width (- (window-width) (length left) )))
@@ -244,16 +235,12 @@ Taken from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el][h
                                            (propertize "[M]" 'face `(:inherit face-faded)))))
                     (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
   (setq-default mode-line-format nil)
+  (set-face-attribute 'header-line nil
+                      :underline nil
+                      :background nil)
 
+  (set-face-background 'header-line nil)
 
-  (defun dg/set-elegant-header-faces (&rest r)
-    (set-face-attribute 'header-line nil
-                        :underline nil
-                        :background nil))
-
-  (with-eval-after-load 'nano-theme (dg/set-elegant-header-faces))
-  (advice-add 'nano-dark :after #'dg/set-elegant-header-faces)
-  (advice-add 'nano-light :after #'dg/set-elegant-header-faces)
 #+end_src
 * System
 #+begin_src elisp
@@ -412,7 +399,7 @@ Taken from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el][h
 #+end_src
 *** Latex
 #+begin_src elisp
-(use-package citeproc)
+(use-package citeproc :if (eq major-mode 'org-mode))
 #+end_src
 * Navigation
 ** Avy
@@ -674,6 +661,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
           '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
           delete-by-moving-to-trash t
           insert-directory-program "gls"
+          dired-kill-when-opening-new-dired-buffer t
           dired-use-ls-dired t
           dired-listing-switches
           "-l --almost-all --human-readable --group-directories-first --no-group")
