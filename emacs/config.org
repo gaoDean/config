@@ -401,6 +401,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+begin_src elisp
 (use-package citeproc :if (eq major-mode 'org-mode))
 #+end_src
+** Org functions
 * Navigation
 ** Avy
 #+begin_src elisp
