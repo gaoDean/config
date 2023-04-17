@@ -150,6 +150,7 @@
    org-hide-emphasis-markers t
    org-modern-label-border 0.3
    org-modern-hide-stars " "
+   org-image-actual-width '(400)
    line-spacing 0.1
    org-pretty-entities t
    org-ellipsis "…")
@@ -272,8 +273,7 @@
   (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
   :general
   (leader-def '(normal visual) "j" 'avy-goto-char-2)
-  :general
-  (general-define-key "C-j" 'avy-goto-char-2))
+  ("C-c j" 'avy-goto-char-2))
 
 (use-package helpful
   :general
@@ -496,6 +496,16 @@
   (interactive)
   (find-alternate-file ".."))
 
+(defun my/kill-all-dired-buffers-and-quit ()
+"Kill all Dired buffers and quit the current Dired buffer."
+(interactive)
+(quit-window)
+(mapc (lambda (buffer)
+        (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+          (kill-buffer buffer)))
+      (buffer-list)))
+
+
 (use-package dired-open :after dirvish)
 
 (use-package dirvish
@@ -540,10 +550,10 @@
     (kbd "d") 'dired-do-delete
     (kbd "x") 'dired-do-delete
     (kbd "f") 'dirvish-file-info-menu
-    ;; (kbd "h") #'my/dired-up-directory-in-buffer
     (kbd "h") 'dired-up-directory
     (kbd "l") 'dired-find-alternate-file
     (kbd "o") 'dired-open-file
+    (kbd "q") 'my/kill-all-dired-buffers-and-quit
     (kbd "m") 'dired-mark
     (kbd "p") 'dirvish-yank
     (kbd "r") 'dired-do-rename
@@ -583,7 +593,7 @@
 (leader-def :keymaps 'normal
   "b" '(:ignore t :wk "buffers")
   "b b" 'ido-switch-buffer
-  "b B" 'bs-show
+  "b B" 'ibuffer
   "b K" 'ido-kill-buffer
   "b k" 'kill-this-buffer
   "b n" 'bs-cycle-next

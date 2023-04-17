@@ -321,6 +321,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
      org-hide-emphasis-markers t
      org-modern-label-border 0.3
      org-modern-hide-stars " "
+     org-image-actual-width '(400)
      line-spacing 0.1
      org-pretty-entities t
      org-ellipsis "…")
@@ -473,8 +474,7 @@ Adapted from [[https://emacs.stackexchange.com/questions/64607/org-display-remot
     (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
     :general
     (leader-def '(normal visual) "j" 'avy-goto-char-2)
-    :general
-    (general-define-key "C-j" 'avy-goto-char-2))
+    ("C-c j" 'avy-goto-char-2))
 #+end_src
 
 * Tools
@@ -768,6 +768,16 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     (interactive)
     (find-alternate-file ".."))
 
+  (defun my/kill-all-dired-buffers-and-quit ()
+  "Kill all Dired buffers and quit the current Dired buffer."
+  (interactive)
+  (quit-window)
+  (mapc (lambda (buffer)
+          (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+            (kill-buffer buffer)))
+        (buffer-list)))
+
+
   (use-package dired-open :after dirvish)
 
   (use-package dirvish
@@ -812,10 +822,10 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
       (kbd "d") 'dired-do-delete
       (kbd "x") 'dired-do-delete
       (kbd "f") 'dirvish-file-info-menu
-      ;; (kbd "h") #'my/dired-up-directory-in-buffer
       (kbd "h") 'dired-up-directory
       (kbd "l") 'dired-find-alternate-file
       (kbd "o") 'dired-open-file
+      (kbd "q") 'my/kill-all-dired-buffers-and-quit
       (kbd "m") 'dired-mark
       (kbd "p") 'dirvish-yank
       (kbd "r") 'dired-do-rename
@@ -860,6 +870,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
       (if found-file
           (async-start-process "quicklook" "qlmanage" nil "-p " found-file)
         (message "Exported file not found"))))
+
 #+end_src
 
 ** Maps
@@ -867,7 +878,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     (leader-def :keymaps 'normal
       "b" '(:ignore t :wk "buffers")
       "b b" 'ido-switch-buffer
-      "b B" 'bs-show
+      "b B" 'ibuffer
       "b K" 'ido-kill-buffer
       "b k" 'kill-this-buffer
       "b n" 'bs-cycle-next
