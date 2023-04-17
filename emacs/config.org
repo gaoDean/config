@@ -1,8 +1,10 @@
 #+author: Dean Gao
 #+title: config.org
-#+startup: overview
+#+startup: overview inlineimages
 #+property: header-args :tangle config.el
 #+auto_tangle: t
+
+[[./cat.jpg]]
 
 * Init
 ** early-init.el
@@ -28,13 +30,14 @@
                               (tool-bar-lines . 0)
                               (fullscreen . maximized)
                               (menu-bar-lines . 0)))
+
   (setq initial-frame-alist default-frame-alist)
 
   ;; https://stackoverflow.com/questions/27758800/why-does-emacs-leave-a-gap-when-trying-to-maximize-the-frame
   (setq frame-resize-pixelwise t)
 
   (setq use-short-answers t)
-  (setq mac-command-modifier 'super
+  (setq mac-command-modifier 'meta
         mac-option-modifier 'meta)
 
   ;; Resizing the Emacs frame can be a terribly expensive part of changing the
@@ -45,6 +48,8 @@
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)
   (setq inhibit-startup-echo-area-message t)
+  (setq inhibit-compacting-font-caches t)
+
   (setq initial-scratch-message nil)
   (setq initial-buffer-choice nil)
   (setq frame-title-format nil)
@@ -61,6 +66,11 @@
   (setq fill-column 80)
   (setq confirm-nonexistent-file-or-buffer nil)
   (setq org-return-follows-link t)
+  (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
+
+  ;; https://web.archive.org/web/20170413150436/https://ogbe.net/emacsconfig.html
+  (setq scroll-step 1
+        scroll-conservatively 10000)
 
   (if (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -78,7 +88,7 @@
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment   'utf-8)
-  
+
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'reverse
         uniquify-separator " • "
@@ -96,6 +106,8 @@
       ad-do-it))
   (ad-activate 'term-sentinel)
 
+  (defun display-startup-echo-area-message ()
+    (message ""))
 #+end_src
 ** init.el
 My approach is to not use ~org-babel-load-file~ because its slow, and instead use ~org-auto-tangle~ to tangle upon save, and load the elisp.
@@ -189,6 +201,13 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
     (evil-commentary-mode))
 #+end_src
 
+* System
+#+begin_src elisp
+  (setq user-full-name "Dean Gao"
+        user-mail-address "gao.dean@hotmail.com")
+
+  (add-to-list 'load-path "~/.config/emacs/plugins/")
+#+end_src
 * Appearance
 ** Nano Theme
 #+begin_src elisp
@@ -212,7 +231,6 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
 
 ** Nano Session
 #+begin_src elisp
-  (add-to-list 'load-path "~/.config/emacs/plugins/")
   (with-eval-after-load 'nano-splash
     (require 'nano-session))
 #+end_src
@@ -241,14 +259,6 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 
   (set-face-background 'header-line nil)
 
-#+end_src
-* System
-#+begin_src elisp
-  (setq user-full-name "Dean Gao"
-        user-mail-address "gao.dean@hotmail.com")
-
-  (defun display-startup-echo-area-message ()
-    (message ""))
 #+end_src
 * Typography
 ** Mixed pitch mode
@@ -299,7 +309,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 * Org
 ** Org
 #+begin_src elisp
-(use-package org :straight (:type built-in))
+    (use-package org :straight (:type built-in))
 #+end_src
 ** Org Modern
 #+begin_src elisp
@@ -336,20 +346,28 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+begin_src elisp
   (use-package org-fragtog
     :init
-    (setq org-startup-with-latex-preview t
+    (setq org-startup-with-latex-preview nil
           org-latex-create-formula-image-program 'dvisvgm
-          org-highlight-latex-and-related '(latex script entities))
+          org-highlight-latex-and-related '(latex script entities)
+          org-latex-preview-ltxpng-directory "~/.cache/emacs/ltxpng/")
     :config
     (plist-put org-format-latex-options :scale 2.6)
     :hook org-mode)
 #+end_src
 
+** Org Imgtog
+#+begin_src elisp
+  (use-package org-imgtog
+    :straight (org-imgtog :type git :host github :repo "gaoDean/org-imgtog" :local-repo "~/repos/rea/org-imgtog")
+    :hook org-mode)
+#+end_src
 ** Org Appear
 #+begin_src elisp
 (use-package org-appear
   :hook org-mode
   :custom
   (org-appear-autoentities t)
+  (org-appear-submarkers t)
   (org-appear-autolinks t))
 #+end_src
 ** Org Auto tangle
@@ -360,37 +378,32 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 ** Org Babel
 *** Export
 #+begin_src elisp
-(with-eval-after-load 'org
-  (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
-        org-latex-default-packages-alist
-        '(("AUTO" "inputenc" nil
-          ("pdflatex"))
-         ("T1" "fontenc" nil
-          ("pdflatex"))
-         ("" "graphicx" t)
-         ("" "longtable" t)
-         ("" "wrapfig" nil)
-         ("" "rotating" nil)
-         ("normalem" "ulem" t)
-         ("" "amsmath" t)
-         ("" "amssymb" t)
-         ("" "capt-of" nil)
-         ("" "hyperref" t))))
+  (with-eval-after-load 'org
+    (require 'ox-latex)
 
-(with-eval-after-load 'ox-latex
-  (defun get-string-from-file (filePath)
-    "Return file content as string."
-    (with-temp-buffer
-      (insert-file-contents filePath)
-      (buffer-string)))
+    (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
+          org-latex-default-packages-alist
+          '(("AUTO" "inputenc" nil
+             ("pdflatex"))
+            ("T1" "fontenc" nil
+             ("pdflatex"))
+            ("" "graphicx" t)
+            ("" "longtable" t)
+            ("" "wrapfig" nil)
+            ("" "rotating" nil)
+            ("normalem" "ulem" t)
+            ("" "amsmath" t)
+            ("" "amssymb" t)
+            ("" "capt-of" nil)
+            ("" "hyperref" t)))
 
   (add-to-list 'org-latex-classes
                '("orgox"
                  "
-                \\documentclass[hidelinks]{article}
-                [DEFAULT-PACKAGES]
-                [PACKAGES]
-                [EXTRA]"
+                  \\documentclass[hidelinks]{article}
+                  [DEFAULT-PACKAGES]
+                  [PACKAGES]
+                  [EXTRA]"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -401,16 +414,67 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+begin_src elisp
 (use-package citeproc :if (eq major-mode 'org-mode))
 #+end_src
-** Org functions
+** Org Publish
+#+begin_src elisp
+  (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
+  (setq org-publish-project-alist
+        '(("org-notes"
+           :base-directory "~/org/"
+           :publishing-directory "~/org/pub/"
+           :base-extension "org"
+           :publishing-function org-html-publish-to-html
+           :exclude "pub"
+           :recursive t
+           :html-extension "html"
+           :html-preamble t
+           :section-numbers t
+           :with-toc t
+           :html-head "<link rel=\"stylesheet\"
+                       href=\"/web/main.css\"
+                       type=\"text/css\"/>")
+          ("org-static"
+           :base-directory "~/org/"
+           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+           :publishing-directory "~/org/pub/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("org" :components ("org-notes" "org-static"))))
+#+end_src
+** Remote Inline
+Adapted from [[https://emacs.stackexchange.com/questions/64607/org-display-remote-inline-images-not-working][here]]
+*** Images
+#+begin_src elisp
+  (setq org-display-remote-inline-images 'cache)
+  (defun org-http-image-data-fn (protocol link _description)
+  "Interpret LINK as an URL to an image file."
+  (when (and (image-type-from-file-name link)
+             (not (eq org-display-remote-inline-images 'skip)))
+    (if-let (buf (url-retrieve-synchronously (concat protocol ":" link)))
+        (with-current-buffer buf
+          (goto-char (point-min))
+          (re-search-forward "\r?\n\r?\n" nil t)
+          (buffer-substring-no-properties (point) (point-max)))
+      (message "Download of image \"%s\" failed" link)
+      nil)))
+  (org-link-set-parameters "http"  :image-data-fun #'org-http-image-data-fn)
+(org-link-set-parameters "https" :image-data-fun #'org-http-image-data-fn)
+#+end_src
+*** Video
+#+begin_src elisp
+  (use-package org-yt
+    :straight (org-yt :type git :host github :repo "TobiasZawada/org-yt"))
+#+end_src
 * Navigation
 ** Avy
 #+begin_src elisp
-    (use-package avy
-      :custom
-      (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
-      :general
-      (leader-def '(normal visual) "j" 'avy-goto-char-2)
-      (general-define-key "C-j" 'avy-goto-char-2))
+  (use-package avy
+    :custom
+    (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
+    :general
+    (leader-def '(normal visual) "j" 'avy-goto-char-2)
+    :general
+    (general-define-key "C-j" 'avy-goto-char-2))
 #+end_src
 
 * Tools
@@ -451,12 +515,23 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
     (rg-enable-menu))
 #+end_src
 
+** Flycheck
+#+begin_src elisp
+  ;; (use-package flycheck
+  ;;   :hook (after-init . global-flycheck-mode))
+#+end_src
+* Languages
+** yaml
+#+begin_src elisp
+  (use-package yaml-mode
+    :mode ("\\.ya?ml\\'" . yaml-mode))
+#+end_src
 * Git
 ** Magit
 #+begin_src elisp
   (use-package magit
     :general
-    (leader-def 'normal "g g" 'magit))
+    (leader-def 'normal "g" 'magit))
 #+end_src
 
 ** Projectile
@@ -503,7 +578,6 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
     :general
     (:keymaps 'vertico-map
               "?" 'minibuffer-completion-help
-              "M-RET" 'minibuffer-force-complete-and-exit
               "C-j" 'vertico-next
               "C-k" 'vertico-previous
               "M-TAB" 'minibuffer-complete))
@@ -533,6 +607,21 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 
 #+end_src
 
+** Tempel
+#+begin_src elisp
+  (use-package tempel
+    :config
+    ;; Setup completion at point
+    (defun tempel-setup-capf ()
+      (setq-local completion-at-point-functions
+                  (cons #'tempel-expand
+                        completion-at-point-functions)))
+
+    (add-hook 'prog-mode-hook 'tempel-setup-capf)
+    (add-hook 'text-mode-hook 'tempel-setup-capf))
+
+  (use-package tempel-collection :after tempel)
+#+end_src
 ** Corfu
 #+begin_src elisp
   (use-package corfu
@@ -558,20 +647,30 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
               "S-TAB" 'corfu-previous))
 #+end_src
 
-** Tempel
+** Cape
 #+begin_src elisp
-  (use-package tempel
+  (use-package cape
     :config
-    ;; Setup completion at point
-    (defun tempel-setup-capf ()
-      (setq-local completion-at-point-functions
-                  (cons #'tempel-expand
-                        completion-at-point-functions)))
 
-    (add-hook 'prog-mode-hook 'tempel-setup-capf)
-    (add-hook 'text-mode-hook 'tempel-setup-capf))
+    (defun cape-setup-capf ()
+      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+      ;; (add-to-list 'completion-at-point-functions #'cape-file)
+      (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+      ;; (add-to-list 'completion-at-point-functions #'cape-history)
+      ;; (add-to-list 'completion-at-point-functions #'cape-keyword)
+      ;; (add-to-list 'completion-at-point-functions #'cape-tex)
+      ;; (add-to-list 'completion-at-point-functions #'cape-sgml)
+      ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+      ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+      ;; (add-to-list 'completion-at-point-functions #'cape-dict)
+      ;; (add-to-list 'completion-at-point-functions #'cape-symbol)
+      ;; (add-to-list 'completion-at-point-functions #'cape-line)
+      )
 
-  (use-package tempel-collection :after tempel)
+    (add-hook 'prog-mode-hook 'cape-setup-capf)
+    (add-hook 'text-mode-hook 'cape-setup-capf)
+
+    )
 #+end_src
 ** Company (disabled)
 #+begin_src elisp :tangle no
@@ -592,7 +691,9 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 
 * Terminal
 ** Eshell
+*** Tools
 #+begin_src elisp
+
   (use-package shrink-path)
   (use-package eshell-vterm
     :config
@@ -600,14 +701,37 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
   (use-package eshell-up)
 
   (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
-  
+#+end_src
+*** Aliases
+#+begin_src elisp
+
+  (defun fzf (strings)
+    (completing-read "Filter: " strings))
+
+  (defun eshell/get-brew-formulae ()
+    (split-string (shell-command-to-string "brew formulae") "\n" t))
+
+  (defun eshell/bi ()
+                      (let ((selected (fzf (eshell/get-brew-formulae))))
+                        (insert (concat "brew install " selected))
+                        (eshell-command-result (concat "brew info " selected))))
+
+  (setq my/eshell-alises '(
+                           ("f"  . "find-file")
+                           ("l"  . "ls -lh $*")
+                           ("la" . "ls -alh $*")
+                           ("gs" . "magit-status $*")
+                           ("g"  . "magit $*")
+                           ("d"  . "dirvish $*")
+                           ))
+
+
+
   (add-hook 'eshell-mode-hook (lambda ()
-    (eshell/alias "f" "find-file $1")
-    (eshell/alias "l" "ls -lh $*")
-    (eshell/alias "la" "ls -alh $*")
-    (eshell/alias "gs" "magit-status $*")
-    (eshell/alias "g" "magit $*")
-    (eshell/alias "d" "dirvish $*")))
+                                (dolist (pair my/eshell-alises)
+                                  (eshell/alias (car pair) (cdr pair)))))
+
+
 #+end_src
 *** Prompt
 Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8ef2d06454254bb3e1e41][here]], changed loop to cl-loop
@@ -640,11 +764,14 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
 * Files
 ** Dirvish
 #+begin_src elisp
-  (use-package dired-open)
+  (defun my/dired-up-directory-in-buffer ()
+    (interactive)
+    (find-alternate-file ".."))
+
+  (use-package dired-open :after dirvish)
 
   (use-package dirvish
     :hook (emacs-startup . dirvish-override-dired-mode)
-    :after dired-open
     :straight (dirvish :type git :host github :repo "isamert/dirvish")
     :custom
     (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
@@ -656,10 +783,11 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     :init
     ;; (dirvish-peek-mode) ; Preview files in minibuffer
     ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-    (setq dirvish-mode-line-format
-          '(:left (sort symlink) :right (omit yank index))
-          dirvish-attributes
-          '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
+    (put 'dired-find-alternate-file 'disabled nil)
+    (setq dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index))
+          dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
+          dired-recursive-copies 'always
+          dired-recursive-deletes 'always
           delete-by-moving-to-trash t
           insert-directory-program "gls"
           dired-kill-when-opening-new-dired-buffer t
@@ -684,12 +812,14 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
       (kbd "d") 'dired-do-delete
       (kbd "x") 'dired-do-delete
       (kbd "f") 'dirvish-file-info-menu
+      ;; (kbd "h") #'my/dired-up-directory-in-buffer
       (kbd "h") 'dired-up-directory
-      (kbd "l") 'dired-open-file
+      (kbd "l") 'dired-find-alternate-file
+      (kbd "o") 'dired-open-file
       (kbd "m") 'dired-mark
       (kbd "p") 'dirvish-yank
       (kbd "r") 'dired-do-rename
-      (kbd "t") 'dirvish-new-empty-file-a
+      (kbd "t") 'find-file
       (kbd "u") 'dired-unmark
       (kbd "v") 'dirvish-move
       (kbd "y") 'dirvish-yank-menu
@@ -707,63 +837,90 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
   (set-register ?c (cons 'file "~/.config/emacs/config.org"))
 #+end_src
 * Mappings
+** Functions
 #+begin_src elisp
-  (defun dg/reload-init-file ()
+  (defun my/reload-init-file ()
     (interactive)
     (load-file user-init-file))
 
-  (leader-def :keymaps 'normal
-              ;; misc
-              "."   'find-file
+  (defun my/view-with-quicklook ()
+    (interactive)
+    (let* ((current-file (file-name-nondirectory (buffer-file-name)))
+           (file-extensions '(".pdf" ".html"))
+           (found-file nil)
+           (file-extension ""))
+      (while (and file-extensions (not found-file))
+        (setq file-extension (car file-extensions))
+        (let ((file-path (concat (file-name-directory (buffer-file-name))
+                                 (file-name-sans-extension current-file)
+                                 file-extension)))
+          (when (file-exists-p file-path)
+            (setq found-file file-path)))
+        (setq file-extensions (cdr file-extensions)))
+      (if found-file
+          (async-start-process "quicklook" "qlmanage" nil "-p " found-file)
+        (message "Exported file not found"))))
+#+end_src
 
-              ;; buffers
-              "b b" 'ido-switch-buffer
-              "b B" 'bs-show
-              "b K" 'ido-kill-buffer
-              "b k" 'kill-this-buffer
-              "b n" 'bs-cycle-next
-              "b p" 'bs-cycle-previous
+** Maps
+#+begin_src elisp
+    (leader-def :keymaps 'normal
+      "b" '(:ignore t :wk "buffers")
+      "b b" 'ido-switch-buffer
+      "b B" 'bs-show
+      "b K" 'ido-kill-buffer
+      "b k" 'kill-this-buffer
+      "b n" 'bs-cycle-next
+      "b p" 'bs-cycle-previous
 
-              ;; windows
-              "w w" 'evil-window-next
-              "w k" 'evil-window-up
-              "w j" 'evil-window-down
-              "w h" 'evil-window-left
-              "w l" 'evil-window-right
-              "w p" 'evil-window-mru
-              "w c" 'evil-window-delete
-              "w v" 'evil-window-vsplit
-              "w >" 'evil-window-increase-width
-              "w <" 'evil-window-decrease-width
-              "w +" 'evil-window-increase-height
-              "w -" 'evil-window-decrease-height
+      "w" '(:ignore t :wk "windows")
+      "w w" 'evil-window-next
+      "w k" 'evil-window-up
+      "w j" 'evil-window-down
+      "w h" 'evil-window-left
+      "w l" 'evil-window-right
+      "w p" 'evil-window-mru
+      "w c" 'evil-window-delete
+      "w v" 'evil-window-vsplit
+      "w >" 'evil-window-increase-width
+      "w <" 'evil-window-decrease-width
+      "w +" 'evil-window-increase-height
+      "w -" 'evil-window-decrease-height
 
-              ;; open
-              "o e" 'eshell
+      "o" '(:ignore t :wk "open")
+      "o e" 'eshell
 
-              ;; toggle
-              ;; "t w" 'writeroom-mode
+      "t" '(:ignore t :wk "toggle")
 
-              ;; actions
-              "a e" 'org-export-dispatch
+      "a" '(:ignore t :wk "actions")
+      "a e" 'org-export-dispatch
+      "a p" 'org-publish
 
-              ;; file
-              "f r" 'recentf
+      "f" '(:ignore t :wk "files")
+      "f r" 'recentf
+      "f v" 'my/view-with-quicklook
 
-              ;; emacs
-              "e r" 'dg/reload-init-file
-              "e m" 'toggle-frame-maximized
-              "e b t" 'benchmark-init/show-durations-tabulated
-              "e b r" 'benchmark-init/show-durations-tree
-              "r" 'jump-to-register)
+      "e" '(:ignore t :wk "emacs")
+      "e r" 'my/reload-init-file
+      "e m" 'toggle-frame-maximized
+  
+      "e b" '(:ignore t :wk "benchmark")
+      "e b t" 'benchmark-init/show-durations-tabulated
+      "e b r" 'benchmark-init/show-durations-tree
+      "e b i" 'emacs-init-time
 
-  (general-define-key :states '(normal visual)
-              "g j" 'evil-next-visual-line
-              "g j" 'evil-previous-visual-line
-              "C-u" 'evil-scroll-up)
+      "."   'find-file
+      "q" 'save-buffers-kill-terminal
+      "s" 'scratch-buffer
+      "r" 'jump-to-register)
 
-  (general-define-key "C-v" 'evil-paste-after)
+    (general-define-key :states '(normal visual) :keymaps 'override
+                        "g j" 'evil-next-visual-line
+                        "g k" 'evil-previous-visual-line
+                        "C-u" 'evil-scroll-up)
 
-  (general-define-key (kbd "C-x C-m") 'execute-extended-command)
+    (general-define-key "M-v" 'evil-paste-after)
+
+    (general-define-key (kbd "C-x C-m") 'execute-extended-command)
 #+end_src
 

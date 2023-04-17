@@ -19,13 +19,14 @@
                             (tool-bar-lines . 0)
                             (fullscreen . maximized)
                             (menu-bar-lines . 0)))
+
 (setq initial-frame-alist default-frame-alist)
 
 ;; https://stackoverflow.com/questions/27758800/why-does-emacs-leave-a-gap-when-trying-to-maximize-the-frame
 (setq frame-resize-pixelwise t)
 
 (setq use-short-answers t)
-(setq mac-command-modifier 'super
+(setq mac-command-modifier 'meta
       mac-option-modifier 'meta)
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
@@ -36,6 +37,8 @@
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-message t)
 (setq inhibit-startup-echo-area-message t)
+(setq inhibit-compacting-font-caches t)
+
 (setq initial-scratch-message nil)
 (setq initial-buffer-choice nil)
 (setq frame-title-format nil)
@@ -52,6 +55,11 @@
 (setq fill-column 80)
 (setq confirm-nonexistent-file-or-buffer nil)
 (setq org-return-follows-link t)
+(setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
+
+;; https://web.archive.org/web/20170413150436/https://ogbe.net/emacsconfig.html
+(setq scroll-step 1
+      scroll-conservatively 10000)
 
 (if (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -86,3 +94,6 @@
         (kill-buffer buffer))
     ad-do-it))
 (ad-activate 'term-sentinel)
+
+(defun display-startup-echo-area-message ()
+  (message ""))

@@ -62,6 +62,11 @@
   :config
   (evil-commentary-mode))
 
+(setq user-full-name "Dean Gao"
+      user-mail-address "gao.dean@hotmail.com")
+
+(add-to-list 'load-path "~/.config/emacs/plugins/")
+
 (use-package nano-theme
   :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
   :custom-face
@@ -77,7 +82,6 @@
   :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
   :config (nano-splash))
 
-(add-to-list 'load-path "~/.config/emacs/plugins/")
 (with-eval-after-load 'nano-splash
   (require 'nano-session))
 
@@ -102,12 +106,6 @@
                     :background nil)
 
 (set-face-background 'header-line nil)
-
-(setq user-full-name "Dean Gao"
-      user-mail-address "gao.dean@hotmail.com")
-
-(defun display-startup-echo-area-message ()
-  (message ""))
 
 (use-package mixed-pitch
   :hook text-mode)
@@ -171,65 +169,110 @@
 
 (use-package org-fragtog
   :init
-  (setq org-startup-with-latex-preview t
+  (setq org-startup-with-latex-preview nil
         org-latex-create-formula-image-program 'dvisvgm
-        org-highlight-latex-and-related '(latex script entities))
+        org-highlight-latex-and-related '(latex script entities)
+        org-latex-preview-ltxpng-directory "~/.cache/emacs/ltxpng/")
   :config
   (plist-put org-format-latex-options :scale 2.6)
+  :hook org-mode)
+
+(use-package org-imgtog
+  :straight (org-imgtog :type git :host github :repo "gaoDean/org-imgtog" :local-repo "~/repos/rea/org-imgtog")
   :hook org-mode)
 
 (use-package org-appear
   :hook org-mode
   :custom
   (org-appear-autoentities t)
+  (org-appear-submarkers t)
   (org-appear-autolinks t))
 
 (use-package org-auto-tangle :hook org-mode)
 
 (with-eval-after-load 'org
+  (require 'ox-latex)
+
   (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
         org-latex-default-packages-alist
         '(("AUTO" "inputenc" nil
-          ("pdflatex"))
-         ("T1" "fontenc" nil
-          ("pdflatex"))
-         ("" "graphicx" t)
-         ("" "longtable" t)
-         ("" "wrapfig" nil)
-         ("" "rotating" nil)
-         ("normalem" "ulem" t)
-         ("" "amsmath" t)
-         ("" "amssymb" t)
-         ("" "capt-of" nil)
-         ("" "hyperref" t))))
+           ("pdflatex"))
+          ("T1" "fontenc" nil
+           ("pdflatex"))
+          ("" "graphicx" t)
+          ("" "longtable" t)
+          ("" "wrapfig" nil)
+          ("" "rotating" nil)
+          ("normalem" "ulem" t)
+          ("" "amsmath" t)
+          ("" "amssymb" t)
+          ("" "capt-of" nil)
+          ("" "hyperref" t)))
 
-(with-eval-after-load 'ox-latex
-  (defun get-string-from-file (filePath)
-    "Return file content as string."
-    (with-temp-buffer
-      (insert-file-contents filePath)
-      (buffer-string)))
-
-  (add-to-list 'org-latex-classes
-               '("orgox"
-                 "
+(add-to-list 'org-latex-classes
+             '("orgox"
+               "
                 \\documentclass[hidelinks]{article}
                 [DEFAULT-PACKAGES]
                 [PACKAGES]
                 [EXTRA]"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 (use-package citeproc :if (eq major-mode 'org-mode))
+
+(setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
+(setq org-publish-project-alist
+      '(("org-notes"
+         :base-directory "~/org/"
+         :publishing-directory "~/org/pub/"
+         :base-extension "org"
+         :publishing-function org-html-publish-to-html
+         :exclude "pub"
+         :recursive t
+         :html-extension "html"
+         :html-preamble t
+         :section-numbers t
+         :with-toc t
+         :html-head "<link rel=\"stylesheet\"
+                     href=\"/web/main.css\"
+                     type=\"text/css\"/>")
+        ("org-static"
+         :base-directory "~/org/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/org/pub/"
+         :recursive t
+         :publishing-function org-publish-attachment
+         )
+        ("org" :components ("org-notes" "org-static"))))
+
+(setq org-display-remote-inline-images 'cache)
+  (defun org-http-image-data-fn (protocol link _description)
+  "Interpret LINK as an URL to an image file."
+  (when (and (image-type-from-file-name link)
+             (not (eq org-display-remote-inline-images 'skip)))
+    (if-let (buf (url-retrieve-synchronously (concat protocol ":" link)))
+        (with-current-buffer buf
+          (goto-char (point-min))
+          (re-search-forward "\r?\n\r?\n" nil t)
+          (buffer-substring-no-properties (point) (point-max)))
+      (message "Download of image \"%s\" failed" link)
+      nil)))
+  (org-link-set-parameters "http"  :image-data-fun #'org-http-image-data-fn)
+(org-link-set-parameters "https" :image-data-fun #'org-http-image-data-fn)
+
+(use-package org-yt
+  :straight (org-yt :type git :host github :repo "TobiasZawada/org-yt"))
 
 (use-package avy
   :custom
   (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
   :general
   (leader-def '(normal visual) "j" 'avy-goto-char-2)
+  :general
   (general-define-key "C-j" 'avy-goto-char-2))
 
 (use-package helpful
@@ -258,9 +301,15 @@
   :config
   (rg-enable-menu))
 
+;; (use-package flycheck
+;;   :hook (after-init . global-flycheck-mode))
+
+(use-package yaml-mode
+  :mode ("\\.ya?ml\\'" . yaml-mode))
+
 (use-package magit
   :general
-  (leader-def 'normal "g g" 'magit))
+  (leader-def 'normal "g" 'magit))
 
 (use-package projectile
     :config
@@ -300,7 +349,6 @@
   :general
   (:keymaps 'vertico-map
             "?" 'minibuffer-completion-help
-            "M-RET" 'minibuffer-force-complete-and-exit
             "C-j" 'vertico-next
             "C-k" 'vertico-previous
             "M-TAB" 'minibuffer-complete))
@@ -328,6 +376,19 @@
 (use-package vertico-posframe
   :hook (vertico-mode . vertico-posframe-mode))
 
+(use-package tempel
+  :config
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf))
+
+(use-package tempel-collection :after tempel)
+
 (use-package corfu
   :straight (:files (:defaults "extensions/*"))
   :hook (emacs-startup . global-corfu-mode)
@@ -350,18 +411,28 @@
             "TAB" 'corfu-next
             "S-TAB" 'corfu-previous))
 
-(use-package tempel
+(use-package cape
   :config
-  ;; Setup completion at point
-  (defun tempel-setup-capf ()
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions)))
 
-  (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf))
+  (defun cape-setup-capf ()
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    ;; (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+    ;; (add-to-list 'completion-at-point-functions #'cape-history)
+    ;; (add-to-list 'completion-at-point-functions #'cape-keyword)
+    ;; (add-to-list 'completion-at-point-functions #'cape-tex)
+    ;; (add-to-list 'completion-at-point-functions #'cape-sgml)
+    ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+    ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+    ;; (add-to-list 'completion-at-point-functions #'cape-dict)
+    ;; (add-to-list 'completion-at-point-functions #'cape-symbol)
+    ;; (add-to-list 'completion-at-point-functions #'cape-line)
+    )
 
-(use-package tempel-collection :after tempel)
+  (add-hook 'prog-mode-hook 'cape-setup-capf)
+  (add-hook 'text-mode-hook 'cape-setup-capf)
+
+  )
 
 (use-package shrink-path)
 (use-package eshell-vterm
@@ -371,13 +442,31 @@
 
 (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
 
+(defun fzf (strings)
+  (completing-read "Filter: " strings))
+
+(defun eshell/get-brew-formulae ()
+  (split-string (shell-command-to-string "brew formulae") "\n" t))
+
+(defun eshell/bi ()
+                    (let ((selected (fzf (eshell/get-brew-formulae))))
+                      (insert (concat "brew install " selected))
+                      (eshell-command-result (concat "brew info " selected))))
+
+(setq my/eshell-alises '(
+                         ("f"  . "find-file")
+                         ("l"  . "ls -lh $*")
+                         ("la" . "ls -alh $*")
+                         ("gs" . "magit-status $*")
+                         ("g"  . "magit $*")
+                         ("d"  . "dirvish $*")
+                         ))
+
+
+
 (add-hook 'eshell-mode-hook (lambda ()
-  (eshell/alias "f" "find-file $1")
-  (eshell/alias "l" "ls -lh $*")
-  (eshell/alias "la" "ls -alh $*")
-  (eshell/alias "gs" "magit-status $*")
-  (eshell/alias "g" "magit $*")
-  (eshell/alias "d" "dirvish $*")))
+                              (dolist (pair my/eshell-alises)
+                                (eshell/alias (car pair) (cdr pair)))))
 
 (setq eshell-prompt-regexp "^.* λ "
       eshell-prompt-function #'+eshell/prompt)
@@ -403,11 +492,14 @@
           (concat " [" (substring branch 2) "]")
         "")))
 
-(use-package dired-open)
+(defun my/dired-up-directory-in-buffer ()
+  (interactive)
+  (find-alternate-file ".."))
+
+(use-package dired-open :after dirvish)
 
 (use-package dirvish
   :hook (emacs-startup . dirvish-override-dired-mode)
-  :after dired-open
   :straight (dirvish :type git :host github :repo "isamert/dirvish")
   :custom
   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
@@ -419,10 +511,11 @@
   :init
   ;; (dirvish-peek-mode) ; Preview files in minibuffer
   ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-  (setq dirvish-mode-line-format
-        '(:left (sort symlink) :right (omit yank index))
-        dirvish-attributes
-        '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
+  (put 'dired-find-alternate-file 'disabled nil)
+  (setq dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index))
+        dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
+        dired-recursive-copies 'always
+        dired-recursive-deletes 'always
         delete-by-moving-to-trash t
         insert-directory-program "gls"
         dired-kill-when-opening-new-dired-buffer t
@@ -447,12 +540,14 @@
     (kbd "d") 'dired-do-delete
     (kbd "x") 'dired-do-delete
     (kbd "f") 'dirvish-file-info-menu
+    ;; (kbd "h") #'my/dired-up-directory-in-buffer
     (kbd "h") 'dired-up-directory
-    (kbd "l") 'dired-open-file
+    (kbd "l") 'dired-find-alternate-file
+    (kbd "o") 'dired-open-file
     (kbd "m") 'dired-mark
     (kbd "p") 'dirvish-yank
     (kbd "r") 'dired-do-rename
-    (kbd "t") 'dirvish-new-empty-file-a
+    (kbd "t") 'find-file
     (kbd "u") 'dired-unmark
     (kbd "v") 'dirvish-move
     (kbd "y") 'dirvish-yank-menu
@@ -463,60 +558,83 @@
 
 (set-register ?c (cons 'file "~/.config/emacs/config.org"))
 
-(defun dg/reload-init-file ()
+(defun my/reload-init-file ()
   (interactive)
   (load-file user-init-file))
 
+(defun my/view-with-quicklook ()
+  (interactive)
+  (let* ((current-file (file-name-nondirectory (buffer-file-name)))
+         (file-extensions '(".pdf" ".html"))
+         (found-file nil)
+         (file-extension ""))
+    (while (and file-extensions (not found-file))
+      (setq file-extension (car file-extensions))
+      (let ((file-path (concat (file-name-directory (buffer-file-name))
+                               (file-name-sans-extension current-file)
+                               file-extension)))
+        (when (file-exists-p file-path)
+          (setq found-file file-path)))
+      (setq file-extensions (cdr file-extensions)))
+    (if found-file
+        (async-start-process "quicklook" "qlmanage" nil "-p " found-file)
+      (message "Exported file not found"))))
+
 (leader-def :keymaps 'normal
-            ;; misc
-            "."   'find-file
+  "b" '(:ignore t :wk "buffers")
+  "b b" 'ido-switch-buffer
+  "b B" 'bs-show
+  "b K" 'ido-kill-buffer
+  "b k" 'kill-this-buffer
+  "b n" 'bs-cycle-next
+  "b p" 'bs-cycle-previous
 
-            ;; buffers
-            "b b" 'ido-switch-buffer
-            "b B" 'bs-show
-            "b K" 'ido-kill-buffer
-            "b k" 'kill-this-buffer
-            "b n" 'bs-cycle-next
-            "b p" 'bs-cycle-previous
+  "w" '(:ignore t :wk "windows")
+  "w w" 'evil-window-next
+  "w k" 'evil-window-up
+  "w j" 'evil-window-down
+  "w h" 'evil-window-left
+  "w l" 'evil-window-right
+  "w p" 'evil-window-mru
+  "w c" 'evil-window-delete
+  "w v" 'evil-window-vsplit
+  "w >" 'evil-window-increase-width
+  "w <" 'evil-window-decrease-width
+  "w +" 'evil-window-increase-height
+  "w -" 'evil-window-decrease-height
 
-            ;; windows
-            "w w" 'evil-window-next
-            "w k" 'evil-window-up
-            "w j" 'evil-window-down
-            "w h" 'evil-window-left
-            "w l" 'evil-window-right
-            "w p" 'evil-window-mru
-            "w c" 'evil-window-delete
-            "w v" 'evil-window-vsplit
-            "w >" 'evil-window-increase-width
-            "w <" 'evil-window-decrease-width
-            "w +" 'evil-window-increase-height
-            "w -" 'evil-window-decrease-height
+  "o" '(:ignore t :wk "open")
+  "o e" 'eshell
 
-            ;; open
-            "o e" 'eshell
+  "t" '(:ignore t :wk "toggle")
 
-            ;; toggle
-            ;; "t w" 'writeroom-mode
+  "a" '(:ignore t :wk "actions")
+  "a e" 'org-export-dispatch
+  "a p" 'org-publish
 
-            ;; actions
-            "a e" 'org-export-dispatch
+  "f" '(:ignore t :wk "files")
+  "f r" 'recentf
+  "f v" 'my/view-with-quicklook
 
-            ;; file
-            "f r" 'recentf
+  "e" '(:ignore t :wk "emacs")
+  "e r" 'my/reload-init-file
+  "e m" 'toggle-frame-maximized
 
-            ;; emacs
-            "e r" 'dg/reload-init-file
-            "e m" 'toggle-frame-maximized
-            "e b t" 'benchmark-init/show-durations-tabulated
-            "e b r" 'benchmark-init/show-durations-tree
-            "r" 'jump-to-register)
+  "e b" '(:ignore t :wk "benchmark")
+  "e b t" 'benchmark-init/show-durations-tabulated
+  "e b r" 'benchmark-init/show-durations-tree
+  "e b i" 'emacs-init-time
 
-(general-define-key :states '(normal visual)
-            "g j" 'evil-next-visual-line
-            "g j" 'evil-previous-visual-line
-            "C-u" 'evil-scroll-up)
+  "."   'find-file
+  "q" 'save-buffers-kill-terminal
+  "s" 'scratch-buffer
+  "r" 'jump-to-register)
 
-(general-define-key "C-v" 'evil-paste-after)
+(general-define-key :states '(normal visual) :keymaps 'override
+                    "g j" 'evil-next-visual-line
+                    "g k" 'evil-previous-visual-line
+                    "C-u" 'evil-scroll-up)
+
+(general-define-key "M-v" 'evil-paste-after)
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)
