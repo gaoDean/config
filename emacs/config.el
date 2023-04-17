@@ -245,25 +245,17 @@
          :base-directory "~/org/"
          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
          :publishing-directory "~/org/pub/"
+         :exclude "pub"
          :recursive t
          :publishing-function org-publish-attachment
          )
         ("org" :components ("org-notes" "org-static"))))
 
 (setq org-display-remote-inline-images 'cache)
-  (defun org-http-image-data-fn (protocol link _description)
-  "Interpret LINK as an URL to an image file."
-  (when (and (image-type-from-file-name link)
-             (not (eq org-display-remote-inline-images 'skip)))
-    (if-let (buf (url-retrieve-synchronously (concat protocol ":" link)))
-        (with-current-buffer buf
-          (goto-char (point-min))
-          (re-search-forward "\r?\n\r?\n" nil t)
-          (buffer-substring-no-properties (point) (point-max)))
-      (message "Download of image \"%s\" failed" link)
-      nil)))
-  (org-link-set-parameters "http"  :image-data-fun #'org-http-image-data-fn)
-(org-link-set-parameters "https" :image-data-fun #'org-http-image-data-fn)
+
+(use-package org-remoteimg
+  :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg")
+  :hook org-mode)
 
 (use-package org-yt
   :straight (org-yt :type git :host github :repo "TobiasZawada/org-yt"))
