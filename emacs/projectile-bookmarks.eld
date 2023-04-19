@@ -1,1 +1,1 @@
-("~/org/" "~/repos/rea/org-imgtog/" "~/.config/" "~/.config/doom/emacs/" "~/.config/emacs/straight/repos/nano-theme/" "~/.config/alacritty/catppuccin/" "~/.config/emacs/straight/repos/nano-splash/")
+("~/repos/rea/org-remoteimg/" "~/repos/rea/org-imgtog/" "~/.config/" "~/org/" "~/.config/doom/emacs/" "~/.config/emacs/straight/repos/nano-theme/" "~/.config/alacritty/catppuccin/" "~/.config/emacs/straight/repos/nano-splash/")

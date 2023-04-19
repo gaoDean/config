@@ -30,8 +30,6 @@
                         ;; :prefix my-leader
                         :prefix "SPC")
 
-(use-package undo-fu)
-
 (use-package evil
   :init
   (setq evil-want-integration t
@@ -98,8 +96,8 @@
                                                  'local-map   mode-line-major-mode-keymap)
                                      " %b "
                                      (if (and buffer-file-name (buffer-modified-p))
-                                         (propertize "[M]" 'face `(:inherit face-faded)))))
-                  (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
+                                         (propertize "[M]" 'face `(:inherit nano-faded)))))
+                  (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit nano-faded)))))))
 (setq-default mode-line-format nil)
 (set-face-attribute 'header-line nil
                     :underline nil
@@ -120,7 +118,7 @@
   :general
   (leader-def :keymaps 'normal "t w" 'writeroom-mode))
 
-(setq-default fill-column 80                          ; Default line width
+(setq-default fill-column 81 ;; Thou shalt not cross 80 columns in thy file
                 sentence-end-double-space nil           ; Use a single space after dots
                 bidi-paragraph-direction 'left-to-right ; Faster
                 truncate-string-ellipsis "…")           ; Nicer ellipsis
@@ -139,6 +137,64 @@
 ;; Let Emacs guess Python indent silently
 (setq python-indent-guess-indent-offset t
       python-indent-guess-indent-offset-verbose nil)
+
+(use-package helpful
+  :general
+  (leader-def 'normal
+    "h F" 'describe-face
+    "h p" 'describe-package
+    "h f" 'helpful-callable
+    "h b" 'describe-bindings
+    "h v" 'helpful-variable
+    "h k" 'helpful-key
+    "h x" 'helpful-command
+    "h ." 'helpful-at-point))
+
+(use-package which-key
+  :init
+  (setq which-key-show-early-on-C-h t)
+  :hook pre-command
+  :config
+  (which-key-setup-side-window-right))
+
+(setq ido-ignore-buffers '("^ " "\*"))
+
+(use-package rg
+  :commands (rg)
+  :config
+  (rg-enable-menu))
+
+;; (use-package flycheck
+;;   :hook (after-init . global-flycheck-mode))
+
+(use-package hl-todo
+  :hook emacs-startup)
+
+(setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
+
+(setq create-lockfiles nil)
+
+(use-package undo-fu)
+(use-package undo-fu-session
+  :custom
+  (undo-fu-session-directory "~/.cache/emacs/undo-fu-session")
+  :hook (emacs-startup . undo-fu-session-global-mode))
+
+(defun my/set-face (face inherit)
+  (face-spec-reset-face face)
+  (set-face-attribute face nil :inherit inherit))
+
+(use-package whitespace-cleanup-mode
+  :hook (prog-mode . whitespace-cleanup-mode))
+
+(require 'whitespace)
+(setq whitespace-style '(face empty tabs lines-tail trailing))
+(setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
+(add-hook 'prog-mode-hook 'whitespace-mode)
+(with-eval-after-load 'whitespace
+  (my/set-face 'whitespace-line 'nano-critical)
+  (my/set-face 'whitespace-trailing 'nano-critical-i)
+  (my/set-face 'whitespace-tab 'nano-critical-i))
 
 (use-package org :straight (:type built-in))
 
@@ -225,6 +281,10 @@
 
 (use-package citeproc :if (eq major-mode 'org-mode))
 
+(setq org-html-postamble-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
+<p class=\"updated\">Date: %d</p>
+<p class=\"creator\">%c</p>")))
+
 (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
 (setq org-publish-project-alist
       '(("org-notes"
@@ -251,14 +311,12 @@
          )
         ("org" :components ("org-notes" "org-static"))))
 
+(setq url-cache-directory "~/.cache/emacs/url")
 (setq org-display-remote-inline-images 'cache)
+;; (setq org-display-remote-inline-images 'download)
 
 (use-package org-remoteimg
-  :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg")
-  :hook org-mode)
-
-(use-package org-yt
-  :straight (org-yt :type git :host github :repo "TobiasZawada/org-yt"))
+  :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg"))
 
 (use-package avy
   :custom
@@ -266,35 +324,6 @@
   :general
   (leader-def '(normal visual) "j" 'avy-goto-char-2)
   ("C-c j" 'avy-goto-char-2))
-
-(use-package helpful
-  :general
-  (leader-def 'normal
-    "h F" 'describe-face
-    "h p" 'describe-package
-    "h f" 'helpful-callable
-    "h b" 'describe-bindings
-    "h v" 'helpful-variable
-    "h k" 'helpful-key
-    "h x" 'helpful-command
-    "h ." 'helpful-at-point))
-
-(use-package which-key
-  :init
-  (setq which-key-show-early-on-C-h t)
-  :hook pre-command
-  :config
-  (which-key-setup-side-window-right))
-
-(setq ido-ignore-buffers '("^ " "\*"))
-
-(use-package rg
-  :commands (rg)
-  :config
-  (rg-enable-menu))
-
-;; (use-package flycheck
-;;   :hook (after-init . global-flycheck-mode))
 
 (use-package yaml-mode
   :mode ("\\.ya?ml\\'" . yaml-mode))
@@ -364,9 +393,6 @@
         read-file-name-completion-ignore-case t
         read-buffer-completion-ignore-case t
         completion-ignore-case t))
-
-(use-package vertico-posframe
-  :hook (vertico-mode . vertico-posframe-mode))
 
 (use-package tempel
   :config
@@ -559,6 +585,7 @@
       trash-directory "~/.Trash")
 
 (set-register ?c (cons 'file "~/.config/emacs/config.org"))
+(set-register ?i (cons 'file "~/org/index.org"))
 
 (defun my/reload-init-file ()
   (interactive)
@@ -607,6 +634,7 @@
 
   "o" '(:ignore t :wk "open")
   "o e" 'eshell
+  "o v" 'vterm
 
   "t" '(:ignore t :wk "toggle")
 
@@ -626,6 +654,9 @@
   "e b t" 'benchmark-init/show-durations-tabulated
   "e b r" 'benchmark-init/show-durations-tree
   "e b i" 'emacs-init-time
+
+  "c" '(:ignore t :wk "code")
+  "c w" 'fill-paragraph
 
   "."   'find-file
   "q" 'save-buffers-kill-terminal

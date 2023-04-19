@@ -63,7 +63,7 @@
   (setq font-lock-maximum-decoration nil)
   (setq font-lock-maximum-size nil)
   (setq auto-fill-mode nil)
-  (setq fill-column 80)
+  (setq fill-column 81) ;; Thou shalt not cross 80 columns in thy file
   (setq confirm-nonexistent-file-or-buffer nil)
   (setq org-return-follows-link t)
   (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
@@ -168,8 +168,6 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
 
 ** Evil
 #+begin_src elisp
-  (use-package undo-fu)
-
   (use-package evil
     :init
     (setq evil-want-integration t
@@ -250,8 +248,8 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
                                                    'local-map   mode-line-major-mode-keymap)
                                        " %b "
                                        (if (and buffer-file-name (buffer-modified-p))
-                                           (propertize "[M]" 'face `(:inherit face-faded)))))
-                    (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
+                                           (propertize "[M]" 'face `(:inherit nano-faded)))))
+                    (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit nano-faded)))))))
   (setq-default mode-line-format nil)
   (set-face-attribute 'header-line nil
                       :underline nil
@@ -284,8 +282,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+end_src
 ** Other
 #+begin_src elisp
-
-    (setq-default fill-column 80                          ; Default line width
+    (setq-default fill-column 81 ;; Thou shalt not cross 80 columns in thy file
                   sentence-end-double-space nil           ; Use a single space after dots
                   bidi-paragraph-direction 'left-to-right ; Faster
                   truncate-string-ellipsis "…")           ; Nicer ellipsis
@@ -304,6 +301,89 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
   ;; Let Emacs guess Python indent silently
   (setq python-indent-guess-indent-offset t
         python-indent-guess-indent-offset-verbose nil)
+
+#+end_src
+* Tools
+** Helpful
+#+begin_src elisp
+  (use-package helpful
+    :general
+    (leader-def 'normal
+      "h F" 'describe-face
+      "h p" 'describe-package
+      "h f" 'helpful-callable
+      "h b" 'describe-bindings
+      "h v" 'helpful-variable
+      "h k" 'helpful-key
+      "h x" 'helpful-command
+      "h ." 'helpful-at-point))
+#+end_src
+** Which Key
+#+begin_src elisp
+  (use-package which-key
+    :init
+    (setq which-key-show-early-on-C-h t)
+    :hook pre-command
+    :config
+    (which-key-setup-side-window-right))
+#+end_src
+
+** Ido
+#+begin_src elisp
+(setq ido-ignore-buffers '("^ " "\*"))
+#+end_src
+
+** Ripgrep
+#+begin_src elisp
+  (use-package rg
+    :commands (rg)
+    :config
+    (rg-enable-menu))
+#+end_src
+
+** Flycheck
+#+begin_src elisp
+  ;; (use-package flycheck
+  ;;   :hook (after-init . global-flycheck-mode))
+#+end_src
+** hl-todo
+#+begin_src elisp
+  (use-package hl-todo
+    :hook emacs-startup)
+#+end_src
+** Backup 
+#+begin_src elisp
+  (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
+#+end_src
+** Lockfiles
+#+begin_src elisp
+(setq create-lockfiles nil)
+#+end_src
+** Undo-fu
+#+begin_src elisp
+  (use-package undo-fu)
+  (use-package undo-fu-session
+    :custom
+    (undo-fu-session-directory "~/.cache/emacs/undo-fu-session")
+    :hook (emacs-startup . undo-fu-session-global-mode))
+#+end_src
+** Whitespace
+#+begin_src elisp
+  (defun my/set-face (face inherit)
+    (face-spec-reset-face face)
+    (set-face-attribute face nil :inherit inherit))
+
+  (use-package whitespace-cleanup-mode
+    :hook (prog-mode . whitespace-cleanup-mode))
+
+  (require 'whitespace)
+  (setq whitespace-style '(face empty tabs lines-tail trailing))
+  (setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
+  (add-hook 'prog-mode-hook 'whitespace-mode)
+  (with-eval-after-load 'whitespace
+    (my/set-face 'whitespace-line 'nano-critical)
+    (my/set-face 'whitespace-trailing 'nano-critical-i)
+    (my/set-face 'whitespace-tab 'nano-critical-i))
 
 #+end_src
 * Org
@@ -417,6 +497,10 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+end_src
 ** Org Publish
 #+begin_src elisp
+  (setq org-html-postamble-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
+  <p class=\"updated\">Date: %d</p>
+  <p class=\"creator\">%c</p>")))
+
   (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
   (setq org-publish-project-alist
         '(("org-notes"
@@ -443,21 +527,18 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
            )
           ("org" :components ("org-notes" "org-static"))))
 #+end_src
-** Remote Inline
-Adapted from [[https://emacs.stackexchange.com/questions/64607/org-display-remote-inline-images-not-working][here]]
-*** Images
+** Org Remoteimg
 #+begin_src elisp
+  (setq url-cache-directory "~/.cache/emacs/url")
   (setq org-display-remote-inline-images 'cache)
+  ;; (setq org-display-remote-inline-images 'download)
 
   (use-package org-remoteimg
-    :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg")
-    :hook org-mode)
+    :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg"))
+
+
 #+end_src
-*** Video
-#+begin_src elisp
-  (use-package org-yt
-    :straight (org-yt :type git :host github :repo "TobiasZawada/org-yt"))
-#+end_src
+
 * Navigation
 ** Avy
 #+begin_src elisp
@@ -469,49 +550,6 @@ Adapted from [[https://emacs.stackexchange.com/questions/64607/org-display-remot
     ("C-c j" 'avy-goto-char-2))
 #+end_src
 
-* Tools
-** Helpful
-#+begin_src elisp
-  (use-package helpful
-    :general
-    (leader-def 'normal
-      "h F" 'describe-face
-      "h p" 'describe-package
-      "h f" 'helpful-callable
-      "h b" 'describe-bindings
-      "h v" 'helpful-variable
-      "h k" 'helpful-key
-      "h x" 'helpful-command
-      "h ." 'helpful-at-point))
-#+end_src
-** Which Key
-#+begin_src elisp
-  (use-package which-key
-    :init
-    (setq which-key-show-early-on-C-h t)
-    :hook pre-command
-    :config
-    (which-key-setup-side-window-right))
-#+end_src
-
-** Ido
-#+begin_src elisp
-(setq ido-ignore-buffers '("^ " "\*"))
-#+end_src
-
-** Ripgrep
-#+begin_src elisp
-  (use-package rg
-    :commands (rg)
-    :config
-    (rg-enable-menu))
-#+end_src
-
-** Flycheck
-#+begin_src elisp
-  ;; (use-package flycheck
-  ;;   :hook (after-init . global-flycheck-mode))
-#+end_src
 * Languages
 ** yaml
 #+begin_src elisp
@@ -593,9 +631,6 @@ Adapted from [[https://emacs.stackexchange.com/questions/64607/org-display-remot
           read-file-name-completion-ignore-case t
           read-buffer-completion-ignore-case t
           completion-ignore-case t))
-
-  (use-package vertico-posframe
-    :hook (vertico-mode . vertico-posframe-mode))
 
 #+end_src
 
@@ -837,6 +872,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
 ** File Shortcuts
 #+begin_src elisp
   (set-register ?c (cons 'file "~/.config/emacs/config.org"))
+  (set-register ?i (cons 'file "~/org/index.org"))
 #+end_src
 * Mappings
 ** Functions
@@ -867,63 +903,67 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
 
 ** Maps
 #+begin_src elisp
-    (leader-def :keymaps 'normal
-      "b" '(:ignore t :wk "buffers")
-      "b b" 'ido-switch-buffer
-      "b B" 'ibuffer
-      "b K" 'ido-kill-buffer
-      "b k" 'kill-this-buffer
-      "b n" 'bs-cycle-next
-      "b p" 'bs-cycle-previous
+  (leader-def :keymaps 'normal
+    "b" '(:ignore t :wk "buffers")
+    "b b" 'ido-switch-buffer
+    "b B" 'ibuffer
+    "b K" 'ido-kill-buffer
+    "b k" 'kill-this-buffer
+    "b n" 'bs-cycle-next
+    "b p" 'bs-cycle-previous
 
-      "w" '(:ignore t :wk "windows")
-      "w w" 'evil-window-next
-      "w k" 'evil-window-up
-      "w j" 'evil-window-down
-      "w h" 'evil-window-left
-      "w l" 'evil-window-right
-      "w p" 'evil-window-mru
-      "w c" 'evil-window-delete
-      "w v" 'evil-window-vsplit
-      "w >" 'evil-window-increase-width
-      "w <" 'evil-window-decrease-width
-      "w +" 'evil-window-increase-height
-      "w -" 'evil-window-decrease-height
+    "w" '(:ignore t :wk "windows")
+    "w w" 'evil-window-next
+    "w k" 'evil-window-up
+    "w j" 'evil-window-down
+    "w h" 'evil-window-left
+    "w l" 'evil-window-right
+    "w p" 'evil-window-mru
+    "w c" 'evil-window-delete
+    "w v" 'evil-window-vsplit
+    "w >" 'evil-window-increase-width
+    "w <" 'evil-window-decrease-width
+    "w +" 'evil-window-increase-height
+    "w -" 'evil-window-decrease-height
 
-      "o" '(:ignore t :wk "open")
-      "o e" 'eshell
+    "o" '(:ignore t :wk "open")
+    "o e" 'eshell
+    "o v" 'vterm
 
-      "t" '(:ignore t :wk "toggle")
+    "t" '(:ignore t :wk "toggle")
 
-      "a" '(:ignore t :wk "actions")
-      "a e" 'org-export-dispatch
-      "a p" 'org-publish
+    "a" '(:ignore t :wk "actions")
+    "a e" 'org-export-dispatch
+    "a p" 'org-publish
 
-      "f" '(:ignore t :wk "files")
-      "f r" 'recentf
-      "f v" 'my/view-with-quicklook
+    "f" '(:ignore t :wk "files")
+    "f r" 'recentf
+    "f v" 'my/view-with-quicklook
 
-      "e" '(:ignore t :wk "emacs")
-      "e r" 'my/reload-init-file
-      "e m" 'toggle-frame-maximized
-  
-      "e b" '(:ignore t :wk "benchmark")
-      "e b t" 'benchmark-init/show-durations-tabulated
-      "e b r" 'benchmark-init/show-durations-tree
-      "e b i" 'emacs-init-time
+    "e" '(:ignore t :wk "emacs")
+    "e r" 'my/reload-init-file
+    "e m" 'toggle-frame-maximized
 
-      "."   'find-file
-      "q" 'save-buffers-kill-terminal
-      "s" 'scratch-buffer
-      "r" 'jump-to-register)
+    "e b" '(:ignore t :wk "benchmark")
+    "e b t" 'benchmark-init/show-durations-tabulated
+    "e b r" 'benchmark-init/show-durations-tree
+    "e b i" 'emacs-init-time
 
-    (general-define-key :states '(normal visual) :keymaps 'override
-                        "g j" 'evil-next-visual-line
-                        "g k" 'evil-previous-visual-line
-                        "C-u" 'evil-scroll-up)
+    "c" '(:ignore t :wk "code")
+    "c w" 'fill-paragraph
 
-    (general-define-key "M-v" 'evil-paste-after)
+    "."   'find-file
+    "q" 'save-buffers-kill-terminal
+    "s" 'scratch-buffer
+    "r" 'jump-to-register)
 
-    (general-define-key (kbd "C-x C-m") 'execute-extended-command)
+  (general-define-key :states '(normal visual) :keymaps 'override
+                      "g j" 'evil-next-visual-line
+                      "g k" 'evil-previous-visual-line
+                      "C-u" 'evil-scroll-up)
+
+  (general-define-key "M-v" 'evil-paste-after)
+
+  (general-define-key (kbd "C-x C-m") 'execute-extended-command)
 #+end_src
 

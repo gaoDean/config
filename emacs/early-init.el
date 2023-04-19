@@ -52,7 +52,7 @@
 (setq font-lock-maximum-decoration nil)
 (setq font-lock-maximum-size nil)
 (setq auto-fill-mode nil)
-(setq fill-column 80)
+(setq fill-column 81) ;; Thou shalt not cross 80 columns in thy file
 (setq confirm-nonexistent-file-or-buffer nil)
 (setq org-return-follows-link t)
 (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
