@@ -14,7 +14,8 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(straight-use-package 'use-package)
+;; (straight-use-package 'use-package) ;; emacs 29 built-in use-package
+(require 'use-package)
 (setq straight-use-package-by-default t)
 
 (setq straight-host-usernames
@@ -116,7 +117,7 @@
   (writeroom-fullscreen-effect 'maximized)
   (writeroom-header-line t)
   :general
-  (leader-def :keymaps 'normal "t w" 'writeroom-mode))
+  (leader-def :keymaps 'normal "t z" 'writeroom-mode))
 
 (setq-default fill-column 81 ;; Thou shalt not cross 80 columns in thy file
                 sentence-end-double-space nil           ; Use a single space after dots
@@ -170,7 +171,7 @@
 (use-package hl-todo
   :hook emacs-startup)
 
-(setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
+(setq backup-directory-alist `(("." . ,"~/.cache/emacs/backups")))
 
 (setq create-lockfiles nil)
 
@@ -187,14 +188,20 @@
 (use-package whitespace-cleanup-mode
   :hook (prog-mode . whitespace-cleanup-mode))
 
-(require 'whitespace)
-(setq whitespace-style '(face empty tabs lines-tail trailing))
-(setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
-(add-hook 'prog-mode-hook 'whitespace-mode)
-(with-eval-after-load 'whitespace
+(use-package whitespace
+  :straight nil
+  :init
+  (setq whitespace-style '(face empty tabs lines-tail trailing))
+  (setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
+  :general
+  (leader-def :keymaps 'normal "t w" 'whitespace-mode)
+  :config
   (my/set-face 'whitespace-line 'nano-critical)
   (my/set-face 'whitespace-trailing 'nano-critical-i)
   (my/set-face 'whitespace-tab 'nano-critical-i))
+
+(use-package fcitx
+  :hook (emacs-startup . fcitx-aggressive-setup))
 
 (use-package org :straight (:type built-in))
 
@@ -232,10 +239,6 @@
         org-latex-preview-ltxpng-directory "~/.cache/emacs/ltxpng/")
   :config
   (plist-put org-format-latex-options :scale 2.6)
-  :hook org-mode)
-
-(use-package org-imgtog
-  :straight (org-imgtog :type git :host github :repo "gaoDean/org-imgtog" :local-repo "~/repos/rea/org-imgtog")
   :hook org-mode)
 
 (use-package org-appear
@@ -281,9 +284,13 @@
 
 (use-package citeproc :if (eq major-mode 'org-mode))
 
-(setq org-html-postamble-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
-<p class=\"updated\">Date: %d</p>
-<p class=\"creator\">%c</p>")))
+(use-package htmlize)
+
+(setq org-html-postamble-format '(("en" "
+<p class=\"author\">Author: %a</p>
+<p class=\"updated\">Updated: %C</p>
+<p class=\"creator\">%c</p>
+")))
 
 (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
 (setq org-publish-project-alist
@@ -295,12 +302,13 @@
          :exclude "pub"
          :recursive t
          :html-extension "html"
-         :html-preamble t
+         :auto-preamble t
+         :html-postamble t
          :section-numbers t
          :with-toc t
          :html-head "<link rel=\"stylesheet\"
-                     href=\"/web/main.css\"
-                     type=\"text/css\"/>")
+                                   href=\"/web/main.css\"
+                                   type=\"text/css\"/>")
         ("org-static"
          :base-directory "~/org/"
          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
@@ -310,6 +318,12 @@
          :publishing-function org-publish-attachment
          )
         ("org" :components ("org-notes" "org-static"))))
+
+(use-package org-imgtog
+  :custom
+  (org-imgtog-preview-delay 0.2)
+  :straight (org-imgtog :type git :host github :repo "gaoDean/org-imgtog" :local-repo "~/repos/rea/org-imgtog")
+  :hook org-mode)
 
 (setq url-cache-directory "~/.cache/emacs/url")
 (setq org-display-remote-inline-images 'cache)
@@ -326,7 +340,12 @@
   ("C-c j" 'avy-goto-char-2))
 
 (use-package yaml-mode
-  :mode ("\\.ya?ml\\'" . yaml-mode))
+  :mode ("\\.ya?ml$'" . yaml-mode))
+
+(use-package lua-mode
+  :init
+  (setq lua-indent-level 4)
+  :mode ("\\.lua$" . lua-mode))
 
 (use-package magit
   :general
@@ -609,6 +628,12 @@
         (async-start-process "quicklook" "qlmanage" nil "-p " found-file)
       (message "Exported file not found"))))
 
+(defun my/git-push-org ()
+  (interactive)
+  (org-publish "org")
+  (start-process "git-push-org" nil "gaa" "org")
+  (message "done"))
+
 (leader-def :keymaps 'normal
   "b" '(:ignore t :wk "buffers")
   "b b" 'ido-switch-buffer
@@ -641,6 +666,7 @@
   "a" '(:ignore t :wk "actions")
   "a e" 'org-export-dispatch
   "a p" 'org-publish
+  "a o" 'my/git-push-org
 
   "f" '(:ignore t :wk "files")
   "f r" 'recentf
@@ -649,6 +675,11 @@
   "e" '(:ignore t :wk "emacs")
   "e r" 'my/reload-init-file
   "e m" 'toggle-frame-maximized
+
+  "e e" '(:ignore t :wk "eval")
+  "e e r" 'eval-region
+  "e e b" 'eval-buffer
+  "e e f" 'eval-defun
 
   "e b" '(:ignore t :wk "benchmark")
   "e b t" 'benchmark-init/show-durations-tabulated

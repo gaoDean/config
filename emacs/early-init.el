@@ -55,10 +55,12 @@
 (setq fill-column 81) ;; Thou shalt not cross 80 columns in thy file
 (setq confirm-nonexistent-file-or-buffer nil)
 (setq org-return-follows-link t)
+(setq backward-delete-char-untabify-method 'hungry)
 (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
 
 ;; https://web.archive.org/web/20170413150436/https://ogbe.net/emacsconfig.html
 (setq scroll-step 1
+      scroll-margin 3
       scroll-conservatively 10000)
 
 (if (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
@@ -66,7 +68,8 @@
 (if (display-graphic-p)
     (menu-bar-mode t) ;; When nil, focus problem on OSX
   (menu-bar-mode -1))
-(pixel-scroll-mode t)
+(pixel-scroll-precision-mode 1)
+(pixel-scroll-mode -1)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (temp-buffer-resize-mode)

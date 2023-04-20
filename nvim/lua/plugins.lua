@@ -225,7 +225,6 @@ local plugins = {
 		keys = {
 			{ "<leader>z", ":ZenMode<cr>"}
 		},
-		event = "BufEnter *.md",
 		opts = {
 			window = {
 				backdrop = 1,

@@ -66,10 +66,12 @@
   (setq fill-column 81) ;; Thou shalt not cross 80 columns in thy file
   (setq confirm-nonexistent-file-or-buffer nil)
   (setq org-return-follows-link t)
+  (setq backward-delete-char-untabify-method 'hungry)
   (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
 
   ;; https://web.archive.org/web/20170413150436/https://ogbe.net/emacsconfig.html
   (setq scroll-step 1
+        scroll-margin 3
         scroll-conservatively 10000)
 
   (if (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
@@ -77,7 +79,8 @@
   (if (display-graphic-p)
       (menu-bar-mode t) ;; When nil, focus problem on OSX
     (menu-bar-mode -1))
-  (pixel-scroll-mode t)
+  (pixel-scroll-precision-mode 1)
+  (pixel-scroll-mode -1)
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 4)
   (temp-buffer-resize-mode)
@@ -136,7 +139,8 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
-  (straight-use-package 'use-package)
+  ;; (straight-use-package 'use-package) ;; emacs 29 built-in use-package
+  (require 'use-package)
   (setq straight-use-package-by-default t)
 
   (setq straight-host-usernames
@@ -278,7 +282,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
     (writeroom-fullscreen-effect 'maximized)
     (writeroom-header-line t)
     :general
-    (leader-def :keymaps 'normal "t w" 'writeroom-mode))
+    (leader-def :keymaps 'normal "t z" 'writeroom-mode))
 #+end_src
 ** Other
 #+begin_src elisp
@@ -353,7 +357,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+end_src
 ** Backup 
 #+begin_src elisp
-  (setq backup-directory-alist '(("." . "~/.cache/emacs/backups")))
+  (setq backup-directory-alist `(("." . ,"~/.cache/emacs/backups")))
 #+end_src
 ** Lockfiles
 #+begin_src elisp
@@ -376,15 +380,23 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
   (use-package whitespace-cleanup-mode
     :hook (prog-mode . whitespace-cleanup-mode))
 
-  (require 'whitespace)
-  (setq whitespace-style '(face empty tabs lines-tail trailing))
-  (setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
-  (add-hook 'prog-mode-hook 'whitespace-mode)
-  (with-eval-after-load 'whitespace
+  (use-package whitespace
+    :straight nil
+    :init
+    (setq whitespace-style '(face empty tabs lines-tail trailing))
+    (setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
+    :general
+    (leader-def :keymaps 'normal "t w" 'whitespace-mode)
+    :config
     (my/set-face 'whitespace-line 'nano-critical)
     (my/set-face 'whitespace-trailing 'nano-critical-i)
     (my/set-face 'whitespace-tab 'nano-critical-i))
 
+#+end_src
+** Chinese Switch
+#+begin_src elisp
+  (use-package fcitx
+    :hook (emacs-startup . fcitx-aggressive-setup))
 #+end_src
 * Org
 ** Org
@@ -436,12 +448,6 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
     :hook org-mode)
 #+end_src
 
-** Org Imgtog
-#+begin_src elisp
-  (use-package org-imgtog
-    :straight (org-imgtog :type git :host github :repo "gaoDean/org-imgtog" :local-repo "~/repos/rea/org-imgtog")
-    :hook org-mode)
-#+end_src
 ** Org Appear
 #+begin_src elisp
 (use-package org-appear
@@ -497,9 +503,13 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 #+end_src
 ** Org Publish
 #+begin_src elisp
-  (setq org-html-postamble-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
-  <p class=\"updated\">Date: %d</p>
-  <p class=\"creator\">%c</p>")))
+  (use-package htmlize)
+
+  (setq org-html-postamble-format '(("en" "
+  <p class=\"author\">Author: %a</p>
+  <p class=\"updated\">Updated: %C</p>
+  <p class=\"creator\">%c</p>
+  ")))
 
   (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
   (setq org-publish-project-alist
@@ -511,12 +521,13 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
            :exclude "pub"
            :recursive t
            :html-extension "html"
-           :html-preamble t
+           :auto-preamble t
+           :html-postamble t
            :section-numbers t
            :with-toc t
            :html-head "<link rel=\"stylesheet\"
-                       href=\"/web/main.css\"
-                       type=\"text/css\"/>")
+                                     href=\"/web/main.css\"
+                                     type=\"text/css\"/>")
           ("org-static"
            :base-directory "~/org/"
            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
@@ -526,6 +537,14 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
            :publishing-function org-publish-attachment
            )
           ("org" :components ("org-notes" "org-static"))))
+#+end_src
+** Org Imgtog
+#+begin_src elisp
+  (use-package org-imgtog
+    :custom
+    (org-imgtog-preview-delay 0.2)
+    :straight (org-imgtog :type git :host github :repo "gaoDean/org-imgtog" :local-repo "~/repos/rea/org-imgtog")
+    :hook org-mode)
 #+end_src
 ** Org Remoteimg
 #+begin_src elisp
@@ -554,8 +573,17 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 ** yaml
 #+begin_src elisp
   (use-package yaml-mode
-    :mode ("\\.ya?ml\\'" . yaml-mode))
+    :mode ("\\.ya?ml$'" . yaml-mode))
 #+end_src
+
+** lua
+#+begin_src elisp
+  (use-package lua-mode
+    :init
+    (setq lua-indent-level 4)
+    :mode ("\\.lua$" . lua-mode))
+#+end_src
+
 * Git
 ** Magit
 #+begin_src elisp
@@ -899,6 +927,11 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
           (async-start-process "quicklook" "qlmanage" nil "-p " found-file)
         (message "Exported file not found"))))
 
+  (defun my/git-push-org ()
+    (interactive)
+    (org-publish "org")
+    (start-process "git-push-org" nil "gaa" "org")
+    (message "done"))
 #+end_src
 
 ** Maps
@@ -935,6 +968,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     "a" '(:ignore t :wk "actions")
     "a e" 'org-export-dispatch
     "a p" 'org-publish
+    "a o" 'my/git-push-org
 
     "f" '(:ignore t :wk "files")
     "f r" 'recentf
@@ -943,6 +977,11 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     "e" '(:ignore t :wk "emacs")
     "e r" 'my/reload-init-file
     "e m" 'toggle-frame-maximized
+  
+    "e e" '(:ignore t :wk "eval")
+    "e e r" 'eval-region
+    "e e b" 'eval-buffer
+    "e e f" 'eval-defun
 
     "e b" '(:ignore t :wk "benchmark")
     "e b t" 'benchmark-init/show-durations-tabulated
