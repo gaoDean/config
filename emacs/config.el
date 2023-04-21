@@ -109,8 +109,7 @@
 (use-package mixed-pitch
   :hook text-mode)
 
-(use-package all-the-icons
-  :hook (pre-command . (lambda())))
+(use-package all-the-icons)
 
 (use-package writeroom-mode
   :custom
@@ -154,7 +153,8 @@
 (use-package which-key
   :init
   (setq which-key-show-early-on-C-h t)
-  :hook pre-command
+  (setq which-key-idle-delay 3)
+  :hook emacs-startup
   :config
   (which-key-setup-side-window-right))
 
@@ -333,11 +333,12 @@
   :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg"))
 
 (use-package avy
-  :custom
-  (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
-  :general
-  (leader-def '(normal visual) "j" 'avy-goto-char-2)
-  ("C-c j" 'avy-goto-char-2))
+    :custom
+    (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
+    :general
+    (:keymaps 'normal ";" 'avy-goto-char-2)
+    (:keymaps '(insert visual) "C-;" 'avy-goto-char-2)
+)
 
 (use-package yaml-mode
   :mode ("\\.ya?ml$'" . yaml-mode))
@@ -634,6 +635,8 @@
   (start-process "git-push-org" nil "gaa" "org")
   (message "done"))
 
+(unbind-key "s-p") ;; ns-print-buffer
+
 (leader-def :keymaps 'normal
   "b" '(:ignore t :wk "buffers")
   "b b" 'ido-switch-buffer
@@ -693,6 +696,10 @@
   "q" 'save-buffers-kill-terminal
   "s" 'scratch-buffer
   "r" 'jump-to-register)
+
+(general-define-key :keymaps 'insert "<backtab>" 'evil-shift-left-line)
+
+(general-define-key :keymaps 'insert "DEL" 'backward-delete-char-untabify)
 
 (general-define-key :states '(normal visual) :keymaps 'override
                     "g j" 'evil-next-visual-line

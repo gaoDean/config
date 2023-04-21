@@ -203,21 +203,27 @@ local plugins = {
 			"markdown",
 			"text",
 			"tex",
+			"norg",
 			"plaintex",
 		},
 		config = function()
 			local autolist = require("autolist")
+
 			autolist.setup()
-			autolist.create_mapping_hook("i", "<CR>", autolist.new)
-			autolist.create_mapping_hook("i", "<Tab>", autolist.indent)
-			autolist.create_mapping_hook("i", "<S-Tab>", autolist.indent, "<C-D>")
-			autolist.create_mapping_hook("n", "o", autolist.new)
-			autolist.create_mapping_hook("n", "O", autolist.new_before)
-			autolist.create_mapping_hook("n", ">>", autolist.indent)
-			autolist.create_mapping_hook("n", "<<", autolist.indent)
-			autolist.create_mapping_hook("n", "<C-r>", autolist.force_recalculate, "")
-			autolist.create_mapping_hook("n", "<leader>x", autolist.invert_entry, "")
-			autolist.create_mapping_hook("n", "dd", autolist.force_recalculate, "dd")
+			vim.keymap.set("i", "<tab>", "<cmd>AutolistTab<cr>")
+			vim.keymap.set("i", "<s-tab>", "<cmd>AutolistShiftTab<cr>")
+			vim.keymap.set("n", ">>", ">><cmd>AutolistRecalculate<cr>")
+			vim.keymap.set("n", "<<", "<<<cmd>AutolistRecalculate<cr>")
+			vim.keymap.set("i", "<CR>", "<CR><cmd>AutolistNewBullet<cr>")
+			vim.keymap.set("n", "o", "o<cmd>AutolistNewBullet<cr>")
+			vim.keymap.set("n", "O", "O<cmd>AutolistNewBulletBefore<cr>")
+			vim.keymap.set("n", "<C-r>", "<cmd>AutolistRecalculate<cr>")
+			vim.keymap.set("n", "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>")
+
+			vim.keymap.set("n", "<leader>cn", autolist.next_list_type_dr, {expr = true})
+			vim.keymap.set("n", "<leader>cp", autolist.prev_list_type_dr, {expr = true})
+			-- vim.keymap.set("n", "<leader>cn", "<cmd>AutolistNextListType<cr>")
+			-- autolist.create_mapping_hook("n", "dd", autolist.force_recalculate, "dd")
 		end,
 	},
 	{
