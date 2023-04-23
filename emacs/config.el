@@ -112,11 +112,10 @@
 (use-package all-the-icons)
 
 (use-package writeroom-mode
+  :commands writeroom-mode
   :custom
   (writeroom-fullscreen-effect 'maximized)
-  (writeroom-header-line t)
-  :general
-  (leader-def :keymaps 'normal "t z" 'writeroom-mode))
+  (writeroom-header-line t))
 
 (setq-default fill-column 81 ;; Thou shalt not cross 80 columns in thy file
                 sentence-end-double-space nil           ; Use a single space after dots
@@ -153,7 +152,7 @@
 (use-package which-key
   :init
   (setq which-key-show-early-on-C-h t)
-  (setq which-key-idle-delay 3)
+  (setq which-key-idle-delay 1.5)
   :hook emacs-startup
   :config
   (which-key-setup-side-window-right))
@@ -190,18 +189,39 @@
 
 (use-package whitespace
   :straight nil
+  :commands whitespace-mode
   :init
   (setq whitespace-style '(face empty tabs lines-tail trailing))
   (setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
-  :general
-  (leader-def :keymaps 'normal "t w" 'whitespace-mode)
   :config
   (my/set-face 'whitespace-line 'nano-critical)
   (my/set-face 'whitespace-trailing 'nano-critical-i)
   (my/set-face 'whitespace-tab 'nano-critical-i))
 
-(use-package fcitx
-  :hook (emacs-startup . fcitx-aggressive-setup))
+(defun sis-mode ()
+  (interactive)
+  (sis-context-mode t)
+  (sis-inline-mode t))
+
+(use-package sis
+  :commands sis-mode
+  :config
+  (setq sis-other-cursor-color 'orange)
+  (sis-ism-lazyman-config
+   "com.apple.keylayout.Australian"
+   "com.sogou.inputmethod.sogou.pinyin")
+  (sis-global-cursor-color-mode t)
+  (sis-global-respect-mode t)
+  )
+
+(use-package smartparens
+  :hook lua-mode
+  :hook cc-mode
+  :hook org-mode
+  :hook js-mode
+  :no-require
+  :init
+  (require 'smartparens-config))
 
 (use-package org :straight (:type built-in))
 
@@ -336,8 +356,8 @@
     :custom
     (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
     :general
-    (:keymaps 'normal ";" 'avy-goto-char-2)
-    (:keymaps '(insert visual) "C-;" 'avy-goto-char-2)
+    (:keymaps 'override ";" 'avy-goto-char-2)
+    (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
 )
 
 (use-package yaml-mode
@@ -637,7 +657,7 @@
 
 (unbind-key "s-p") ;; ns-print-buffer
 
-(leader-def :keymaps 'normal
+(leader-def :keymaps '(normal visual)
   "b" '(:ignore t :wk "buffers")
   "b b" 'ido-switch-buffer
   "b B" 'ibuffer
@@ -665,6 +685,9 @@
   "o v" 'vterm
 
   "t" '(:ignore t :wk "toggle")
+  "t s" 'sis-mode
+  "t z" 'writeroom-mode
+  "t w" 'whitespace-mode
 
   "a" '(:ignore t :wk "actions")
   "a e" 'org-export-dispatch

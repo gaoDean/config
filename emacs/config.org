@@ -277,11 +277,10 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 ** Writeroom mode
 #+begin_src elisp
   (use-package writeroom-mode
+    :commands writeroom-mode
     :custom
     (writeroom-fullscreen-effect 'maximized)
-    (writeroom-header-line t)
-    :general
-    (leader-def :keymaps 'normal "t z" 'writeroom-mode))
+    (writeroom-header-line t))
 #+end_src
 ** Other
 #+begin_src elisp
@@ -326,7 +325,7 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
   (use-package which-key
     :init
     (setq which-key-show-early-on-C-h t)
-    (setq which-key-idle-delay 3)
+    (setq which-key-idle-delay 1.5)
     :hook emacs-startup
     :config
     (which-key-setup-side-window-right))
@@ -382,21 +381,45 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 
   (use-package whitespace
     :straight nil
+    :commands whitespace-mode
     :init
     (setq whitespace-style '(face empty tabs lines-tail trailing))
     (setq whitespace-line-column 81) ;; Thou shalt not cross 80 columns in thy file
-    :general
-    (leader-def :keymaps 'normal "t w" 'whitespace-mode)
     :config
     (my/set-face 'whitespace-line 'nano-critical)
     (my/set-face 'whitespace-trailing 'nano-critical-i)
     (my/set-face 'whitespace-tab 'nano-critical-i))
 
 #+end_src
-** Chinese Switch
+** Chinese Switch - sis
+Don't use fcitx, binds up emacs
 #+begin_src elisp
-  (use-package fcitx
-    :hook (emacs-startup . fcitx-aggressive-setup))
+  (defun sis-mode ()
+    (interactive)
+    (sis-context-mode t)
+    (sis-inline-mode t))
+
+  (use-package sis
+    :commands sis-mode
+    :config
+    (setq sis-other-cursor-color 'orange)
+    (sis-ism-lazyman-config
+     "com.apple.keylayout.Australian"
+     "com.sogou.inputmethod.sogou.pinyin")
+    (sis-global-cursor-color-mode t)
+    (sis-global-respect-mode t)
+    )
+#+end_src
+** Smartparens
+#+begin_src elisp
+  (use-package smartparens
+    :hook lua-mode
+    :hook cc-mode
+    :hook org-mode
+    :hook js-mode
+    :no-require
+    :init
+    (require 'smartparens-config))
 #+end_src
 * Org
 ** Org
@@ -565,8 +588,8 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
       :custom
       (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
       :general
-      (:keymaps 'normal ";" 'avy-goto-char-2)
-      (:keymaps '(insert visual) "C-;" 'avy-goto-char-2)
+      (:keymaps 'override ";" 'avy-goto-char-2)
+      (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
   )
 #+end_src
 
@@ -940,7 +963,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
 
   (unbind-key "s-p") ;; ns-print-buffer
 
-  (leader-def :keymaps 'normal
+  (leader-def :keymaps '(normal visual)
     "b" '(:ignore t :wk "buffers")
     "b b" 'ido-switch-buffer
     "b B" 'ibuffer
@@ -968,6 +991,9 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     "o v" 'vterm
 
     "t" '(:ignore t :wk "toggle")
+    "t s" 'sis-mode
+    "t z" 'writeroom-mode
+    "t w" 'whitespace-mode
 
     "a" '(:ignore t :wk "actions")
     "a e" 'org-export-dispatch
