@@ -81,9 +81,6 @@
   :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
   :config (nano-splash))
 
-(with-eval-after-load 'nano-splash
-  (require 'nano-session))
-
 (defun mode-line-render (left right)
   (let* ((available-width (- (window-width) (length left) )))
     (format (format "%%s %%%ds" available-width) left right)))
@@ -137,6 +134,69 @@
 (setq python-indent-guess-indent-offset t
       python-indent-guess-indent-offset-verbose nil)
 
+;; Save miscellaneous history
+(setq savehist-additional-variables
+      '(kill-ring
+        command-history
+    set-variable-value-history
+    custom-variable-history   
+    query-replace-history     
+    read-expression-history   
+    minibuffer-history        
+    read-char-history         
+    face-name-history         
+    bookmark-history          
+        ivy-history               
+    counsel-M-x-history       
+    file-name-history         
+        counsel-minibuffer-history))
+(setq history-length 250)
+(setq kill-ring-max 25)
+(put 'minibuffer-history         'history-length 50)
+(put 'file-name-history          'history-length 50)
+(put 'set-variable-value-history 'history-length 25)
+(put 'custom-variable-history    'history-length 25)
+(put 'query-replace-history      'history-length 25)
+(put 'read-expression-history    'history-length 25)
+(put 'read-char-history          'history-length 25)
+(put 'face-name-history          'history-length 25)
+(put 'bookmark-history           'history-length 25)
+(put 'ivy-history                'history-length 25)
+(put 'counsel-M-x-history        'history-length 25)
+(put 'counsel-minibuffer-history 'history-length 25)
+(setq savehist-file "~/.nano-savehist")
+(savehist-mode 1)
+
+;; Remove text properties for kill ring entries
+;; See https://emacs.stackexchange.com/questions/4187
+(defun unpropertize-kill-ring ()
+  (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+(add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
+
+;; Recentf files 
+(setq recentf-max-menu-items 25)
+(setq recentf-save-file     "~/.cache/emacs/recentf")
+(add-hook 'emacs-startup-hook #'recentf-mode)
+
+;; Bookmarks
+(setq bookmark-default-file "~/.cache/emacs/bookmarks")
+
+;; Backup
+(setq backup-directory-alist '(("." . "~/.cache/emacs/backups"))
+      make-backup-files t     ; backup of a file the first time it is saved.
+      backup-by-copying t     ; don't clobber symlinks
+      version-control t       ; version numbers for backup files
+      delete-old-versions t   ; delete excess backup files silently
+      kept-old-versions 6     ; oldest versions to keep when a new numbered
+                              ;  backup is made (default: 2)
+      kept-new-versions 9     ; newest versions to keep when a new numbered
+                              ;  backup is made (default: 2)
+      auto-save-default t     ; auto-save every buffer that visits a file
+      auto-save-timeout 20    ; number of seconds idle time before auto-save
+                              ;  (default: 30)
+      auto-save-interval 200)  ; number of keystrokes between auto-saves
+                              ;  (default: 300)
+
 (use-package helpful
   :general
   (leader-def 'normal
@@ -170,9 +230,8 @@
 (use-package hl-todo
   :hook emacs-startup)
 
-(setq backup-directory-alist `(("." . ,"~/.cache/emacs/backups")))
-
-(setq create-lockfiles nil)
+(setq auto-save-file-name-transforms
+    '((".*" "~/.cache/emacs/autosave" t)))
 
 (use-package undo-fu)
 (use-package undo-fu-session
