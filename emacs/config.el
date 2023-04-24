@@ -100,6 +100,8 @@
                     :background nil)
 
 (set-face-background 'header-line nil)
+(advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
+(advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
 
 (use-package mixed-pitch
   :hook text-mode)
@@ -272,10 +274,7 @@
   )
 
 (use-package smartparens
-  :hook lua-mode
-  :hook cc-mode
-  :hook org-mode
-  :hook js-mode
+  :hook (emacs-startup . smartparens-global-mode)
   :no-require
   :init
   (require 'smartparens-config))

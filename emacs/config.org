@@ -254,6 +254,8 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
                       :background nil)
 
   (set-face-background 'header-line nil)
+  (advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
+  (advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
 
 #+end_src
 * Typography
@@ -472,10 +474,7 @@ Don't use fcitx, binds up emacs
 ** Smartparens
 #+begin_src elisp
   (use-package smartparens
-    :hook lua-mode
-    :hook cc-mode
-    :hook org-mode
-    :hook js-mode
+    :hook (emacs-startup . smartparens-global-mode)
     :no-require
     :init
     (require 'smartparens-config))
