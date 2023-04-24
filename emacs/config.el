@@ -41,9 +41,7 @@
   (evil-mode 1))
 
 (use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+  :hook (emacs-startup . evil-collection-init))
 
 (use-package evil-surround
   :config
@@ -228,7 +226,7 @@
 ;;   :hook (after-init . global-flycheck-mode))
 
 (use-package hl-todo
-  :hook emacs-startup)
+  :hook (emacs-startup . global-hl-todo-mode))
 
 (setq auto-save-file-name-transforms
     '((".*" "~/.cache/emacs/autosave" t)))
@@ -282,6 +280,15 @@
   :init
   (require 'smartparens-config))
 
+(use-package pdf-tools
+  :defer t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-loader-install)
+  (setq-default pdf-view-display-size 'fit-width)
+  :custom
+  (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+
 (use-package org :straight (:type built-in))
 
 (use-package org-modern
@@ -292,6 +299,7 @@
    org-hide-emphasis-markers t
    org-modern-label-border 0.3
    org-modern-hide-stars " "
+   org-modern-table nil ;; TODO theres a bug
    org-image-actual-width '(400)
    line-spacing 0.1
    org-pretty-entities t
@@ -415,7 +423,7 @@
     :custom
     (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
     :general
-    (:keymaps 'override ";" 'avy-goto-char-2)
+    (:keymaps '(normal visual) ";" 'avy-goto-char-2)
     (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
 )
 

@@ -182,9 +182,7 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
     (evil-mode 1))
 
   (use-package evil-collection
-    :after evil
-    :config
-    (evil-collection-init))
+    :hook (emacs-startup . evil-collection-init))
 
   (use-package evil-surround
     :config
@@ -222,6 +220,7 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
     :config
     (nano-dark))
 #+end_src
+
 ** Nano Splash
 #+begin_src elisp
   (use-package nano-splash
@@ -414,7 +413,7 @@ adapted from rougier/nano-emacs/nano-session
 ** hl-todo
 #+begin_src elisp
   (use-package hl-todo
-    :hook emacs-startup)
+    :hook (emacs-startup . global-hl-todo-mode))
 #+end_src
 ** autosave
 #+begin_src elisp
@@ -481,6 +480,17 @@ Don't use fcitx, binds up emacs
     :init
     (require 'smartparens-config))
 #+end_src
+** pdf-tools
+#+begin_src elisp
+  (use-package pdf-tools
+    :defer t
+    :mode ("\\.pdf\\'" . pdf-view-mode)
+    :config
+    (pdf-loader-install)
+    (setq-default pdf-view-display-size 'fit-width)
+    :custom
+    (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+#+end_src
 * Org
 ** Org
 #+begin_src elisp
@@ -496,6 +506,7 @@ Don't use fcitx, binds up emacs
      org-hide-emphasis-markers t
      org-modern-label-border 0.3
      org-modern-hide-stars " "
+     org-modern-table nil ;; TODO theres a bug
      org-image-actual-width '(400)
      line-spacing 0.1
      org-pretty-entities t
@@ -648,7 +659,7 @@ Don't use fcitx, binds up emacs
       :custom
       (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
       :general
-      (:keymaps 'override ";" 'avy-goto-char-2)
+      (:keymaps '(normal visual) ";" 'avy-goto-char-2)
       (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
   )
 #+end_src
