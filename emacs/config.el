@@ -22,9 +22,48 @@
       '((github . "gaoDean")
         (gitlab . "gaoDean")))
 
-(straight-use-package 'benchmark-init)
-(require 'benchmark-init)
-(add-hook 'after-init-hook 'benchmark-init/deactivate)
+(use-package nano-theme
+  :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
+  :custom-face
+  (default ((t (:family "Input Mono" :height 240))))
+  (italic ((t (:family "Input Mono" :height 240 :slant italic))))
+  (variable-pitch ((t (:family "Lato" :height 240))))
+  :config
+  (nano-dark)
+  ;; (nano-light)
+  )
+
+(use-package nano-splash
+  :custom
+  (nano-splash-duration 20)
+  :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
+  :config (nano-splash))
+
+(defun mode-line-render (left right)
+  (let* ((available-width (- (window-width) (length left) )))
+    (format (format "%%s %%%ds" available-width) left right)))
+(setq-default header-line-format
+              '((:eval
+                 (mode-line-render
+                  (format-mode-line (list
+                                     (propertize "☰" 'face `(:inherit mode-line-buffer-id)
+                                                 'help-echo "Mode(s) menu"
+                                                 'mouse-face 'mode-line-highlight
+                                                 'local-map   mode-line-major-mode-keymap)
+                                     " %b "
+                                     (if (and buffer-file-name (buffer-modified-p))
+                                         (propertize "[M]" 'face `(:inherit nano-faded)))))
+                  (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit nano-faded)))))))
+(setq-default mode-line-format nil)
+(set-face-attribute 'header-line nil
+                    :underline nil
+                    :background 'unspecified)
+
+(set-face-background 'header-line nil)
+(advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
+(advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
+
+(use-package esup)
 
 (use-package general)
 (general-create-definer leader-def
@@ -64,49 +103,10 @@
 
 (add-to-list 'load-path "~/.config/emacs/plugins/")
 
-(use-package nano-theme
-  :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
-  :custom-face
-  (default ((t (:family "Input Mono" :height 240))))
-  (italic ((t (:family "Input Mono" :height 240 :slant italic))))
-  (variable-pitch ((t (:family "Lato" :height 240))))
-  :config
-  (nano-dark))
-
-(use-package nano-splash
-  :custom
-  (nano-splash-duration 20)
-  :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
-  :config (nano-splash))
-
-(defun mode-line-render (left right)
-  (let* ((available-width (- (window-width) (length left) )))
-    (format (format "%%s %%%ds" available-width) left right)))
-(setq-default header-line-format
-              '((:eval
-                 (mode-line-render
-                  (format-mode-line (list
-                                     (propertize "☰" 'face `(:inherit mode-line-buffer-id)
-                                                 'help-echo "Mode(s) menu"
-                                                 'mouse-face 'mode-line-highlight
-                                                 'local-map   mode-line-major-mode-keymap)
-                                     " %b "
-                                     (if (and buffer-file-name (buffer-modified-p))
-                                         (propertize "[M]" 'face `(:inherit nano-faded)))))
-                  (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit nano-faded)))))))
-(setq-default mode-line-format nil)
-(set-face-attribute 'header-line nil
-                    :underline nil
-                    :background nil)
-
-(set-face-background 'header-line nil)
-(advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
-(advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
-
 (use-package mixed-pitch
-  :hook text-mode)
+  :hook org-mode)
 
-(use-package all-the-icons)
+(add-hook 'after-init-hook (lambda() (use-package all-the-icons)))
 
 (use-package writeroom-mode
   :commands writeroom-mode
@@ -273,12 +273,6 @@
   (sis-global-respect-mode t)
   )
 
-(use-package smartparens
-  :hook (emacs-startup . smartparens-global-mode)
-  :no-require
-  :init
-  (require 'smartparens-config))
-
 (use-package pdf-tools
   :defer t
   :mode ("\\.pdf\\'" . pdf-view-mode)
@@ -287,6 +281,10 @@
   (setq-default pdf-view-display-size 'fit-width)
   :custom
   (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+
+(electric-pair-mode 1)
+
+(set-face-attribute 'table-cell nil :background 'unspecified)
 
 (use-package org :straight (:type built-in))
 
@@ -336,7 +334,7 @@
 
 (use-package org-auto-tangle :hook org-mode)
 
-(with-eval-after-load 'org
+(add-hook 'org-mode-hook (lambda()
   (require 'ox-latex)
 
   (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
@@ -366,11 +364,11 @@
                ("\\subsection{%s}" . "\\subsection*{%s}")
                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
 
 (use-package citeproc :if (eq major-mode 'org-mode))
 
-(use-package htmlize)
+(use-package htmlize :if (eq major-mode 'org-mode))
 
 (setq org-html-postamble-format '(("en" "
 <p class=\"author\">Author: %a</p>
@@ -416,7 +414,8 @@
 ;; (setq org-display-remote-inline-images 'download)
 
 (use-package org-remoteimg
-  :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg"))
+  :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg")
+  :after org-imgtog)
 
 (use-package avy
     :custom
@@ -558,13 +557,39 @@
 
   )
 
-(use-package shrink-path)
-(use-package eshell-vterm
-  :config
-  (defalias 'eshell/v 'eshell-exec-visual))
-(use-package eshell-up)
+(advice-add 'eshell :before (lambda(&rest r)
+    (use-package shrink-path)
+    (use-package eshell-vterm
+      :config
+      (defalias 'eshell/v 'eshell-exec-visual))
+    (use-package eshell-up)
 
-(add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
+(setq eshell-prompt-regexp "^.* λ "
+      eshell-prompt-function #'+eshell/prompt)
+
+(defun +eshell/prompt ()
+  (let ((base/dir (shrink-path-prompt default-directory)))
+        (concat (propertize (car base/dir)
+                            'face 'font-lock-comment-face)
+                (propertize (cdr base/dir)
+                            'face 'font-lock-constant-face)
+                (propertize (+eshell--current-git-branch)
+                            'face 'font-lock-function-name-face)
+                (propertize " λ" 'face 'eshell-prompt-face)
+                ;; needed for the input text to not have prompt face
+                (propertize " " 'face 'default))))
+
+;; for completeness sake
+(defun +eshell--current-git-branch ()
+    (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                             when (string-match "^\*" match)
+                             collect match))))
+      (if (not (eq branch nil))
+          (concat " [" (substring branch 2) "]")
+        "")))
+))
+
+    (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
 
 (defun fzf (strings)
   (completing-read "Filter: " strings))
@@ -592,29 +617,7 @@
                               (dolist (pair my/eshell-alises)
                                 (eshell/alias (car pair) (cdr pair)))))
 
-(setq eshell-prompt-regexp "^.* λ "
-      eshell-prompt-function #'+eshell/prompt)
 
-(defun +eshell/prompt ()
-  (let ((base/dir (shrink-path-prompt default-directory)))
-        (concat (propertize (car base/dir)
-                            'face 'font-lock-comment-face)
-                (propertize (cdr base/dir)
-                            'face 'font-lock-constant-face)
-                (propertize (+eshell--current-git-branch)
-                            'face 'font-lock-function-name-face)
-                (propertize " λ" 'face 'eshell-prompt-face)
-                ;; needed for the input text to not have prompt face
-                (propertize " " 'face 'default))))
-
-;; for completeness sake
-(defun +eshell--current-git-branch ()
-    (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                             when (string-match "^\*" match)
-                             collect match))))
-      (if (not (eq branch nil))
-          (concat " [" (substring branch 2) "]")
-        "")))
 
 (defun my/dired-up-directory-in-buffer ()
   (interactive)
@@ -745,6 +748,7 @@
   "w <" 'evil-window-decrease-width
   "w +" 'evil-window-increase-height
   "w -" 'evil-window-decrease-height
+  "w n" 'make-frame
 
   "o" '(:ignore t :wk "open")
   "o e" 'eshell
@@ -789,6 +793,10 @@
 (general-define-key :keymaps 'insert "<backtab>" 'evil-shift-left-line)
 
 (general-define-key :keymaps 'insert "DEL" 'backward-delete-char-untabify)
+
+(general-define-key :states 'normal
+                    :keymaps 'override
+                    "<tab>" 'evil-toggle-fold)
 
 (general-define-key :states '(normal visual) :keymaps 'override
                     "g j" 'evil-next-visual-line

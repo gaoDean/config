@@ -114,11 +114,26 @@
 #+end_src
 ** init.el
 My approach is to not use ~org-babel-load-file~ because its slow, and instead use ~org-auto-tangle~ to tangle upon save, and load the elisp.
+
+The ~file-name-handler-alist~ part is from [[https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/][this]] reddit post. it actually works for some reason.
+
+Wrap your init file inside ~(let ((file-name-handler-alist nil)) <init file>)~
+Normally file-name-handler-alist is set to
+
+#+begin_example elisp
+(("\\`/[^/]*\\'" . tramp-completion-file-name-handler)
+("\\`/[^/|:][^/|]*:" . tramp-file-name-handler)
+("\\`/:" . file-name-non-special))
+#+end_example
+
+Which means on every .el and .elc file loaded during start up, it has to runs those regexps against the filename.
+
 #+begin_src elisp :tangle init.el
+(let ((file-name-handler-alist nil))
   (load
-   (expand-file-name
-    "config"
-    user-emacs-directory))
+     (expand-file-name
+      "config"
+      user-emacs-directory)))
 #+end_src
 * Packages
 ** Straight.el
@@ -147,11 +162,61 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
         '((github . "gaoDean")
           (gitlab . "gaoDean")))
 #+end_src
+* Appearance
+** Nano Theme
+#+begin_src elisp
+  (use-package nano-theme
+    :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
+    :custom-face
+    (default ((t (:family "Input Mono" :height 240))))
+    (italic ((t (:family "Input Mono" :height 240 :slant italic))))
+    (variable-pitch ((t (:family "Lato" :height 240))))
+    :config
+    (nano-dark)
+    ;; (nano-light)
+    )
+#+end_src
+
+** Nano Splash
+#+begin_src elisp
+  (use-package nano-splash
+    :custom
+    (nano-splash-duration 20)
+    :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
+    :config (nano-splash))
+#+end_src
+
+** Elegant Modeline
+Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el][here]]
+#+begin_src elisp
+  (defun mode-line-render (left right)
+    (let* ((available-width (- (window-width) (length left) )))
+      (format (format "%%s %%%ds" available-width) left right)))
+  (setq-default header-line-format
+                '((:eval
+                   (mode-line-render
+                    (format-mode-line (list
+                                       (propertize "☰" 'face `(:inherit mode-line-buffer-id)
+                                                   'help-echo "Mode(s) menu"
+                                                   'mouse-face 'mode-line-highlight
+                                                   'local-map   mode-line-major-mode-keymap)
+                                       " %b "
+                                       (if (and buffer-file-name (buffer-modified-p))
+                                           (propertize "[M]" 'face `(:inherit nano-faded)))))
+                    (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit nano-faded)))))))
+  (setq-default mode-line-format nil)
+  (set-face-attribute 'header-line nil
+                      :underline nil
+                      :background 'unspecified)
+
+  (set-face-background 'header-line nil)
+  (advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
+  (advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
+
+#+end_src
 * Benchmark
 #+begin_src elisp
-  (straight-use-package 'benchmark-init)
-  (require 'benchmark-init)
-  (add-hook 'after-init-hook 'benchmark-init/deactivate)
+  (use-package esup)
 #+end_src
 
 * Keybinds
@@ -208,66 +273,16 @@ My approach is to not use ~org-babel-load-file~ because its slow, and instead us
 
   (add-to-list 'load-path "~/.config/emacs/plugins/")
 #+end_src
-* Appearance
-** Nano Theme
-#+begin_src elisp
-  (use-package nano-theme
-    :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
-    :custom-face
-    (default ((t (:family "Input Mono" :height 240))))
-    (italic ((t (:family "Input Mono" :height 240 :slant italic))))
-    (variable-pitch ((t (:family "Lato" :height 240))))
-    :config
-    (nano-dark))
-#+end_src
-
-** Nano Splash
-#+begin_src elisp
-  (use-package nano-splash
-    :custom
-    (nano-splash-duration 20)
-    :straight (nano-splash :type git :host github :repo "gaoDean/nano-splash")
-    :config (nano-splash))
-#+end_src
-
-** Elegant Modeline
-Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el][here]]
-#+begin_src elisp
-  (defun mode-line-render (left right)
-    (let* ((available-width (- (window-width) (length left) )))
-      (format (format "%%s %%%ds" available-width) left right)))
-  (setq-default header-line-format
-                '((:eval
-                   (mode-line-render
-                    (format-mode-line (list
-                                       (propertize "☰" 'face `(:inherit mode-line-buffer-id)
-                                                   'help-echo "Mode(s) menu"
-                                                   'mouse-face 'mode-line-highlight
-                                                   'local-map   mode-line-major-mode-keymap)
-                                       " %b "
-                                       (if (and buffer-file-name (buffer-modified-p))
-                                           (propertize "[M]" 'face `(:inherit nano-faded)))))
-                    (format-mode-line (propertize "%4l:%2c  " 'face `(:inherit nano-faded)))))))
-  (setq-default mode-line-format nil)
-  (set-face-attribute 'header-line nil
-                      :underline nil
-                      :background nil)
-
-  (set-face-background 'header-line nil)
-  (advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
-  (advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
-
-#+end_src
 * Typography
 ** Mixed pitch mode
 #+begin_src elisp
   (use-package mixed-pitch
-    :hook text-mode)
+    :hook org-mode)
 #+end_src
 
 ** All the icons
 #+begin_src elisp
-  (use-package all-the-icons)
+  (add-hook 'after-init-hook (lambda() (use-package all-the-icons)))
 #+end_src
 
 ** Writeroom mode
@@ -471,8 +486,8 @@ Don't use fcitx, binds up emacs
     (sis-global-respect-mode t)
     )
 #+end_src
-** Smartparens
-#+begin_src elisp
+** Smartparens (disabled)
+#+begin_src elisp :tangle no
   (use-package smartparens
     :hook (emacs-startup . smartparens-global-mode)
     :no-require
@@ -490,10 +505,19 @@ Don't use fcitx, binds up emacs
     :custom
     (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
 #+end_src
+** electric
+#+begin_src elisp
+(electric-pair-mode 1)
+#+end_src
+** table.el
+#+begin_src elisp
+(set-face-attribute 'table-cell nil :background 'unspecified)
+#+end_src
+
 * Org
 ** Org
 #+begin_src elisp
-    (use-package org :straight (:type built-in))
+  (use-package org :straight (:type built-in))
 #+end_src
 ** Org Modern
 #+begin_src elisp
@@ -558,7 +582,7 @@ Don't use fcitx, binds up emacs
 ** Org Babel
 *** Export
 #+begin_src elisp
-  (with-eval-after-load 'org
+  (add-hook 'org-mode-hook (lambda()
     (require 'ox-latex)
 
     (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
@@ -588,7 +612,7 @@ Don't use fcitx, binds up emacs
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
 #+end_src
 *** Latex
 #+begin_src elisp
@@ -596,7 +620,7 @@ Don't use fcitx, binds up emacs
 #+end_src
 ** Org Publish
 #+begin_src elisp
-  (use-package htmlize)
+  (use-package htmlize :if (eq major-mode 'org-mode))
 
   (setq org-html-postamble-format '(("en" "
   <p class=\"author\">Author: %a</p>
@@ -646,7 +670,8 @@ Don't use fcitx, binds up emacs
   ;; (setq org-display-remote-inline-images 'download)
 
   (use-package org-remoteimg
-    :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg"))
+    :straight (org-remoteimg :type git :host github :repo "gaoDean/org-remoteimg" :local-repo "~/repos/rea/org-remoteimg")
+    :after org-imgtog)
 
 
 #+end_src
@@ -843,13 +868,39 @@ Don't use fcitx, binds up emacs
 *** Tools
 #+begin_src elisp
 
-  (use-package shrink-path)
-  (use-package eshell-vterm
-    :config
-    (defalias 'eshell/v 'eshell-exec-visual))
-  (use-package eshell-up)
+      (advice-add 'eshell :before (lambda(&rest r)
+      (use-package shrink-path)
+      (use-package eshell-vterm
+        :config
+        (defalias 'eshell/v 'eshell-exec-visual))
+      (use-package eshell-up)
 
-  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
+  (setq eshell-prompt-regexp "^.* λ "
+        eshell-prompt-function #'+eshell/prompt)
+
+  (defun +eshell/prompt ()
+    (let ((base/dir (shrink-path-prompt default-directory)))
+          (concat (propertize (car base/dir)
+                              'face 'font-lock-comment-face)
+                  (propertize (cdr base/dir)
+                              'face 'font-lock-constant-face)
+                  (propertize (+eshell--current-git-branch)
+                              'face 'font-lock-function-name-face)
+                  (propertize " λ" 'face 'eshell-prompt-face)
+                  ;; needed for the input text to not have prompt face
+                  (propertize " " 'face 'default))))
+
+  ;; for completeness sake
+  (defun +eshell--current-git-branch ()
+      (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                               when (string-match "^\*" match)
+                               collect match))))
+        (if (not (eq branch nil))
+            (concat " [" (substring branch 2) "]")
+          "")))
+  ))
+
+      (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
 #+end_src
 *** Aliases
 #+begin_src elisp
@@ -885,29 +936,6 @@ Don't use fcitx, binds up emacs
 *** Prompt
 Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8ef2d06454254bb3e1e41][here]], changed loop to cl-loop
 #+begin_src elisp
-  (setq eshell-prompt-regexp "^.* λ "
-        eshell-prompt-function #'+eshell/prompt)
-
-  (defun +eshell/prompt ()
-    (let ((base/dir (shrink-path-prompt default-directory)))
-          (concat (propertize (car base/dir)
-                              'face 'font-lock-comment-face)
-                  (propertize (cdr base/dir)
-                              'face 'font-lock-constant-face)
-                  (propertize (+eshell--current-git-branch)
-                              'face 'font-lock-function-name-face)
-                  (propertize " λ" 'face 'eshell-prompt-face)
-                  ;; needed for the input text to not have prompt face
-                  (propertize " " 'face 'default))))
-
-  ;; for completeness sake
-  (defun +eshell--current-git-branch ()
-      (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                               when (string-match "^\*" match)
-                               collect match))))
-        (if (not (eq branch nil))
-            (concat " [" (substring branch 2) "]")
-          "")))
 #+end_src
 
 * Files
@@ -1055,6 +1083,7 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
     "w <" 'evil-window-decrease-width
     "w +" 'evil-window-increase-height
     "w -" 'evil-window-decrease-height
+    "w n" 'make-frame
 
     "o" '(:ignore t :wk "open")
     "o e" 'eshell
@@ -1099,6 +1128,10 @@ Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8e
   (general-define-key :keymaps 'insert "<backtab>" 'evil-shift-left-line)
 
   (general-define-key :keymaps 'insert "DEL" 'backward-delete-char-untabify)
+
+  (general-define-key :states 'normal
+                      :keymaps 'override
+                      "<tab>" 'evil-toggle-fold)
 
   (general-define-key :states '(normal visual) :keymaps 'override
                       "g j" 'evil-next-visual-line
