@@ -866,42 +866,6 @@ Don't use fcitx, binds up emacs
 * Terminal
 ** Eshell
 *** Tools
-#+begin_src elisp
-
-      (advice-add 'eshell :before (lambda(&rest r)
-      (use-package shrink-path)
-      (use-package eshell-vterm
-        :config
-        (defalias 'eshell/v 'eshell-exec-visual))
-      (use-package eshell-up)
-
-  (setq eshell-prompt-regexp "^.* λ "
-        eshell-prompt-function #'+eshell/prompt)
-
-  (defun +eshell/prompt ()
-    (let ((base/dir (shrink-path-prompt default-directory)))
-          (concat (propertize (car base/dir)
-                              'face 'font-lock-comment-face)
-                  (propertize (cdr base/dir)
-                              'face 'font-lock-constant-face)
-                  (propertize (+eshell--current-git-branch)
-                              'face 'font-lock-function-name-face)
-                  (propertize " λ" 'face 'eshell-prompt-face)
-                  ;; needed for the input text to not have prompt face
-                  (propertize " " 'face 'default))))
-
-  ;; for completeness sake
-  (defun +eshell--current-git-branch ()
-      (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                               when (string-match "^\*" match)
-                               collect match))))
-        (if (not (eq branch nil))
-            (concat " [" (substring branch 2) "]")
-          "")))
-  ))
-
-      (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
-#+end_src
 *** Aliases
 #+begin_src elisp
 
@@ -933,11 +897,6 @@ Don't use fcitx, binds up emacs
 
 
 #+end_src
-*** Prompt
-Taken from [[https://gitlab.com/bennya/shrink-path.el/tree/c14882c8599aec79a6e8ef2d06454254bb3e1e41][here]], changed loop to cl-loop
-#+begin_src elisp
-#+end_src
-
 * Files
 ** Dirvish
 #+begin_src elisp

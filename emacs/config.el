@@ -557,40 +557,6 @@
 
   )
 
-(advice-add 'eshell :before (lambda(&rest r)
-    (use-package shrink-path)
-    (use-package eshell-vterm
-      :config
-      (defalias 'eshell/v 'eshell-exec-visual))
-    (use-package eshell-up)
-
-(setq eshell-prompt-regexp "^.* λ "
-      eshell-prompt-function #'+eshell/prompt)
-
-(defun +eshell/prompt ()
-  (let ((base/dir (shrink-path-prompt default-directory)))
-        (concat (propertize (car base/dir)
-                            'face 'font-lock-comment-face)
-                (propertize (cdr base/dir)
-                            'face 'font-lock-constant-face)
-                (propertize (+eshell--current-git-branch)
-                            'face 'font-lock-function-name-face)
-                (propertize " λ" 'face 'eshell-prompt-face)
-                ;; needed for the input text to not have prompt face
-                (propertize " " 'face 'default))))
-
-;; for completeness sake
-(defun +eshell--current-git-branch ()
-    (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                             when (string-match "^\*" match)
-                             collect match))))
-      (if (not (eq branch nil))
-          (concat " [" (substring branch 2) "]")
-        "")))
-))
-
-    (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
-
 (defun fzf (strings)
   (completing-read "Filter: " strings))
 
@@ -616,8 +582,6 @@
 (add-hook 'eshell-mode-hook (lambda ()
                               (dolist (pair my/eshell-alises)
                                 (eshell/alias (car pair) (cdr pair)))))
-
-
 
 (defun my/dired-up-directory-in-buffer ()
   (interactive)
