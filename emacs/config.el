@@ -26,7 +26,7 @@
   :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
   :custom-face
   (default ((t (:family "Input Mono" :height 240))))
-  (italic ((t (:family "Input Mono" :height 240 :slant italic))))
+  (italic ((t (:family "Lato" :height 240 :slant italic))))
   (variable-pitch ((t (:family "Lato" :height 240))))
   :config
   (nano-dark)
@@ -69,6 +69,7 @@
 (general-create-definer leader-def
                         ;; :prefix my-leader
                         :prefix "SPC")
+(general-evil-setup t)
 
 (use-package evil
   :init
@@ -284,7 +285,7 @@
 
 (electric-pair-mode 1)
 
-(set-face-attribute 'table-cell nil :background 'unspecified)
+(advice-add 'org-edit-table.el :before (lambda (&rest r) (set-face-attribute 'table-cell nil :background 'unspecified)))
 
 (use-package org :straight (:type built-in))
 
@@ -433,6 +434,9 @@
   (setq lua-indent-level 4)
   :mode ("\\.lua$" . lua-mode))
 
+(use-package csv-mode
+  :mode ("\\.csv$" . csv-mode))
+
 (use-package magit
   :general
   (leader-def 'normal "g" 'magit))
@@ -556,6 +560,40 @@
   (add-hook 'text-mode-hook 'cape-setup-capf)
 
   )
+
+(advice-add 'eshell :before (lambda(&rest r)
+    (use-package shrink-path)
+    (use-package eshell-vterm
+      :config
+      (defalias 'eshell/v 'eshell-exec-visual))
+    (use-package eshell-up)
+
+(setq eshell-prompt-regexp "^.* λ "
+      eshell-prompt-function #'+eshell/prompt)
+
+(defun +eshell/prompt ()
+  (let ((base/dir (shrink-path-prompt default-directory)))
+        (concat (propertize (car base/dir)
+                            'face 'font-lock-comment-face)
+                (propertize (cdr base/dir)
+                            'face 'font-lock-constant-face)
+                (propertize (+eshell--current-git-branch)
+                            'face 'font-lock-function-name-face)
+                (propertize " λ" 'face 'eshell-prompt-face)
+                ;; needed for the input text to not have prompt face
+                (propertize " " 'face 'default))))
+
+;; for completeness sake
+(defun +eshell--current-git-branch ()
+    (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                             when (string-match "^\*" match)
+                             collect match))))
+      (if (not (eq branch nil))
+          (concat " [" (substring branch 2) "]")
+        "")))
+))
+
+    ;; (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
 
 (defun fzf (strings)
   (completing-read "Filter: " strings))
@@ -754,18 +792,19 @@
   "s" 'scratch-buffer
   "r" 'jump-to-register)
 
-(general-define-key :keymaps 'insert "<backtab>" 'evil-shift-left-line)
+(imap "<backtab>" 'evil-shift-left-line)
 
-(general-define-key :keymaps 'insert "DEL" 'backward-delete-char-untabify)
+(imap "DEL" 'backward-delete-char-untabify)
 
-(general-define-key :states 'normal
-                    :keymaps 'override
-                    "<tab>" 'evil-toggle-fold)
+(nmap general-override-mode-map 
+  :predicate '(derived-mode-p 'org-mode)
+  "TAB" 'evil-toggle-fold
+  "<tab>" 'evil-toggle-fold)
 
-(general-define-key :states '(normal visual) :keymaps 'override
-                    "g j" 'evil-next-visual-line
-                    "g k" 'evil-previous-visual-line
-                    "C-u" 'evil-scroll-up)
+(mmap :keymaps 'override
+  "g j" 'evil-next-visual-line
+  "g k" 'evil-previous-visual-line
+  "C-u" 'evil-scroll-up)
 
 (general-define-key "M-v" 'evil-paste-after)
 
