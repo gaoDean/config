@@ -110,10 +110,22 @@
 (add-hook 'after-init-hook (lambda() (use-package all-the-icons)))
 
 (use-package writeroom-mode
-  :commands writeroom-mode
-  :custom
-  (writeroom-fullscreen-effect 'maximized)
-  (writeroom-header-line t))
+    :commands writeroom-mode
+    :custom
+    (writeroom-fullscreen-effect 'maximized)
+    (writeroom-width 0.5)
+    (writeroom-header-line '((:eval
+                     (mode-line-render
+                      (format-mode-line (list
+                                         (propertize "☰" 'face `(:inherit mode-line-buffer-id)
+                                                     'help-echo "Mode(s) menu"
+                                                     'mouse-face 'mode-line-highlight
+                                                     'local-map   mode-line-major-mode-keymap)
+                                         " %b "
+                                         (if (and buffer-file-name (buffer-modified-p))
+                                             (propertize "[M]" 'face `(:inherit nano-faded)))))
+                      ""))))
+)
 
 (setq-default fill-column 81 ;; Thou shalt not cross 80 columns in thy file
                 sentence-end-double-space nil           ; Use a single space after dots
@@ -662,7 +674,7 @@
         dired-listing-switches
         "-l --almost-all --human-readable --group-directories-first --no-group")
   :config
-  (evil-define-key 'normal dired-mode-map
+  (evil-define-key 'normal dirvish-mode-map
     (kbd "% l") 'dired-downcase
     (kbd "% m") 'dired-mark-files-regexp
     (kbd "% u") 'dired-upcase
@@ -680,7 +692,7 @@
     (kbd "x") 'dired-do-delete
     (kbd "f") 'dirvish-file-info-menu
     (kbd "h") 'dired-up-directory
-    (kbd "l") 'dired-find-alternate-file
+    (kbd "l") 'dired-find-file
     (kbd "o") 'dired-open-file
     (kbd "q") 'my/kill-all-dired-buffers-and-quit
     (kbd "m") 'dired-mark
@@ -770,6 +782,9 @@
   "f r" 'recentf
   "f v" 'my/view-with-quicklook
 
+  "f a" '(:ignore t :wk "file actions")
+  "f a r" 'rename-file
+
   "e" '(:ignore t :wk "emacs")
   "e r" 'my/reload-init-file
   "e m" 'toggle-frame-maximized
@@ -786,6 +801,7 @@
 
   "c" '(:ignore t :wk "code")
   "c w" 'fill-paragraph
+  "c c" 'count-words
 
   "."   'find-file
   "q" 'save-buffers-kill-terminal
@@ -801,7 +817,7 @@
   "TAB" 'evil-toggle-fold
   "<tab>" 'evil-toggle-fold)
 
-(mmap :keymaps 'override
+(general-def '(normal visual) general-override-mode-map
   "g j" 'evil-next-visual-line
   "g k" 'evil-previous-visual-line
   "C-u" 'evil-scroll-up)
