@@ -1,1 +1,1 @@
-("~/.config/" "~/org/" "~/repos/rea/org-imgtog/" "~/repos/rea/org-remoteimg/" "~/repos/rea/emacs-pa/" "~/repos/rea/autolist.nvim/" "~/.config/doom/emacs/" "~/.config/emacs/straight/repos/nano-theme/" "~/.config/alacritty/catppuccin/" "~/.config/emacs/straight/repos/nano-splash/")
+("~/repos/rea/emacs-pa/" "~/repos/rea/org-remoteimg/" "~/repos/rea/org-imgtog/" "~/.config/" "~/repos/bin/pa/" "~/org/" "~/repos/rea/autolist.nvim/" "~/.config/doom/emacs/" "~/.config/emacs/straight/repos/nano-theme/" "~/.config/alacritty/catppuccin/" "~/.config/emacs/straight/repos/nano-splash/")

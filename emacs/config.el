@@ -299,7 +299,29 @@
 
 (advice-add 'org-edit-table.el :before (lambda (&rest r) (set-face-attribute 'table-cell nil :background 'unspecified)))
 
+(use-package emacs-pa
+  :straight (emacs-pa :type git :host github :repo "gaoDean/emacs-pa" :local-repo "~/repos/rea/emacs-pa")
+  :general
+  (leader-def :keymaps 'normal
+    "P" '(:ignore t :wk "pa")
+    "P a" 'pa--add
+    "P e" 'pa--edit
+    "P s" 'pa--show
+    "P d" 'pa--delete
+    "P r" 'pa--rename))
+
 (use-package org :straight (:type built-in))
+
+(defun my/set-org-faces()
+  (with-eval-after-load 'org-faces
+    (set-face-attribute 'org-level-1 nil :font "Source Sans Pro" :weight 'bold :height 1.4)
+    (set-face-attribute 'org-level-2 nil :font "Source Sans Pro" :weight 'bold :height 1.3)
+    (set-face-attribute 'org-level-3 nil :font "Source Sans Pro" :weight 'bold :height 1.2)
+    (set-face-attribute 'org-level-4 nil :font "Source Sans Pro" :weight 'bold :height 1.1)
+    (set-face-attribute 'org-level-5 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
+    (set-face-attribute 'org-level-6 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
+    (set-face-attribute 'org-level-7 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
+    (set-face-attribute 'org-modern-symbol nil :font "FiraCode NF" :height 1.1)))
 
 (use-package org-modern
   :init
@@ -316,15 +338,7 @@
    org-ellipsis "…")
   :hook org-mode
   :config
-  (with-eval-after-load 'org-faces
-    (set-face-attribute 'org-level-1 nil :font "Source Sans Pro" :weight 'bold :height 1.4)
-    (set-face-attribute 'org-level-2 nil :font "Source Sans Pro" :weight 'bold :height 1.3)
-    (set-face-attribute 'org-level-3 nil :font "Source Sans Pro" :weight 'bold :height 1.2)
-    (set-face-attribute 'org-level-4 nil :font "Source Sans Pro" :weight 'bold :height 1.1)
-    (set-face-attribute 'org-level-5 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
-    (set-face-attribute 'org-level-6 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
-    (set-face-attribute 'org-level-7 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
-    (set-face-attribute 'org-modern-symbol nil :font "FiraCode NF" :height 1.1)))
+  (my/set-org-faces))
 
 (use-package org-autolist :hook org-mode)
 
@@ -389,6 +403,8 @@
 <p class=\"creator\">%c</p>
 ")))
 
+(setq org-export-with-section-numbers nil)
+
 (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
 (setq org-publish-project-alist
       '(("org-notes"
@@ -401,14 +417,14 @@
          :html-extension "html"
          :auto-preamble t
          :html-postamble t
-         :section-numbers t
+         :section-numbers nil
          :with-toc t
          :html-head "<link rel=\"stylesheet\"
                                    href=\"/web/main.css\"
                                    type=\"text/css\"/>")
         ("org-static"
          :base-directory "~/org/"
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
          :publishing-directory "~/org/pub/"
          :exclude "pub"
          :recursive t
@@ -431,12 +447,14 @@
   :after org-imgtog)
 
 (use-package avy
-    :custom
-    (avy-keys '(?i ?s ?r ?t ?g ?p ?n ?e ?a ?o))
-    :general
-    (:keymaps '(normal visual) ";" 'avy-goto-char-2)
-    (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
-)
+      :custom
+      (avy-keys '(
+?n ?t ?e ?r ?a ?s ?h ?d ?f ?m ?o ?i ?w ?v ?u ?l ?c 
+))
+      :general
+      (:keymaps '(normal visual) ";" 'avy-goto-char-2)
+      (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
+  )
 
 (use-package yaml-mode
   :mode ("\\.ya?ml$'" . yaml-mode))
@@ -709,6 +727,7 @@
 
 (set-register ?c (cons 'file "~/.config/emacs/config.org"))
 (set-register ?i (cons 'file "~/org/index.org"))
+(set-register ?n (cons 'file "~/org/web/ntp.html"))
 
 (defun my/reload-init-file ()
   (interactive)
@@ -737,6 +756,22 @@
   (org-publish "org")
   (start-process "git-push-org" nil "gaa" "org")
   (message "done"))
+
+(defun my/git-push-org-force-republish ()
+  (interactive)
+  (org-publish "org" t)
+  (start-process "git-push-org" nil "gaa" "org")
+  (message "done"))
+
+(defun my/light-theme ()
+  (interactive)
+  (nano-light)
+  (my/set-org-faces))
+
+(defun my/dark-theme ()
+  (interactive)
+  (nano-dark)
+  (my/set-org-faces))
 
 (unbind-key "s-p") ;; ns-print-buffer
 
@@ -776,7 +811,10 @@
   "a" '(:ignore t :wk "actions")
   "a e" 'org-export-dispatch
   "a p" 'org-publish
-  "a o" 'my/git-push-org
+
+  "a o" '(:ignore t :wk "publish org")
+  "a o o" 'my/git-push-org
+  "a o f" 'my/git-push-org-force-republish
 
   "f" '(:ignore t :wk "files")
   "f r" 'recentf
@@ -798,6 +836,10 @@
   "e b t" 'benchmark-init/show-durations-tabulated
   "e b r" 'benchmark-init/show-durations-tree
   "e b i" 'emacs-init-time
+
+  "e t" '(:ignore t :wk "theme")
+  "e t l" 'my/light-theme
+  "e t d" 'my/dark-theme
 
   "c" '(:ignore t :wk "code")
   "c w" 'fill-paragraph
