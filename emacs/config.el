@@ -292,6 +292,8 @@
   :config
   (pdf-loader-install)
   (setq-default pdf-view-display-size 'fit-width)
+  (defvar my/tmp-pdf-tools-thing nil)
+  (nmap pdf-view-mode-map "SPC" my/tmp-pdf-tools-thing) ;; to fix SPC not being leader-key
   :custom
   (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
 
@@ -403,7 +405,9 @@
 <p class=\"creator\">%c</p>
 ")))
 
-(setq org-export-with-section-numbers nil)
+;; preserve line breaks 
+;; example: don't join line1 and line2 together into a paragraph
+(setq org-export-preserve-breaks t)
 
 (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
 (setq org-publish-project-alist
@@ -416,7 +420,7 @@
          :recursive t
          :html-extension "html"
          :auto-preamble t
-         :html-postamble t
+         :html-postamble nil
          :section-numbers nil
          :with-toc t
          :html-head "<link rel=\"stylesheet\"
@@ -809,19 +813,11 @@
   "t w" 'whitespace-mode
 
   "a" '(:ignore t :wk "actions")
-  "a e" 'org-export-dispatch
-  "a p" 'org-publish
-
-  "a o" '(:ignore t :wk "publish org")
-  "a o o" 'my/git-push-org
-  "a o f" 'my/git-push-org-force-republish
 
   "f" '(:ignore t :wk "files")
   "f r" 'recentf
   "f v" 'my/view-with-quicklook
-
-  "f a" '(:ignore t :wk "file actions")
-  "f a r" 'rename-file
+  "f R" 'rename-file
 
   "e" '(:ignore t :wk "emacs")
   "e r" 'my/reload-init-file
@@ -841,16 +837,21 @@
   "e t l" 'my/light-theme
   "e t d" 'my/dark-theme
 
+  "E" '(:ignore t :wk "export")
+  "E e" 'org-export-dispatch
+  "E p" 'org-publish
+  "E o" 'my/git-push-org
+  "E O" 'my/git-push-org-force-republish
+
   "c" '(:ignore t :wk "code")
   "c w" 'fill-paragraph
   "c c" 'count-words
 
-  "."   'find-file
+  "." 'find-file
+  "/" 'rg
   "q" 'save-buffers-kill-terminal
   "s" 'scratch-buffer
   "r" 'jump-to-register)
-
-(imap "<backtab>" 'evil-shift-left-line)
 
 (imap "DEL" 'backward-delete-char-untabify)
 
@@ -864,6 +865,15 @@
   "g k" 'evil-previous-visual-line
   "C-u" 'evil-scroll-up)
 
+(imap "M-SPC" (general-simulate-key "SPC" :state 'normal))
+
+(general-def pdf-mode-map
+  "SPC" (general-simulate-key "SPC" :state 'normal)
+  "q" 'kill-this-buffer)
+
 (general-define-key "M-v" 'evil-paste-after)
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)
+
+(general-def tempel-map "TAB" 'tempel-next)
+(general-def tempel-map "S-TAB" 'tempel-previous)
