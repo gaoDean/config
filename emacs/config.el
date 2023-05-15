@@ -25,13 +25,22 @@
 (use-package nano-theme
   :straight (nano-theme :type git :host github :repo "rougier/nano-theme")
   :custom-face
-  (default ((t (:family "Input Mono" :height 240))))
-  (italic ((t (:family "Lato" :height 240 :slant italic))))
-  (variable-pitch ((t (:family "Lato" :height 240))))
-  :config
-  (nano-dark)
+  (default ((t (:family "Input Mono" :height 260))))
+  (italic ((t (:family "ETBembo" :slant italic))))
+  (variable-pitch ((t (:family "ETBembo"))))
+  ;; :config
+  ;; (nano-dark)
   ;; (nano-light)
   )
+
+(defun my/apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (nano-light))
+    ('dark (nano-dark))))
+
+(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
 (use-package nano-splash
   :custom
@@ -40,8 +49,10 @@
   :config (nano-splash))
 
 (defun mode-line-render (left right)
-  (let* ((available-width (- (window-width) (length left) )))
+  ;; (let* ((available-width (- (window-width) (length left) )))
+  (let* ((available-width (- (frame-width) (length left) )))
     (format (format "%%s %%%ds" available-width) left right)))
+
 (setq-default header-line-format
               '((:eval
                  (mode-line-render
@@ -111,9 +122,12 @@
 
 (use-package writeroom-mode
     :commands writeroom-mode
+    :hook org-mode
     :custom
     (writeroom-fullscreen-effect 'maximized)
-    (writeroom-width 0.5)
+    (writeroom-fringes-outside-margins nil)
+    (writeroom-width (* 0.55 (- 1 0.125)))
+    (writeroom-added-width-left (lambda() (round (* (window-width) 0.125))))
     (writeroom-header-line '((:eval
                      (mode-line-render
                       (format-mode-line (list
@@ -316,14 +330,14 @@
 
 (defun my/set-org-faces()
   (with-eval-after-load 'org-faces
-    (set-face-attribute 'org-level-1 nil :font "Source Sans Pro" :weight 'bold :height 1.4)
-    (set-face-attribute 'org-level-2 nil :font "Source Sans Pro" :weight 'bold :height 1.3)
-    (set-face-attribute 'org-level-3 nil :font "Source Sans Pro" :weight 'bold :height 1.2)
-    (set-face-attribute 'org-level-4 nil :font "Source Sans Pro" :weight 'bold :height 1.1)
-    (set-face-attribute 'org-level-5 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
-    (set-face-attribute 'org-level-6 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
-    (set-face-attribute 'org-level-7 nil :font "Source Sans Pro" :weight 'bold :height 1.0)
+    (set-face-attribute 'org-document-title nil :height 2.0 :foreground "FFF")
+    (set-face-attribute 'org-level-1 nil :font "ETBembo" :weight 'normal :height 1.5)
+    (set-face-attribute 'org-level-2 nil :font "ETBembo" :weight 'normal :slant 'italic :height 1.35)
+    (set-face-attribute 'org-level-3 nil :font "ETBembo" :weight 'bold :height 1.1)
     (set-face-attribute 'org-modern-symbol nil :font "FiraCode NF" :height 1.1)))
+
+(advice-add 'nano-light :after (lambda(&rest r) (my/set-org-faces)))
+(advice-add 'nano-dark :after (lambda(&rest r) (my/set-org-faces)))
 
 (use-package org-modern
   :init
@@ -332,14 +346,53 @@
    org-insert-heading-respect-content t
    org-hide-emphasis-markers t
    org-modern-label-border 0.3
-   org-modern-hide-stars " "
+   ;; org-modern-hide-stars ""
+   ;; org-modern-hide-stars " "
+   org-modern-hide-stars t
    org-modern-table nil ;; TODO theres a bug
    org-image-actual-width '(400)
    line-spacing 0.1
    org-pretty-entities t
-   org-ellipsis "…")
+ org-modern-block-name
+      '(("src" "»" "«")
+        ("quote" "❝" "❞")
+        ("export" "⇄")
+          (t . t)
+        )
+      org-modern-keyword
+      '((default . t)
+        ("title" . "")
+        ("subtitle" . "𝙩")
+        ("author" . "𝘼")
+        ("date" . "𝘿")
+        ("auto_tangle" . "↬")
+        ("property" . "⚙")
+        ("options" . "⌥")
+        ("startup" . "†")
+        ("macro" . "𝓜")
+        ("bibliography" . "")
+        ("print_bibliography" . "")
+        ("html_head" . "🅷")
+        ("html" . "🅗")
+        ("latex_class" . "🄻")
+        ("latex_header" . "🅻")
+        ("latex" . "🅛")
+        ("beamer_theme" . "🄱")
+        ("beamer_header" . "🅱")
+        ("beamer" . "🅑")
+        ("attr_latex" . "🄛")
+        ("attr_html" . "🄗")
+        ("attr_org" . "⒪")
+        ("name" . "⁍")
+        ("header" . "›")
+        ("caption" . "☰")
+        ("RESULTS" . "🠶"))
+   org-ellipsis "…"
+   ;; org-ellipsis ":"
+   )
   :hook org-mode
   :config
+  (set-face-attribute 'org-modern-block-name nil :family "ETBembo")
   (my/set-org-faces))
 
 (use-package org-autolist :hook org-mode)
@@ -399,42 +452,53 @@
 
 (use-package htmlize :if (eq major-mode 'org-mode))
 
-(setq org-html-postamble-format '(("en" "
-<p class=\"author\">Author: %a</p>
-<p class=\"updated\">Updated: %C</p>
-<p class=\"creator\">%c</p>
-")))
+    (setq org-html-postamble-format '(("en" "
+    <p class=\"author\">Author: %a</p>
+    <p class=\"updated\">Updated: %C</p>
+    <p class=\"creator\">%c</p>
+    ")))
 
-;; preserve line breaks 
-;; example: don't join line1 and line2 together into a paragraph
-(setq org-export-preserve-breaks t)
+    ;; preserve line breaks 
+    ;; example: don't join line1 and line2 together into a paragraph
+    (setq org-export-preserve-breaks t)
 
-(setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
-(setq org-publish-project-alist
-      '(("org-notes"
-         :base-directory "~/org/"
-         :publishing-directory "~/org/pub/"
-         :base-extension "org"
-         :publishing-function org-html-publish-to-html
-         :exclude "pub"
-         :recursive t
-         :html-extension "html"
-         :auto-preamble t
-         :html-postamble nil
-         :section-numbers nil
-         :with-toc t
-         :html-head "<link rel=\"stylesheet\"
-                                   href=\"/web/main.css\"
-                                   type=\"text/css\"/>")
-        ("org-static"
-         :base-directory "~/org/"
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
-         :publishing-directory "~/org/pub/"
-         :exclude "pub"
-         :recursive t
-         :publishing-function org-publish-attachment
-         )
-        ("org" :components ("org-notes" "org-static"))))
+ (setq org-html-head-include-default-style nil)
+
+    (setq org-publish-timestamp-directory "~/.cache/emacs/org-timestamps/")  
+    (setq org-publish-project-alist
+          '(("org-notes"
+             :base-directory "~/org/"
+             :publishing-directory "~/org/pub/"
+             :base-extension "org"
+             :publishing-function org-html-publish-to-html
+             :exclude "pub"
+             :recursive t
+             :html-extension "html"
+             :auto-preamble nil
+             :html-preamble nil
+             :html-postamble nil
+             :head-include-default-style nil
+             :section-numbers nil
+             :with-toc t
+;;              :html-head "
+;; <link rel=\"stylesheet\" href=\"/web/main.css\" type=\"text/css\"/>
+;; <link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic\">
+;; <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css\">
+;; "
+             :html-head "
+<link rel=\"stylesheet\" href=\"/web/main.css\" type=\"text/css\"/>
+<link rel=\"stylesheet\" href=\"/web/tufte.min.css\"/>
+"
+             )
+            ("org-static"
+             :base-directory "~/org/"
+             :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+             :publishing-directory "~/org/pub/"
+             :exclude "pub"
+             :recursive t
+             :publishing-function org-publish-attachment
+             )
+            ("org" :components ("org-notes" "org-static"))))
 
 (use-package org-imgtog
   :custom
@@ -474,6 +538,11 @@
 (use-package magit
   :general
   (leader-def 'normal "g" 'magit))
+
+(add-hook 'shell-mode-hook  'with-editor-export-editor)
+(add-hook 'eshell-mode-hook 'with-editor-export-editor)
+(add-hook 'term-exec-hook   'with-editor-export-editor)
+(add-hook 'vterm-mode-hook  'with-editor-export-editor)
 
 (use-package projectile
     :config
@@ -545,8 +614,15 @@
                 (cons #'tempel-expand
                       completion-at-point-functions)))
 
+  (setq tempel-path "~/.config/emacs/templates.el")
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf))
+  (add-hook 'text-mode-hook 'tempel-setup-capf)
+
+  (auto-insert-mode)
+  (setq auto-insert-query nil)
+  (define-auto-insert "\\.org$" [(lambda() (evil-insert 0) (tempel-insert 'tempel-org))])
+  (define-auto-insert "\\.html" [(lambda() (evil-insert 0) (tempel-insert 'tempel-html))])
+  )
 
 (use-package tempel-collection :after tempel)
 
@@ -646,7 +722,8 @@
                          ("la" . "ls -alh $*")
                          ("gs" . "magit-status $*")
                          ("g"  . "magit $*")
-                         ("d"  . "dirvish $*")
+                         ("n"  . "dirvish $*")
+                         ("ql"  . "qlmanage -p")
                          ))
 
 
@@ -655,83 +732,154 @@
                               (dolist (pair my/eshell-alises)
                                 (eshell/alias (car pair) (cdr pair)))))
 
+(use-package vterm
+  :straight (vterm :type git :host github :repo "akermu/emacs-libvterm"))
+
 (defun my/dired-up-directory-in-buffer ()
+    (interactive)
+    (find-alternate-file ".."))
+
+  (defun my/kill-all-dired-buffers-and-quit ()
+    "Kill all Dired buffers and quit the current Dired buffer."
+    (interactive)
+    (quit-window)
+    (mapc (lambda (buffer)
+            (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+              (kill-buffer buffer)))
+          (buffer-list)))
+
+  (defun my/dired-toggle-mark-single-file ()
+  "Toggle mark of the single file under the cursor."
   (interactive)
-  (find-alternate-file ".."))
+  (let ((current-line (buffer-substring-no-properties
+                       (line-beginning-position)
+                       (line-end-position))))
+    (if (string-match-p "^\\*" current-line)
+        (dired-unmark 1)
+      (dired-mark 1))))
 
-(defun my/kill-all-dired-buffers-and-quit ()
-"Kill all Dired buffers and quit the current Dired buffer."
-(interactive)
-(quit-window)
-(mapc (lambda (buffer)
-        (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
-          (kill-buffer buffer)))
-      (buffer-list)))
+  (use-package dired-open)
+  (use-package dired
+    :straight nil
+    :init
+    (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
+    (evil-define-key 'normal dired-mode-map (kbd "q") 'my/kill-all-dired-buffers-and-quit)
+    (evil-define-key 'normal dired-mode-map (kbd "v") 'dired-async-do-rename)
+    (evil-define-key 'normal dired-mode-map (kbd "p") 'dired-async-do-copy)
+    (evil-define-key 'normal dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
+    (evil-define-key 'normal dired-mode-map (kbd "x") (lambda() (dired-flag-file-deletion) (dired-do-delete)))
+    (evil-define-key 'normal dired-mode-map (kbd "r") (lambda() (dired-flag-file-deletion) (dired-do-delete)))
+    (evil-define-key 'normal dired-mode-map (kbd "-") 'dired-narrow))
+    (evil-define-key 'normal dired-mode-map (kbd "f") 'dired-do-info)
+    (evil-define-key 'normal dired-mode-map (kbd "SPC") 'my/dired-toggle-mark-single-file)
+    (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file)
+  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+    )
 
 
-(use-package dired-open :after dirvish)
+(setq dired-open-extensions '(("gif" . "")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
+  ;; (nmap dired-mode-map
+  ;;   (kbd "% l") 'dired-downcase
+  ;;   (kbd "% m") 'dired-mark-files-regexp
+  ;;   (kbd "% u") 'dired-upcase
+  ;;   (kbd "* %") 'dired-mark-files-regexp
+  ;;   (kbd "* .") 'dired-mark-extension
+  ;;   (kbd "* /") 'dired-mark-directories
+  ;;   (kbd "+") 'dired-create-directory
+  ;;   (kbd "-") 'dired-narrow
+  ;;   ;; (kbd "M") 'dirvish-mark-menu
+  ;;   ;; (kbd "S") 'dirvish-symlink
+  ;;   ;; (kbd "a") 'dirvish-quick-access
+  ;;   ;; (kbd "c") 'dirvish-chxxx-menu
+  ;;   (kbd "d") 'dired-do-delete
+  ;;   (kbd "x") 'dired-do-delete
+  ;;   ;; (kbd "f") 'dirvish-file-info-menu
+  ;;   (kbd "h") 'dired-up-directory
+  ;;   (kbd "l") 'dired-find-file
+  ;;   (kbd "o") 'dired-open-file
+  ;;   (kbd "q") 'my/kill-all-dired-buffers-and-quit
+  ;;   (kbd "m") 'dired-mark
+  ;;   ;; (kbd "p") 'dirvish-yank
+  ;;   (kbd "r") 'dired-do-rename
+  ;;   (kbd "t") 'find-file
+  ;;   (kbd "u") 'dired-unmark
+  ;;   ;; (kbd "v") 'dirvish-move
+  ;;   ;; (kbd "y") 'dirvish-yank-menu
+  ;;   (kbd "z") 'dired-do-compress)
 
-(use-package dirvish
-  :hook (emacs-startup . dirvish-override-dired-mode)
-  :straight (dirvish :type git :host github :repo "isamert/dirvish")
-  :custom
-  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-   '(("h" "~/"                          "Home")
-     ("d" "~/Downloads/"                "Downloads")
-     ("v" "~/vau/"                      "vau")
-     ("r" "~/repos/"                    "repos")
-     ("t" "~/.Trash"                    "Trash")))
-  :init
-  ;; (dirvish-peek-mode) ; Preview files in minibuffer
-  ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-  (put 'dired-find-alternate-file 'disabled nil)
-  (setq dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index))
-        dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
-        dired-recursive-copies 'always
+
+  (setq dired-recursive-copies 'always
         dired-recursive-deletes 'always
         delete-by-moving-to-trash t
         insert-directory-program "gls"
-        dired-kill-when-opening-new-dired-buffer t
         dired-use-ls-dired t
-        dired-listing-switches
-        "-l --almost-all --human-readable --group-directories-first --no-group")
-  :config
-  (evil-define-key 'normal dirvish-mode-map
-    (kbd "% l") 'dired-downcase
-    (kbd "% m") 'dired-mark-files-regexp
-    (kbd "% u") 'dired-upcase
-    (kbd "* %") 'dired-mark-files-regexp
-    (kbd "* .") 'dired-mark-extension
-    (kbd "* /") 'dired-mark-directories
-    (kbd "+") 'dired-create-directory
-    (kbd "-") 'dirvish-narrow
-    (kbd "<tab>") 'dirvish-toggle-subtree
-    (kbd "M") 'dirvish-mark-menu
-    (kbd "S") 'dirvish-symlink
-    (kbd "a") 'dirvish-quick-access
-    (kbd "c") 'dirvish-chxxx-menu
-    (kbd "d") 'dired-do-delete
-    (kbd "x") 'dired-do-delete
-    (kbd "f") 'dirvish-file-info-menu
-    (kbd "h") 'dired-up-directory
-    (kbd "l") 'dired-find-file
-    (kbd "o") 'dired-open-file
-    (kbd "q") 'my/kill-all-dired-buffers-and-quit
-    (kbd "m") 'dired-mark
-    (kbd "p") 'dirvish-yank
-    (kbd "r") 'dired-do-rename
-    (kbd "t") 'find-file
-    (kbd "u") 'dired-unmark
-    (kbd "v") 'dirvish-move
-    (kbd "y") 'dirvish-yank-menu
-    (kbd "z") 'dired-do-compress))
+        dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
+
+  ;; (use-package dirvish
+  ;;   :hook (emacs-startup . dirvish-override-dired-mode)
+  ;;   :straight (dirvish :type git :host github :repo "isamert/dirvish")
+  ;;   :custom
+  ;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+  ;;    '(("h" "~/"                          "Home")
+  ;;      ("d" "~/Downloads/"                "Downloads")
+  ;;      ("v" "~/vau/"                      "vau")
+  ;;      ("r" "~/repos/"                    "repos")
+  ;;      ("t" "~/.Trash"                    "Trash")))
+  ;;   :init
+  ;;   ;; (dirvish-peek-mode) ; Preview files in minibuffer
+  ;;   ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+  ;;   (put 'dired-find-alternate-file 'disabled nil)
+  ;;   (setq dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index))
+  ;;         dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
+  ;;         dired-recursive-copies 'always
+  ;;         dired-recursive-deletes 'always
+  ;;         delete-by-moving-to-trash t
+  ;;         insert-directory-program "gls"
+  ;;         dired-kill-when-opening-new-dired-buffer t
+  ;;         dired-use-ls-dired t
+  ;;         dired-listing-switches
+  ;;         "-l --almost-all --human-readable --group-directories-first --no-group")
+  ;;   :config
+  ;;   (evil-define-key 'normal dirvish-mode-map
+  ;;     (kbd "% l") 'dired-downcase
+  ;;     (kbd "% m") 'dired-mark-files-regexp
+  ;;     (kbd "% u") 'dired-upcase
+  ;;     (kbd "* %") 'dired-mark-files-regexp
+  ;;     (kbd "* .") 'dired-mark-extension
+  ;;     (kbd "* /") 'dired-mark-directories
+  ;;     (kbd "+") 'dired-create-directory
+  ;;     (kbd "-") 'dirvish-narrow
+  ;;     (kbd "<tab>") 'dirvish-toggle-subtree
+  ;;     (kbd "M") 'dirvish-mark-menu
+  ;;     (kbd "S") 'dirvish-symlink
+  ;;     (kbd "a") 'dirvish-quick-access
+  ;;     (kbd "c") 'dirvish-chxxx-menu
+  ;;     (kbd "d") 'dired-do-delete
+  ;;     (kbd "x") 'dired-do-delete
+  ;;     (kbd "f") 'dirvish-file-info-menu
+  ;;     (kbd "h") 'dired-up-directory
+  ;;     (kbd "l") 'dired-find-file
+  ;;     (kbd "o") 'dired-open-file
+  ;;     (kbd "q") 'my/kill-all-dired-buffers-and-quit
+  ;;     (kbd "m") 'dired-mark
+  ;;     (kbd "p") 'dirvish-yank
+  ;;     (kbd "r") 'dired-do-rename
+  ;;     (kbd "t") 'find-file
+  ;;     (kbd "u") 'dired-unmark
+  ;;     (kbd "v") 'dirvish-move
+  ;;     (kbd "y") 'dirvish-yank-menu
+  ;;     (kbd "z") 'dired-do-compress))
 
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
 
 (set-register ?c (cons 'file "~/.config/emacs/config.org"))
 (set-register ?i (cons 'file "~/org/index.org"))
-(set-register ?n (cons 'file "~/org/web/ntp.html"))
+(set-register ?t (cons 'file "~/.config/emacs/templates.el"))
 
 (defun my/reload-init-file ()
   (interactive)
@@ -739,21 +887,10 @@
 
 (defun my/view-with-quicklook ()
   (interactive)
-  (let* ((current-file (file-name-nondirectory (buffer-file-name)))
-         (file-extensions '(".pdf" ".html"))
-         (found-file nil)
-         (file-extension ""))
-    (while (and file-extensions (not found-file))
-      (setq file-extension (car file-extensions))
-      (let ((file-path (concat (file-name-directory (buffer-file-name))
-                               (file-name-sans-extension current-file)
-                               file-extension)))
-        (when (file-exists-p file-path)
-          (setq found-file file-path)))
-      (setq file-extensions (cdr file-extensions)))
-    (if found-file
-        (async-start-process "quicklook" "qlmanage" nil "-p " found-file)
-      (message "Exported file not found"))))
+  (let ((name (buffer-file-name)))
+    (if name
+        (async-start-process "quicklook" "qlmanage" nil "-p" (concat (file-name-sans-extension name) ".pdf"))
+      (message "File not found"))))
 
 (defun my/git-push-org ()
   (interactive)
@@ -776,6 +913,14 @@
   (interactive)
   (nano-dark)
   (my/set-org-faces))
+
+(defun my/org-cycle ()
+  "Cycle through visibility states, but do not reach the SUBTREE state."
+  (interactive)
+  (if (or (eq (car (org-element-context)) 'plain-list)
+          (eq (car (org-element-context)) 'item))
+      (org-cycle)
+    (evil-toggle-fold)))
 
 (unbind-key "s-p") ;; ns-print-buffer
 
@@ -802,6 +947,7 @@
   "w +" 'evil-window-increase-height
   "w -" 'evil-window-decrease-height
   "w n" 'make-frame
+  "w d" 'delete-frame
 
   "o" '(:ignore t :wk "open")
   "o e" 'eshell
@@ -857,8 +1003,11 @@
 
 (nmap general-override-mode-map 
   :predicate '(derived-mode-p 'org-mode)
-  "TAB" 'evil-toggle-fold
-  "<tab>" 'evil-toggle-fold)
+  "TAB" 'my/org-cycle
+  "<tab>" 'my/org-cycle)
+
+(nmap general-override-mode-map 
+  "Y" (general-simulate-key "y$" :state 'normal))
 
 (general-def '(normal visual) general-override-mode-map
   "g j" 'evil-next-visual-line
@@ -870,6 +1019,10 @@
 (general-def pdf-mode-map
   "SPC" (general-simulate-key "SPC" :state 'normal)
   "q" 'kill-this-buffer)
+
+;; (general-def dired-mode-map
+;;   "SPC" (general-simulate-key "SPC" :state 'normal)
+;;   "q" 'my/kill-all-dired-buffers-and-quit)
 
 (general-define-key "M-v" 'evil-paste-after)
 
