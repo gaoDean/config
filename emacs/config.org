@@ -1116,13 +1116,16 @@ Don't use fcitx, binds up emacs
                   (kbd "v") 'dired-ranger-move
                   (kbd "b") 'dired-ranger-bookmark
                   (kbd "B") 'dired-ranger-bookmark-visit
+                  (kbd "m") 'dired-do-chmod
                   (kbd "r") 'dired-do-rename
                   (kbd "O") 'dired-xdg-open
                   (kbd "L") 'my/dired-quicklook
                   (kbd "w") 'wdired-change-to-wdired-mode
                   (kbd "x") 'dired-do-delete
-                  (kbd "-") 'dired-narrow
                   (kbd "f") 'dired-do-info
+                  (kbd "-") 'dired-narrow
+                  (kbd "+") 'dired-create-directory
+                  (kbd ".") 'find-file
                   (kbd "SPC") 'my/dired-toggle-mark-single-file)
                 )))
 
