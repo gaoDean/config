@@ -6,7 +6,7 @@ org-mode
 
 (elisp "#+begin_src elisp" n> r> n "#+end_src")
 (elsp "#+begin_src elisp" n> r> n "#+end_src")
-(tempel-org "#+title: " p n n r)
+(tempel-org "#+title:" p n n r)
 
 html-mode
 

@@ -2,6 +2,7 @@
 #+author: Dean Gao
 #+startup: overview inlineimages
 #+property: header-args :tangle config.el
+#+options: toc:t
 #+auto_tangle: t
 
 [[./cat.jpg]]
@@ -290,7 +291,20 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
 ** Mixed pitch mode
 #+begin_src elisp
   (use-package mixed-pitch
+    :config
+    (setq mixed-pitch-fixed-pitch-faces (remove 'org-table mixed-pitch-fixed-pitch-faces))
     :hook org-mode)
+#+end_src
+
+** Valign
+#+begin_src elisp
+  (use-package valign
+    :hook org-mode
+    :init
+    (setq valign-fancy-bar t)
+    (advice-add 'evil-toggle-fold :after (lambda(&rest r) (valign-mode)(valign-mode)))
+    :config
+    (set-face-attribute 'org-table nil :family "ETBembo" :foreground "FFF"))
 #+end_src
 
 ** All the icons
@@ -569,7 +583,7 @@ Don't use fcitx, binds up emacs
 #+begin_src elisp
   (defun my/set-org-faces()
     (with-eval-after-load 'org-faces
-      (set-face-attribute 'org-document-title nil :height 2.0 :foreground "FFF")
+      (set-face-attribute 'org-document-title nil :height 2.2 :foreground "FFF")
       (set-face-attribute 'org-level-1 nil :font "ETBembo" :weight 'normal :height 1.5)
       (set-face-attribute 'org-level-2 nil :font "ETBembo" :weight 'normal :slant 'italic :height 1.35)
       (set-face-attribute 'org-level-3 nil :font "ETBembo" :weight 'bold :height 1.1)
@@ -599,33 +613,8 @@ Don't use fcitx, binds up emacs
             (t . t)
           )
         org-modern-keyword
-        '((default . t)
-          ("title" . "")
-          ("subtitle" . "𝙩")
-          ("author" . "𝘼")
-          ("date" . "𝘿")
-          ("auto_tangle" . "↬")
-          ("property" . "⚙")
-          ("options" . "⌥")
-          ("startup" . "†")
-          ("macro" . "𝓜")
-          ("bibliography" . "")
-          ("print_bibliography" . "")
-          ("html_head" . "🅷")
-          ("html" . "🅗")
-          ("latex_class" . "🄻")
-          ("latex_header" . "🅻")
-          ("latex" . "🅛")
-          ("beamer_theme" . "🄱")
-          ("beamer_header" . "🅱")
-          ("beamer" . "🅑")
-          ("attr_latex" . "🄛")
-          ("attr_html" . "🄗")
-          ("attr_org" . "⒪")
-          ("name" . "⁍")
-          ("header" . "›")
-          ("caption" . "☰")
-          ("RESULTS" . "🠶"))
+        '((t . t)
+          ("title" . ""))
      org-ellipsis "…"
      ;; org-ellipsis ":"
      )
@@ -741,7 +730,7 @@ Don't use fcitx, binds up emacs
                :html-postamble nil
                :head-include-default-style nil
                :section-numbers nil
-               :with-toc t
+               :with-toc nil
   ;;              :html-head "
   ;; <link rel=\"stylesheet\" href=\"/web/main.css\" type=\"text/css\"/>
   ;; <link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic\">
@@ -754,7 +743,7 @@ Don't use fcitx, binds up emacs
                )
               ("org-static"
                :base-directory "~/org/"
-               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+               :base-extension "css\\|js\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
                :publishing-directory "~/org/pub/"
                :exclude "pub"
                :recursive t
@@ -1066,148 +1055,87 @@ Don't use fcitx, binds up emacs
 #+end_src
 * Files
 ** Dired
+*** dired-hacks
 #+begin_src elisp
-    (defun my/dired-up-directory-in-buffer ()
-      (interactive)
-      (find-alternate-file ".."))
+  (use-package dired-collapse
+    :hook dired-mode)
 
-    (defun my/kill-all-dired-buffers-and-quit ()
-      "Kill all Dired buffers and quit the current Dired buffer."
-      (interactive)
-      (quit-window)
-      (mapc (lambda (buffer)
-              (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
-                (kill-buffer buffer)))
-            (buffer-list)))
+  (use-package dired-narrow)
 
-    (defun my/dired-toggle-mark-single-file ()
-    "Toggle mark of the single file under the cursor."
+  (use-package dired-ranger)
+#+end_src
+*** functions
+#+begin_src elisp
+  (defun my/dired-up-directory-in-buffer ()
+    (interactive)
+    (find-alternate-file ".."))
+
+  (defun my/kill-all-dired-buffers-and-quit ()
+    "Kill all Dired buffers and quit the current Dired buffer."
+    (interactive)
+    (quit-window)
+    (mapc (lambda (buffer)
+            (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+              (kill-buffer buffer)))
+          (buffer-list)))
+
+  (defun my/dired-toggle-mark-single-file ()
+    "Toggle mark of the single file under the cursor. Needs dired-ranger from dired-hacks"
     (interactive)
     (let ((current-line (buffer-substring-no-properties
                          (line-beginning-position)
                          (line-end-position))))
       (if (string-match-p "^\\*" current-line)
           (dired-unmark 1)
-        (dired-mark 1))))
+        (dired-mark 1)))
+    (dired-ranger-copy nil))
 
-    (use-package dired-open)
-    (use-package dired
-      :straight nil
-      :init
-      (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
-      (evil-define-key 'normal dired-mode-map (kbd "q") 'my/kill-all-dired-buffers-and-quit)
-      (evil-define-key 'normal dired-mode-map (kbd "v") 'dired-async-do-rename)
-      (evil-define-key 'normal dired-mode-map (kbd "p") 'dired-async-do-copy)
-      (evil-define-key 'normal dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
-      (evil-define-key 'normal dired-mode-map (kbd "x") (lambda() (dired-flag-file-deletion) (dired-do-delete)))
-      (evil-define-key 'normal dired-mode-map (kbd "r") (lambda() (dired-flag-file-deletion) (dired-do-delete)))
-      (evil-define-key 'normal dired-mode-map (kbd "-") 'dired-narrow))
-      (evil-define-key 'normal dired-mode-map (kbd "f") 'dired-do-info)
-      (evil-define-key 'normal dired-mode-map (kbd "SPC") 'my/dired-toggle-mark-single-file)
-      (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file)
-    (add-hook 'dired-mode-hook #'dired-hide-details-mode)
-      )
+  (defun my/dired-quicklook ()
+    (interactive)
+    (async-start-process "quicklook"
+                         "qlmanage"
+                         nil
+                         "-p"
+                         (dired-get-file-for-visit)))
 
+#+end_src
+*** bindings
+#+begin_src elisp
+  (use-package dired-open)
+  (use-package dired
+    :straight nil
+    :init
+    (add-hook 'dired-mode-hook
+              (lambda() 
+                (dired-hide-details-mode)
+                (evil-define-key 'normal dired-mode-map
+                  (kbd "h") 'dired-up-directory
+                  (kbd "l") 'dired-open-file
+                  (kbd "q") 'my/kill-all-dired-buffers-and-quit
+                  (kbd "p") 'dired-ranger-copy
+                  (kbd "v") 'dired-ranger-move
+                  (kbd "b") 'dired-ranger-bookmark
+                  (kbd "B") 'dired-ranger-bookmark-visit
+                  (kbd "r") 'dired-do-rename
+                  (kbd "O") 'dired-xdg-open
+                  (kbd "L") 'my/dired-quicklook
+                  (kbd "w") 'wdired-change-to-wdired-mode
+                  (kbd "x") 'dired-do-delete
+                  (kbd "-") 'dired-narrow
+                  (kbd "f") 'dired-do-info
+                  (kbd "SPC") 'my/dired-toggle-mark-single-file)
+                )))
 
-  (setq dired-open-extensions '(("gif" . "")
-                                ("jpg" . "sxiv")
-                                ("png" . "sxiv")
-                                ("mkv" . "mpv")
-                                ("mp4" . "mpv")))
-    ;; (nmap dired-mode-map
-    ;;   (kbd "% l") 'dired-downcase
-    ;;   (kbd "% m") 'dired-mark-files-regexp
-    ;;   (kbd "% u") 'dired-upcase
-    ;;   (kbd "* %") 'dired-mark-files-regexp
-    ;;   (kbd "* .") 'dired-mark-extension
-    ;;   (kbd "* /") 'dired-mark-directories
-    ;;   (kbd "+") 'dired-create-directory
-    ;;   (kbd "-") 'dired-narrow
-    ;;   ;; (kbd "M") 'dirvish-mark-menu
-    ;;   ;; (kbd "S") 'dirvish-symlink
-    ;;   ;; (kbd "a") 'dirvish-quick-access
-    ;;   ;; (kbd "c") 'dirvish-chxxx-menu
-    ;;   (kbd "d") 'dired-do-delete
-    ;;   (kbd "x") 'dired-do-delete
-    ;;   ;; (kbd "f") 'dirvish-file-info-menu
-    ;;   (kbd "h") 'dired-up-directory
-    ;;   (kbd "l") 'dired-find-file
-    ;;   (kbd "o") 'dired-open-file
-    ;;   (kbd "q") 'my/kill-all-dired-buffers-and-quit
-    ;;   (kbd "m") 'dired-mark
-    ;;   ;; (kbd "p") 'dirvish-yank
-    ;;   (kbd "r") 'dired-do-rename
-    ;;   (kbd "t") 'find-file
-    ;;   (kbd "u") 'dired-unmark
-    ;;   ;; (kbd "v") 'dirvish-move
-    ;;   ;; (kbd "y") 'dirvish-yank-menu
-    ;;   (kbd "z") 'dired-do-compress)
+  (setq dired-recursive-copies 'always
+        dired-recursive-deletes 'always
+        delete-by-moving-to-trash t
+        insert-directory-program "gls"
+        dired-use-ls-dired t
+        dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
 
-
-    (setq dired-recursive-copies 'always
-          dired-recursive-deletes 'always
-          delete-by-moving-to-trash t
-          insert-directory-program "gls"
-          dired-use-ls-dired t
-          dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
-
-    ;; (use-package dirvish
-    ;;   :hook (emacs-startup . dirvish-override-dired-mode)
-    ;;   :straight (dirvish :type git :host github :repo "isamert/dirvish")
-    ;;   :custom
-    ;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-    ;;    '(("h" "~/"                          "Home")
-    ;;      ("d" "~/Downloads/"                "Downloads")
-    ;;      ("v" "~/vau/"                      "vau")
-    ;;      ("r" "~/repos/"                    "repos")
-    ;;      ("t" "~/.Trash"                    "Trash")))
-    ;;   :init
-    ;;   ;; (dirvish-peek-mode) ; Preview files in minibuffer
-    ;;   ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-    ;;   (put 'dired-find-alternate-file 'disabled nil)
-    ;;   (setq dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index))
-    ;;         dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)
-    ;;         dired-recursive-copies 'always
-    ;;         dired-recursive-deletes 'always
-    ;;         delete-by-moving-to-trash t
-    ;;         insert-directory-program "gls"
-    ;;         dired-kill-when-opening-new-dired-buffer t
-    ;;         dired-use-ls-dired t
-    ;;         dired-listing-switches
-    ;;         "-l --almost-all --human-readable --group-directories-first --no-group")
-    ;;   :config
-    ;;   (evil-define-key 'normal dirvish-mode-map
-    ;;     (kbd "% l") 'dired-downcase
-    ;;     (kbd "% m") 'dired-mark-files-regexp
-    ;;     (kbd "% u") 'dired-upcase
-    ;;     (kbd "* %") 'dired-mark-files-regexp
-    ;;     (kbd "* .") 'dired-mark-extension
-    ;;     (kbd "* /") 'dired-mark-directories
-    ;;     (kbd "+") 'dired-create-directory
-    ;;     (kbd "-") 'dirvish-narrow
-    ;;     (kbd "<tab>") 'dirvish-toggle-subtree
-    ;;     (kbd "M") 'dirvish-mark-menu
-    ;;     (kbd "S") 'dirvish-symlink
-    ;;     (kbd "a") 'dirvish-quick-access
-    ;;     (kbd "c") 'dirvish-chxxx-menu
-    ;;     (kbd "d") 'dired-do-delete
-    ;;     (kbd "x") 'dired-do-delete
-    ;;     (kbd "f") 'dirvish-file-info-menu
-    ;;     (kbd "h") 'dired-up-directory
-    ;;     (kbd "l") 'dired-find-file
-    ;;     (kbd "o") 'dired-open-file
-    ;;     (kbd "q") 'my/kill-all-dired-buffers-and-quit
-    ;;     (kbd "m") 'dired-mark
-    ;;     (kbd "p") 'dirvish-yank
-    ;;     (kbd "r") 'dired-do-rename
-    ;;     (kbd "t") 'find-file
-    ;;     (kbd "u") 'dired-unmark
-    ;;     (kbd "v") 'dirvish-move
-    ;;     (kbd "y") 'dirvish-yank-menu
-    ;;     (kbd "z") 'dired-do-compress))
 #+end_src
 
-*** Making deleted files go to trash can
+*** making deleted files go to trash can
 #+begin_src elisp
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
