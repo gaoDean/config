@@ -258,6 +258,11 @@ Adapted from [[https://github.com/rougier/elegant-emacs/blob/master/elegance.el]
           evil-want-minibuffer t
           evil-undo-system 'undo-fu)
     :config
+    (setq ring-bell-function 'ignore)
+    (setq evil-insert-state-message nil)
+    (setq evil-visual-char-message nil)
+    (setq evil-visual-line-message nil)
+    (setq evil-visual-block-message nil)
     (evil-mode 1))
 
   (use-package evil-collection
@@ -743,7 +748,7 @@ Don't use fcitx, binds up emacs
                )
               ("org-static"
                :base-directory "~/org/"
-               :base-extension "css\\|js\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+               :base-extension "css\\|js\\|json\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
                :publishing-directory "~/org/pub/"
                :exclude "pub"
                :recursive t
@@ -805,6 +810,10 @@ Don't use fcitx, binds up emacs
 #+begin_src elisp
   (use-package csv-mode
     :mode ("\\.csv$" . csv-mode))
+#+end_src
+** python
+#+begin_src elisp
+  (add-hook 'python-mode-hook (lambda() (setq-local font-lock-maximum-decoration t)))
 #+end_src
 * Git
 ** Magit
@@ -1098,6 +1107,18 @@ Don't use fcitx, binds up emacs
                          "-p"
                          (dired-get-file-for-visit)))
 
+  (setq my/dired-dotfiles-toggled nil)
+  (setq my/dired-listing-switches "-l --human-readable --group-directories-first --no-group")
+  (setq my/dired-listing-switches-dotfiles "-l --almost-all --human-readable --group-directories-first --no-group")
+
+  (defun my/dired-toggle-dotfiles ()
+    (interactive)
+    (if my/dired-dotfiles-toggled 
+        (progn (dired-sort-other my/dired-listing-switches)
+               (setq my/dired-dotfiles-toggled nil))
+      (dired-sort-other my/dired-listing-switches-dotfiles)
+      (setq my/dired-dotfiles-toggled t)))
+
 #+end_src
 *** bindings
 #+begin_src elisp
@@ -1125,7 +1146,8 @@ Don't use fcitx, binds up emacs
                   (kbd "f") 'dired-do-info
                   (kbd "-") 'dired-narrow
                   (kbd "+") 'dired-create-directory
-                  (kbd ".") 'find-file
+                  (kbd "F") 'find-file
+                  (kbd ".") 'my/dired-toggle-dotfiles
                   (kbd "SPC") 'my/dired-toggle-mark-single-file)
                 )))
 
@@ -1134,7 +1156,9 @@ Don't use fcitx, binds up emacs
         delete-by-moving-to-trash t
         insert-directory-program "gls"
         dired-use-ls-dired t
-        dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
+        ;; dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group"
+        dired-listing-switches my/dired-listing-switches
+        )
 
 #+end_src
 
@@ -1156,6 +1180,10 @@ Don't use fcitx, binds up emacs
   (defun my/reload-init-file ()
     (interactive)
     (load-file user-init-file))
+
+  (defun my/run-code-python ()
+    (interactive)
+    (shell-command (concat "python " (buffer-file-name))))
 
   (defun my/view-with-quicklook ()
     (interactive)
@@ -1268,6 +1296,9 @@ Don't use fcitx, binds up emacs
     "c" '(:ignore t :wk "code")
     "c w" 'fill-paragraph
     "c c" 'count-words
+
+    "c r" '(:ignore t :wk "run")
+    "c r p" 'my/run-code-python
 
     "." 'find-file
     "/" 'rg

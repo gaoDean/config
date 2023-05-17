@@ -89,6 +89,11 @@
         evil-want-minibuffer t
         evil-undo-system 'undo-fu)
   :config
+  (setq ring-bell-function 'ignore)
+  (setq evil-insert-state-message nil)
+  (setq evil-visual-char-message nil)
+  (setq evil-visual-line-message nil)
+  (setq evil-visual-block-message nil)
   (evil-mode 1))
 
 (use-package evil-collection
@@ -477,7 +482,7 @@
              )
             ("org-static"
              :base-directory "~/org/"
-             :base-extension "css\\|js\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+             :base-extension "css\\|js\\|json\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
              :publishing-directory "~/org/pub/"
              :exclude "pub"
              :recursive t
@@ -519,6 +524,8 @@
 
 (use-package csv-mode
   :mode ("\\.csv$" . csv-mode))
+
+(add-hook 'python-mode-hook (lambda() (setq-local font-lock-maximum-decoration t)))
 
 (use-package magit
   :general
@@ -759,6 +766,18 @@
                        "-p"
                        (dired-get-file-for-visit)))
 
+(setq my/dired-dotfiles-toggled nil)
+(setq my/dired-listing-switches "-l --human-readable --group-directories-first --no-group")
+(setq my/dired-listing-switches-dotfiles "-l --almost-all --human-readable --group-directories-first --no-group")
+
+(defun my/dired-toggle-dotfiles ()
+  (interactive)
+  (if my/dired-dotfiles-toggled 
+      (progn (dired-sort-other my/dired-listing-switches)
+             (setq my/dired-dotfiles-toggled nil))
+    (dired-sort-other my/dired-listing-switches-dotfiles)
+    (setq my/dired-dotfiles-toggled t)))
+
 (use-package dired-open)
 (use-package dired
   :straight nil
@@ -783,7 +802,8 @@
                 (kbd "f") 'dired-do-info
                 (kbd "-") 'dired-narrow
                 (kbd "+") 'dired-create-directory
-                (kbd ".") 'find-file
+                (kbd "F") 'find-file
+                (kbd ".") 'my/dired-toggle-dotfiles
                 (kbd "SPC") 'my/dired-toggle-mark-single-file)
               )))
 
@@ -792,7 +812,9 @@
       delete-by-moving-to-trash t
       insert-directory-program "gls"
       dired-use-ls-dired t
-      dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
+      ;; dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group"
+      dired-listing-switches my/dired-listing-switches
+      )
 
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
@@ -804,6 +826,10 @@
 (defun my/reload-init-file ()
   (interactive)
   (load-file user-init-file))
+
+(defun my/run-code-python ()
+  (interactive)
+  (shell-command (concat "python " (buffer-file-name))))
 
 (defun my/view-with-quicklook ()
   (interactive)
@@ -912,6 +938,9 @@
   "c" '(:ignore t :wk "code")
   "c w" 'fill-paragraph
   "c c" 'count-words
+
+  "c r" '(:ignore t :wk "run")
+  "c r p" 'my/run-code-python
 
   "." 'find-file
   "/" 'rg
