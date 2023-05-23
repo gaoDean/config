@@ -74,6 +74,13 @@
 (advice-add 'nano-light :after (lambda(&rest r) (set-face-background 'header-line nil)))
 (advice-add 'nano-dark :after (lambda(&rest r) (set-face-background 'header-line nil)))
 
+;; (setq display-buffer-base-action
+;;       '((display-buffer-in-side-window)
+;;         (side . right)
+;;         (window-width . 0.5)))
+
+(add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
+
 (use-package esup)
 
 (use-package general)
@@ -315,17 +322,6 @@
   (sis-global-respect-mode t)
   )
 
-(use-package pdf-tools
-  :defer t
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :config
-  (pdf-loader-install)
-  (setq-default pdf-view-display-size 'fit-width)
-  (defvar my/tmp-pdf-tools-thing nil)
-  (nmap pdf-view-mode-map "SPC" my/tmp-pdf-tools-thing) ;; to fix SPC not being leader-key
-  :custom
-  (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
-
 (electric-pair-mode 1)
 
 (advice-add 'org-edit-table.el :before (lambda (&rest r) (set-face-attribute 'table-cell nil :background 'unspecified)))
@@ -341,7 +337,14 @@
     "P d" 'pa--delete
     "P r" 'pa--rename))
 
+(add-to-list 'image-file-name-extensions "avif")
+
+(setq org-html-inline-image-rules '(("file" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
+                                   ("http" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
+                                   ("https" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")))
+
 (use-package org :straight (:type built-in))
+(advice-add 'org-open-at-point :after #'delete-other-windows)
 
 (defun my/set-org-faces()
   (with-eval-after-load 'org-faces
@@ -406,37 +409,53 @@
 
 (use-package org-auto-tangle :hook org-mode)
 
-(add-hook 'org-mode-hook (lambda()
-  (require 'ox-latex)
+(add-hook 'org-mode-hook
+          (lambda()
+            (require 'ox-latex)
+            (setq org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "qlmanage -p %s"))))
+            (setq org-latex-default-class "org")
 
-  (setq org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
-        org-latex-default-packages-alist
-        '(("AUTO" "inputenc" nil
-           ("pdflatex"))
-          ("T1" "fontenc" nil
-           ("pdflatex"))
-          ("" "graphicx" t)
-          ("" "longtable" t)
-          ("" "wrapfig" nil)
-          ("" "rotating" nil)
-          ("normalem" "ulem" t)
-          ("" "amsmath" t)
-          ("" "amssymb" t)
-          ("" "capt-of" nil)
-          ("" "hyperref" t)))
+            (setq
+             ;; org-latex-pdf-process (list "latexmk -f -pdfxe -interaction=nonstopmode -output-directory=%o %f")
+             org-latex-pdf-process (list "xelatex -interaction nonstopmode -output-directory=%o %f"
+                                         "xelatex -interaction nonstopmode -output-directory=%o %f")
+                  org-latex-default-packages-alist
+                  '(("AUTO" "inputenc" nil
+                     ("pdflatex"))
+                    ("T1" "fontenc" nil
+                     ("pdflatex"))
+                    ("" "graphicx" t)
+                    ("" "longtable" t)
+                    ("" "wrapfig" nil)
+                    ("" "rotating" nil)
+                    ("normalem" "ulem" t)
+                    ("" "amsmath" t)
+                    ("" "amsmath" t)
+                    ("" "amssymb" t)
+                    ("" "capt-of" nil)
+                    ("" "hyperref" t))
+                  org-latex-packages-alist
+                  '(
+                    ("" "hyphenat")
+                    ("" "listings")
+                    ("" "float")
+                    ("" "placeins")
+                    ))
 
-(add-to-list 'org-latex-classes
-             '("orgox"
-               "
-                \\documentclass[hidelinks]{article}
-                [DEFAULT-PACKAGES]
-                [PACKAGES]
-                [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
+
+            (add-to-list 'org-latex-classes
+                         '("org"
+                           "
+               \\documentclass[hidelinks]{article}
+               \\def\\UrlBreaks{\\do\\/\\do-\\do_} 
+               [DEFAULT-PACKAGES]
+               [PACKAGES]
+               [EXTRA]"
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
 
 (use-package citeproc :if (eq major-mode 'org-mode))
 
@@ -482,7 +501,7 @@
              )
             ("org-static"
              :base-directory "~/org/"
-             :base-extension "css\\|js\\|json\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+             :base-extension "css\\|avif\\|js\\|json\\|png\\|webp\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
              :publishing-directory "~/org/pub/"
              :exclude "pub"
              :recursive t
@@ -526,6 +545,9 @@
   :mode ("\\.csv$" . csv-mode))
 
 (add-hook 'python-mode-hook (lambda() (setq-local font-lock-maximum-decoration t)))
+
+(use-package swift-mode
+  :mode "\\.swift")
 
 (use-package magit
   :general
@@ -681,7 +703,7 @@
                             'face 'font-lock-constant-face)
                 (propertize (+eshell--current-git-branch)
                             'face 'font-lock-function-name-face)
-                (propertize " λ" 'face 'eshell-prompt-face)
+                (propertize " λ" 'face 'variable-pitch)
                 ;; needed for the input text to not have prompt face
                 (propertize " " 'face 'default))))
 
@@ -708,35 +730,64 @@
                       (insert (concat "brew install " selected))
                       (eshell-command-result (concat "brew info " selected))))
 
-(setq my/eshell-alises '(
-                         ("f"  . "find-file")
-                         ("l"  . "ls -lh $*")
-                         ("la" . "ls -alh $*")
-                         ("gs" . "magit-status $*")
-                         ("g"  . "magit $*")
-                         ("n"  . "dirvish $*")
-                         ("ql"  . "qlmanage -p")
-                         ))
+(setq eshell-aliases-file "/Users/deangao/.config/emacs/eshell/alias")
+;; (setq my/eshell-alises '(
+;;                          ("f"  . "find-file")
+;;                          ("l"  . "ls -lh $*")
+;;                          ("la" . "ls -alh $*")
+;;                          ("gs" . "magit-status $*")
+;;                          ("g"  . "magit $*")
+;;                          ("n"  . "dirvish $*")
+;;                          ("ql"  . "qlmanage -p")
+;;                          ))
 
 
 
-(add-hook 'eshell-mode-hook (lambda ()
-                              (dolist (pair my/eshell-alises)
-                                (eshell/alias (car pair) (cdr pair)))))
+;; (add-hook 'eshell-mode-hook (lambda ()
+;;                               (dolist (pair my/eshell-alises)
+;;                                 (eshell/alias (car pair) (cdr pair)))))
 
 (use-package vterm
   :straight (vterm :type git :host github :repo "akermu/emacs-libvterm"))
 
-(use-package dired-collapse
-  :hook dired-mode)
-
+;; (use-package dired-collapse
+;;   :hook dired-mode)
+(use-package dired-open)
 (use-package dired-narrow)
-
 (use-package dired-ranger)
+
+(setq my/dired-listing-switches
+      "-g --human-readable --group-directories-first --no-group")
+(setq my/dired-listing-switches-dotfiles
+      "-g --almost-all --human-readable --group-directories-first --no-group")
+
+(setq dired-recursive-copies 'always
+      dired-recursive-deletes 'always
+      delete-by-moving-to-trash t
+      insert-directory-program "gls"
+      dired-use-ls-dired t
+      dired-listing-switches my/dired-listing-switches
+      )
+
+(setq dired-open-extensions '(("gif" . "qlmanage -p")
+                              ("jpg" . "qlmanage -p")
+                              ("heic" . "qlmanage -p")
+                              ("png" . "qlmanage -p")
+                              ("webp" . "qlmanage -p")
+                              ("tiff" . "qlmanage -p")
+                              ("tif" . "qlmanage -p")
+                              ("pdf" . "qlmanage -p")
+                              ("avif" . "qlmanage -p")
+                              ("mp4" . "qlmanage -p")))
 
 (defun my/dired-up-directory-in-buffer ()
   (interactive)
   (find-alternate-file ".."))
+
+(defun my/dired-get-size ()
+  "get size of current file"
+  (interactive)
+  (message (shell-command-to-string (concat "echo -n $(du -sh " (dired-get-filename) " | grep -o \"^\\s*\\S*\")"))))
 
 (defun my/kill-all-dired-buffers-and-quit ()
   "Kill all Dired buffers and quit the current Dired buffer."
@@ -746,6 +797,10 @@
           (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
             (kill-buffer buffer)))
         (buffer-list)))
+
+(defun my/dired-xdg-open ()
+  (interactive)
+  (browse-url-xdg-open (dired-get-filename)))
 
 (defun my/dired-toggle-mark-single-file ()
   "Toggle mark of the single file under the cursor. Needs dired-ranger from dired-hacks"
@@ -764,12 +819,42 @@
                        "qlmanage"
                        nil
                        "-p"
-                       (dired-get-file-for-visit)))
+                       (dired-get-filename)))
+
+(defun my/encode-filepath (path)
+  "replace spaces with backslash + space"
+  (replace-regexp-in-string " "
+                            "\\\\ "
+                            path))
+(defun my/encode-filepath-double (path)
+  "replace spaces with backslash + space"
+  (replace-regexp-in-string " "
+                            "\\\\\\\\ "
+                            path))
+
+(defun my/dired-run-command (command)
+  "run a shell command but replace $s with current selected file"
+  (interactive (list (read-from-minibuffer "command: ")))
+  (async-shell-command
+   (replace-regexp-in-string "\$s"
+                             (my/encode-filepath-double (dired-get-filename))
+                             command)))
+
+;; (defun my/dired-convert-jpg (size)
+;;   (interactive (list (read-from-minibuffer "size: ")))
+;;   (my/dired-run-command (concat "convert $s -define jpeg:extent=" size " img-out.jpg")))
+
+(defun my/dired-convert (extension quality)
+  (interactive (list (read-from-minibuffer "extension: ")
+                     (read-from-minibuffer "quality: ")))
+  (my/dired-run-command (concat "convert $s -quality "
+                                quality
+                                " "
+                                (my/encode-filepath (file-name-sans-extension (dired-get-filename)))
+                                "."
+                                extension)))
 
 (setq my/dired-dotfiles-toggled nil)
-(setq my/dired-listing-switches "-l --human-readable --group-directories-first --no-group")
-(setq my/dired-listing-switches-dotfiles "-l --almost-all --human-readable --group-directories-first --no-group")
-
 (defun my/dired-toggle-dotfiles ()
   (interactive)
   (if my/dired-dotfiles-toggled 
@@ -778,43 +863,42 @@
     (dired-sort-other my/dired-listing-switches-dotfiles)
     (setq my/dired-dotfiles-toggled t)))
 
-(use-package dired-open)
 (use-package dired
   :straight nil
   :init
   (add-hook 'dired-mode-hook
             (lambda() 
               (dired-hide-details-mode)
-              (evil-define-key 'normal dired-mode-map
-                (kbd "h") 'dired-up-directory
-                (kbd "l") 'dired-open-file
-                (kbd "q") 'my/kill-all-dired-buffers-and-quit
-                (kbd "p") 'dired-ranger-copy
-                (kbd "v") 'dired-ranger-move
-                (kbd "b") 'dired-ranger-bookmark
-                (kbd "B") 'dired-ranger-bookmark-visit
-                (kbd "m") 'dired-do-chmod
-                (kbd "r") 'dired-do-rename
-                (kbd "O") 'dired-xdg-open
-                (kbd "L") 'my/dired-quicklook
-                (kbd "w") 'wdired-change-to-wdired-mode
-                (kbd "x") 'dired-do-delete
-                (kbd "f") 'dired-do-info
-                (kbd "-") 'dired-narrow
-                (kbd "+") 'dired-create-directory
-                (kbd "F") 'find-file
-                (kbd ".") 'my/dired-toggle-dotfiles
-                (kbd "SPC") 'my/dired-toggle-mark-single-file)
-              )))
-
-(setq dired-recursive-copies 'always
-      dired-recursive-deletes 'always
-      delete-by-moving-to-trash t
-      insert-directory-program "gls"
-      dired-use-ls-dired t
-      ;; dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group"
-      dired-listing-switches my/dired-listing-switches
-      )
+              (nmap dired-mode-map
+                "+" 'dired-create-directory
+                "-" 'dired-narrow
+                "." 'my/dired-toggle-dotfiles
+                "?" 'helpful-key
+                "B" 'dired-ranger-bookmark-visit
+                "C-?" 'describe-keymap
+                "F" 'dired-do-info
+                "L" 'my/dired-quicklook
+                "M" 'dired-do-rename
+                "R" 'my/dired-run-command
+                "RET" 'my/dired-xdg-open
+                "SPC" 'my/dired-toggle-mark-single-file
+                "b" 'dired-ranger-bookmark
+                "c" 'my/dired-convert
+                "f" 'find-file
+                "h" 'dired-up-directory
+                "i" 'dired-do-info
+                "l" 'dired-open-file
+                "m" 'dired-do-chmod
+                "o" 'dired-xdg-open
+                "p" 'dired-ranger-paste
+                "q" 'my/kill-all-dired-buffers-and-quit
+                "r" 'dired-do-rename
+                "s" 'my/dired-get-size
+                "v" 'dired-ranger-move
+                "w" 'wdired-change-to-wdired-mode
+                "x" 'dired-do-delete
+                "z" 'dired-do-compress
+              ))))
 
 (setq delete-by-moving-to-trash t
       trash-directory "~/.Trash")
@@ -827,9 +911,30 @@
   (interactive)
   (load-file user-init-file))
 
-(defun my/run-code-python ()
+(defun my/copy-buffer ()
+  "copy the entire buffer to clipboard"
   (interactive)
-  (shell-command (concat "python " (buffer-file-name))))
+  (kill-new (buffer-string)))
+
+(defun my/org-open-at-point ()
+  (interactive)
+  (org-open-at-point))
+
+(defun my/run-code ()
+  "run code based on current language"
+  (interactive)
+  (let* ((interpreters '((js . "node")
+                         (py . "python")))
+         (inter (alist-get (intern (file-name-extension (buffer-file-name))) interpreters) ))
+    (shell-command (concat inter " " (buffer-file-name)))))
+
+(defun my/run-code-input (input)
+  "run code based on current language with stdin"
+  (interactive (list (read-from-minibuffer "Input: ")))
+  (let* ((interpreters '((js . "node")
+                         (py . "python")))
+         (inter (alist-get (intern (file-name-extension (buffer-file-name))) interpreters) ))
+    (shell-command (concat "echo -n \"" input "\" | " inter " " (buffer-file-name)))))
 
 (defun my/view-with-quicklook ()
   (interactive)
@@ -875,11 +980,13 @@
   "b b" 'ido-switch-buffer
   "b B" 'ibuffer
   "b K" 'ido-kill-buffer
-  "b k" 'kill-this-buffer
+  ;; "b k" 'kill-this-buffer
+  "b k" 'kill-current-buffer
   "b n" 'bs-cycle-next
   "b p" 'bs-cycle-previous
 
   "w" '(:ignore t :wk "windows")
+  "w m" 'delete-other-windows
   "w w" 'evil-window-next
   "w k" 'evil-window-up
   "w j" 'evil-window-down
@@ -888,8 +995,8 @@
   "w p" 'evil-window-mru
   "w c" 'evil-window-delete
   "w v" 'evil-window-vsplit
-  "w >" 'evil-window-increase-width
-  "w <" 'evil-window-decrease-width
+  "w <" 'evil-window-increase-width
+  "w >" 'evil-window-decrease-width
   "w +" 'evil-window-increase-height
   "w -" 'evil-window-decrease-height
   "w n" 'make-frame
@@ -938,9 +1045,9 @@
   "c" '(:ignore t :wk "code")
   "c w" 'fill-paragraph
   "c c" 'count-words
-
-  "c r" '(:ignore t :wk "run")
-  "c r p" 'my/run-code-python
+  "c r" 'my/run-code
+  "c R" 'my/run-code-input
+  "c y" 'my/copy-buffer
 
   "." 'find-file
   "/" 'rg
@@ -952,6 +1059,7 @@
 
 (nmap general-override-mode-map 
   :predicate '(derived-mode-p 'org-mode)
+  "<return>" 'my/org-open-at-point
   "TAB" 'my/org-cycle
   "<tab>" 'my/org-cycle)
 
@@ -977,5 +1085,5 @@
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)
 
-(general-def tempel-map "TAB" 'tempel-next)
-(general-def tempel-map "S-TAB" 'tempel-previous)
+(general-def tempel-map "<tab>" 'tempel-next)
+(general-def tempel-map "<backtab>" 'tempel-previous)
