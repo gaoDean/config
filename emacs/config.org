@@ -593,6 +593,7 @@ Don't use fcitx, binds up emacs
 ** avif image format
 #+begin_src elisp
     (add-to-list 'image-file-name-extensions "avif")
+    (add-to-list 'image-types 'avif)
 
   (setq org-html-inline-image-rules '(("file" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
                                      ("http" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
@@ -855,6 +856,13 @@ Don't use fcitx, binds up emacs
 #+begin_src elisp
   (use-package swift-mode
     :mode "\\.swift")
+#+end_src
+** devicetree
+#+begin_src elisp
+  (use-package c-mode
+    :straight nil
+    :mode "\\.dtsi"
+    :mode "\\.keymap")
 #+end_src
 * Git
 ** Magit
@@ -1252,6 +1260,7 @@ Don't use fcitx, binds up emacs
                   "b" 'dired-ranger-bookmark
                   "c" 'my/dired-convert
                   "f" 'find-file
+                  "G" 'magit
                   "h" 'dired-up-directory
                   "i" 'dired-do-info
                   "l" 'dired-open-file

@@ -338,6 +338,7 @@
     "P r" 'pa--rename))
 
 (add-to-list 'image-file-name-extensions "avif")
+  (add-to-list 'image-types 'avif)
 
 (setq org-html-inline-image-rules '(("file" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
                                    ("http" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
@@ -548,6 +549,11 @@
 
 (use-package swift-mode
   :mode "\\.swift")
+
+(use-package c-mode
+  :straight nil
+  :mode "\\.dtsi"
+  :mode "\\.keymap")
 
 (use-package magit
   :general
@@ -885,6 +891,7 @@
                 "b" 'dired-ranger-bookmark
                 "c" 'my/dired-convert
                 "f" 'find-file
+                "G" 'magit
                 "h" 'dired-up-directory
                 "i" 'dired-do-info
                 "l" 'dired-open-file

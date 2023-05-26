@@ -20,7 +20,7 @@ js-mode
 (forin "for (const " p " in " p ") {" n> r n "}" >)
 (log "console.log(" r ");")
 (oucc "function run(input) {" n> r n "}" n n "process.stdin.on(\"data\", input => {
-    console.log(run(input.toString()));
+    console.log(run(input.toString().trim()));
 })")
 
 html-mode
