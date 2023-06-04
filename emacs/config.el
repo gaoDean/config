@@ -925,7 +925,7 @@
                 "i" 'dired-do-info
                 "l" 'dired-open-file
                 "m" 'dired-do-chmod
-                "o" 'dired-xdg-open
+                "o" 'my/dired-xdg-open
                 "p" 'dired-ranger-paste
                 "q" 'my/kill-all-dired-buffers-and-quit
                 "r" 'dired-do-rename
