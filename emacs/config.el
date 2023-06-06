@@ -553,6 +553,7 @@
 (use-package c-mode
   :straight nil
   :mode "\\.dtsi"
+  :mode "\\.overlay"
   :mode "\\.keymap")
 
 (setq treesit-language-source-alist

@@ -862,6 +862,7 @@ Don't use fcitx, binds up emacs
   (use-package c-mode
     :straight nil
     :mode "\\.dtsi"
+    :mode "\\.overlay"
     :mode "\\.keymap")
 #+end_src
 * Treesitter
