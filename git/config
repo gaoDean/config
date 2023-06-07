@@ -1,0 +1,20 @@
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[user]
+	name = Dean
+	email = gao.dean@hotmail.com
+[push]
+	autoSetupRemote = true
+[init]
+	defaultBranch = main
+[color]
+	ui = true
+[gpg]
+	program = %PROGRAMFILES(x86)%\\GnuPG\\bin\\gpg.exe
+[pull]
+	rebase = false
+[sendemail]
+	annotate = yes

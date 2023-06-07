@@ -808,6 +808,7 @@
 (setq dired-open-extensions '(("gif" . "qlmanage -p")
                               ("jpg" . "qlmanage -p")
                               ("heic" . "qlmanage -p")
+                              ("svg" . "qlmanage -p")
                               ("png" . "qlmanage -p")
                               ("webp" . "qlmanage -p")
                               ("tiff" . "qlmanage -p")
