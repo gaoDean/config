@@ -1088,6 +1088,7 @@
   "c r" 'my/run-code
   "c R" 'my/run-code-input
   "c y" 'my/copy-buffer
+  "c m" 'make
 
   "." 'find-file
   "/" 'rg
