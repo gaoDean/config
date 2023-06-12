@@ -213,7 +213,7 @@
 (put 'ivy-history                'history-length 25)
 (put 'counsel-M-x-history        'history-length 25)
 (put 'counsel-minibuffer-history 'history-length 25)
-(setq savehist-file "~/.nano-savehist")
+(setq savehist-file "~/.cache/emacs/savehist")
 (savehist-mode 1)
 
 ;; Remove text properties for kill ring entries
