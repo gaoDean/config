@@ -1392,6 +1392,11 @@ Don't use fcitx, binds up emacs
             (eq (car (org-element-context)) 'item))
         (org-cycle)
       (evil-toggle-fold)))
+
+  (defun my/new-org-file (file)
+    "Cycle through visibility states, but do not reach the SUBTREE state."
+    (interactive (list (read-from-minibuffer "File: ")))
+    (find-file (concat "~/org/" file)))
 #+end_src
 
 ** Maps
@@ -1441,6 +1446,7 @@ Don't use fcitx, binds up emacs
     "f r" 'recentf
     "f v" 'my/view-with-quicklook
     "f R" 'rename-file
+    "f o" 'my/new-org-file
 
     "e" '(:ignore t :wk "emacs")
     "e +" 'text-scale-increase

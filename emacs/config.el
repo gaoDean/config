@@ -1011,6 +1011,11 @@
       (org-cycle)
     (evil-toggle-fold)))
 
+(defun my/new-org-file (file)
+  "Cycle through visibility states, but do not reach the SUBTREE state."
+  (interactive (list (read-from-minibuffer "File: ")))
+  (find-file (concat "~/org/" file)))
+
 (unbind-key "s-p") ;; ns-print-buffer
 
 (leader-def :keymaps '(normal visual)
@@ -1055,6 +1060,7 @@
   "f r" 'recentf
   "f v" 'my/view-with-quicklook
   "f R" 'rename-file
+  "f o" 'my/new-org-file
 
   "e" '(:ignore t :wk "emacs")
   "e +" 'text-scale-increase

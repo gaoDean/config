@@ -127,6 +127,10 @@ local plugins = {
 		end,
 	},
 	{
+		"nvim-treesitter/playground",
+		event = "VeryLazy",
+	},
+	{
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
