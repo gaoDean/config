@@ -865,6 +865,15 @@ Don't use fcitx, binds up emacs
     :mode "\\.overlay"
     :mode "\\.keymap")
 #+end_src
+** scad
+#+begin_src elisp
+  (use-package scad-mode
+    :mode "\\.scad$")
+#+end_src
+** svelte mode
+#+begin_src elisp
+(add-to-list 'auto-mode-alist '("\\.svelte\\'" . mhtml-mode))
+#+end_src
 * Treesitter
 [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][guide]]
 #+begin_src elisp
@@ -1293,6 +1302,7 @@ Don't use fcitx, binds up emacs
                   "SPC" 'my/dired-toggle-mark-single-file
                   "b" 'dired-ranger-bookmark
                   "c" 'my/dired-convert
+                  "C" 'magit-clone
                   "f" 'find-file
                   "G" 'magit
                   "h" 'dired-up-directory
@@ -1303,6 +1313,7 @@ Don't use fcitx, binds up emacs
                   "p" 'dired-ranger-paste
                   "q" 'my/kill-all-dired-buffers-and-quit
                   "r" 'dired-do-rename
+                  "e" 'eshell
                   "s" 'my/dired-get-size
                   "v" 'dired-ranger-move
                   "w" 'wdired-change-to-wdired-mode

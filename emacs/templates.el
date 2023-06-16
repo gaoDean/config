@@ -36,4 +36,8 @@ html-mode
   </body>
 </html>")
 (T "<" (s tag) " " p ">" r "</" tag ">")
-(t "<" (s tag) ">" p "</" tag ">")
+(t "<" (s tag) ">" r "</" tag ">")
+
+sh-mode
+(sb "#!/bin/sh" n n r)
+(sh "#!/bin/sh" n n r)

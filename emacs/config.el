@@ -556,6 +556,11 @@
   :mode "\\.overlay"
   :mode "\\.keymap")
 
+(use-package scad-mode
+  :mode "\\.scad$")
+
+(add-to-list 'auto-mode-alist '("\\.svelte\\'" . mhtml-mode))
+
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -921,6 +926,7 @@
                 "SPC" 'my/dired-toggle-mark-single-file
                 "b" 'dired-ranger-bookmark
                 "c" 'my/dired-convert
+                "C" 'magit-clone
                 "f" 'find-file
                 "G" 'magit
                 "h" 'dired-up-directory
@@ -931,6 +937,7 @@
                 "p" 'dired-ranger-paste
                 "q" 'my/kill-all-dired-buffers-and-quit
                 "r" 'dired-do-rename
+                "e" 'eshell
                 "s" 'my/dired-get-size
                 "v" 'dired-ranger-move
                 "w" 'wdired-change-to-wdired-mode
