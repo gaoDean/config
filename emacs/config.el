@@ -1107,6 +1107,7 @@
   "/" 'rg
   "q" 'save-buffers-kill-terminal
   "s" 'scratch-buffer
+  "x" 'delete-frame
   "r" 'jump-to-register)
 
 (imap "DEL" 'backward-delete-char-untabify)
@@ -1138,6 +1139,7 @@
 (general-define-key "M-v" 'evil-paste-after)
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)
+(nmap general-override-mode-map "C-n" 'make-frame)
 
 (general-def tempel-map "<tab>" 'tempel-next)
 (general-def tempel-map "<backtab>" 'tempel-previous)

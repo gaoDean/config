@@ -34,7 +34,7 @@ def left_button():
 
 def right_button():
     while running:
-        time.sleep(60*9)
+        time.sleep(60*4)
         press_key(pykeyboard.Key.right)
         time.sleep(0.3)
         mouse.press(pymouse.Button.right)
