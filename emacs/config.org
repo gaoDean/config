@@ -571,6 +571,15 @@ Don't use fcitx, binds up emacs
 ** electric
 #+begin_src elisp
   (electric-pair-mode 1)
+
+  (setq sgml-quick-keys 'close)
+  (setq electric-pair-pairs
+      '(
+        (?\" . ?\")
+        (?\' . ?\')
+        (?\{ . ?\})
+        (?\( . ?\))
+        (?\[ . ?\])))
 #+end_src
 ** table.el
 #+begin_src elisp
@@ -872,8 +881,13 @@ Don't use fcitx, binds up emacs
 #+end_src
 ** svelte mode
 #+begin_src elisp
-(add-to-list 'auto-mode-alist '("\\.svelte\\'" . mhtml-mode))
+  (add-to-list 'auto-mode-alist '("\\.svelte\\'" . mhtml-mode))
 #+end_src
+** cjs
+#+begin_src elisp
+  (add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
+#+end_src
+
 * Treesitter
 [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][guide]]
 #+begin_src elisp

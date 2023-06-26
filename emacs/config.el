@@ -324,6 +324,15 @@
 
 (electric-pair-mode 1)
 
+(setq sgml-quick-keys 'close)
+(setq electric-pair-pairs
+    '(
+      (?\" . ?\")
+      (?\' . ?\')
+      (?\{ . ?\})
+      (?\( . ?\))
+      (?\[ . ?\])))
+
 (advice-add 'org-edit-table.el :before (lambda (&rest r) (set-face-attribute 'table-cell nil :background 'unspecified)))
 
 (use-package emacs-pa
@@ -560,6 +569,8 @@
   :mode "\\.scad$")
 
 (add-to-list 'auto-mode-alist '("\\.svelte\\'" . mhtml-mode))
+
+(add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
 
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
