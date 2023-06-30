@@ -9,12 +9,14 @@ org-mode
 (qu "#+begin_quote" n "/" r "/" n "#+end_quote")
 (deg "°")
 
-this is a test
-
 js-mode
+
 
 (fun "function " p "(" p ") {" n> r n "}" >)
 (afun "async function " p "(" p ") {" n> r n "}" >)
+(efun "export function " p "(" p ") {" n> r n "}" >)
+(eafun "export async function " p "(" p ") {" n> r n "}" >)
+(imp "import " p " from \"" r "\";")
 (for "for (let " (s i) " = 0; " i " < " p "; " i "++) {" n> r n "}" >)
 (fori "for (let " (s i) " = " p "; " i " > 0; " i "--) {" n> r n "}" >)
 (forin "for (const " p " in " p ") {" n> r n "}" >)
@@ -41,3 +43,7 @@ html-mode
 sh-mode
 (sb "#!/bin/sh" n n r)
 (sh "#!/bin/sh" n n r)
+
+mhtml-mode
+
+(tempel-svelte "")

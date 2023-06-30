@@ -324,7 +324,12 @@
 
 (electric-pair-mode 1)
 
-(setq sgml-quick-keys 'close)
+(add-hook 'mhtml-mode-hook (lambda()
+                             (setq sgml-quick-keys 'close)
+                             (setq electric-pair-inhibit-predicate
+                                   `(lambda (c)
+                                      (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))
+                             ))
 (setq electric-pair-pairs
     '(
       (?\" . ?\")
@@ -352,6 +357,13 @@
 (setq org-html-inline-image-rules '(("file" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
                                    ("http" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
                                    ("https" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")))
+
+(use-package simpleclip
+  :hook emacs-startup-hook
+  :general
+  (general-def general-override-mode-map
+    "M-v" 'simpleclip-paste
+    "M-c" 'simpleclip-copy))
 
 (use-package org :straight (:type built-in))
 (advice-add 'org-open-at-point :after #'delete-other-windows)
@@ -572,6 +584,8 @@
 
 (add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
 
+(setq js-indent-level 2)
+
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -688,6 +702,7 @@
   (setq auto-insert-query nil)
   (define-auto-insert "\\.org$" [(lambda() (evil-insert 0) (tempel-insert 'tempel-org))])
   (define-auto-insert "\\.html" [(lambda() (evil-insert 0) (tempel-insert 'tempel-html))])
+  (define-auto-insert "\\.svelte" [(lambda() (evil-insert 0) (tempel-insert 'tempel-svelte))])
   )
 
 (use-package tempel-collection :after tempel)
@@ -1147,7 +1162,7 @@
 ;;   "SPC" (general-simulate-key "SPC" :state 'normal)
 ;;   "q" 'my/kill-all-dired-buffers-and-quit)
 
-(general-define-key "M-v" 'evil-paste-after)
+;; (general-define-key "M-v" 'evil-paste-after)
 
 (general-define-key (kbd "C-x C-m") 'execute-extended-command)
 (nmap general-override-mode-map "C-n" 'make-frame)

@@ -572,7 +572,12 @@ Don't use fcitx, binds up emacs
 #+begin_src elisp
   (electric-pair-mode 1)
 
-  (setq sgml-quick-keys 'close)
+  (add-hook 'mhtml-mode-hook (lambda()
+                               (setq sgml-quick-keys 'close)
+                               (setq electric-pair-inhibit-predicate
+                                     `(lambda (c)
+                                        (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))
+                               ))
   (setq electric-pair-pairs
       '(
         (?\" . ?\")
@@ -607,6 +612,17 @@ Don't use fcitx, binds up emacs
   (setq org-html-inline-image-rules '(("file" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
                                      ("http" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")
                                      ("https" . "\\(?:\\.\\(?:gif\\|jp\\(?:e?g\\)\\|png\\|avif\\|svg\\|webp\\)\\)")))
+#+end_src
+** simpleclip
+Vim-like dual clipboard. One system, one application.
+#+begin_src elisp
+
+  (use-package simpleclip
+    :hook emacs-startup-hook
+    :general
+    (general-def general-override-mode-map
+      "M-v" 'simpleclip-paste
+      "M-c" 'simpleclip-copy))
 #+end_src
 * Org
 ** Org
@@ -888,6 +904,10 @@ Don't use fcitx, binds up emacs
   (add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
 #+end_src
 
+** js
+#+begin_src elisp
+(setq js-indent-level 2)
+#+end_src
 * Treesitter
 [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][guide]]
 #+begin_src elisp
@@ -1021,6 +1041,7 @@ Don't use fcitx, binds up emacs
     (setq auto-insert-query nil)
     (define-auto-insert "\\.org$" [(lambda() (evil-insert 0) (tempel-insert 'tempel-org))])
     (define-auto-insert "\\.html" [(lambda() (evil-insert 0) (tempel-insert 'tempel-html))])
+    (define-auto-insert "\\.svelte" [(lambda() (evil-insert 0) (tempel-insert 'tempel-svelte))])
     )
 
   (use-package tempel-collection :after tempel)
@@ -1540,7 +1561,7 @@ Don't use fcitx, binds up emacs
   ;;   "SPC" (general-simulate-key "SPC" :state 'normal)
   ;;   "q" 'my/kill-all-dired-buffers-and-quit)
 
-  (general-define-key "M-v" 'evil-paste-after)
+  ;; (general-define-key "M-v" 'evil-paste-after)
 
   (general-define-key (kbd "C-x C-m") 'execute-extended-command)
   (nmap general-override-mode-map "C-n" 'make-frame)
