@@ -33,6 +33,6 @@ hash -d cfa=/Users/deangao/.config/shell/aliasrc
 hash -d cfp=/Users/deangao/.config/shell/profile 
 hash -d bib=/Users/deangao/.config/roff/bib 
 hash -d cft=/Users/deangao/.config/kitty/kitty.conf 
+hash -d cfs=/Users/deangao/.config/kitty/sessions 
 hash -d cfta=/Users/deangao/.config/alacritty/alacritty.yml 
 hash -d bm=/Users/deangao/.config/raycastscripts/bookmarks 
-hash -d cfs=/Users/deangao/.config/kitty/session.conf 

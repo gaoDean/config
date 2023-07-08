@@ -48,7 +48,7 @@ local plugins = {
         previewer = false,
         prompt_title = false
       })
-      require("telescope.themes").get_ivy = function()
+      require("telescope.themes").get_viy = function()
         return dropdown_config
       end
       local actions = require("telescope.actions")
@@ -69,8 +69,7 @@ local plugins = {
           },
           file_browser = {
             -- disables netrw and use telescope-file-browser in its place
-            theme = "ivy",
-            hijack_netrw = true,
+            theme = "viy",
             mappings = {
               i = {
                 ["<backspace>"] = fb_actions.goto_parent_dir,

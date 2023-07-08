@@ -15,7 +15,7 @@
 
 	-- au("VimEnter", "*.md", "ZenMode")
 	au("BufWritePost", "bm-files,bm-dirs", "!shortcuts")
-	au("BufWritePost", "sessions", "!shortcuts")
+	au("BufWritePost", "sessions", "!~/.config/kitty/generate.sh")
 	-- au("FileType", "*", "set fo-=c fo-=o fo-=r fo+=j") -- buffer only option
 	au("FileType", "*", "set fo=qlj") -- buffer only option
 	au("FileType", "lua", "set fo+=r tabstop=2")

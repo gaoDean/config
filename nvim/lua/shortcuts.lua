@@ -10,8 +10,8 @@ nnoremap 'cfa :e /Users/deangao/.config/shell/aliasrc<cr>
 nnoremap 'cfp :e /Users/deangao/.config/shell/profile<cr>
 nnoremap 'bib :e /Users/deangao/.config/roff/bib<cr>
 nnoremap 'cft :e /Users/deangao/.config/kitty/kitty.conf<cr>
+nnoremap 'cfs :e /Users/deangao/.config/kitty/sessions<cr>
 nnoremap 'cfta :e /Users/deangao/.config/alacritty/alacritty.yml<cr>
 nnoremap 'bm :e /Users/deangao/.config/raycastscripts/bookmarks<cr>
-nnoremap 'cfs :e /Users/deangao/.config/kitty/session.conf<cr>
 ]]
 )

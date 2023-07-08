@@ -34,6 +34,6 @@ cfa="$EDITOR /Users/deangao/.config/shell/aliasrc" \
 cfp="$EDITOR /Users/deangao/.config/shell/profile" \
 bib="$EDITOR /Users/deangao/.config/roff/bib" \
 cft="$EDITOR /Users/deangao/.config/kitty/kitty.conf" \
+cfs="$EDITOR /Users/deangao/.config/kitty/sessions" \
 cfta="$EDITOR /Users/deangao/.config/alacritty/alacritty.yml" \
 bm="$EDITOR /Users/deangao/.config/raycastscripts/bookmarks" \
-cfs="$EDITOR /Users/deangao/.config/kitty/session.conf" \
