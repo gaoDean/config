@@ -80,3 +80,8 @@ _comp_options+=(globdots)		# Include hidden files.
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
     source ~/.zprofile
 fi
+
+eval "$(zoxide init zsh)"
+
+# builtin bindkey "^[^H" backward-kill-word
+# builtin bindkey "^[^?" backward-kill-word

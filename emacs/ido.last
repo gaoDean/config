@@ -1,0 +1,52 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/Users/deangao/" . "org/")
+ ("/Users/deangao/repos/rea/taper.nvim/lua/" . "taper/")
+ ("/Users/deangao/repos/rea/taper.nvim/" . "lua/")
+ ("/Users/deangao/.local/share/" . "gnupg/")
+ ("/Users/deangao/.local/" . "share/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/Users/deangao/org/"
+ "/Users/deangao/repos/rea/taper.nvim/lua/taper/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "index.org"
+ "taper.lua"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/Users/deangao/org/des/" (25744 57274 565641 401000) "trebuchet/" "other/" "top-designs/" ".DS_Store" "freeaxis/" "../" "./")
+
+ ("/Users/deangao/" (25766 30214 809557 360000) ".cache/" "Downloads/" ".hushlogin" "Documents/" ".npm/" ".zcompdump" ".Trash/" "Applications/" "Movies/" ".ssh/" "Library/" "Desktop/" ".zsh_history" ".zprofile" "Pictures/" ".local/" "org/" ".yarnrc" ".DS_Store" ".terminfo/" "repos/" ".yarn/" "Music/" ".config/" "../" "./")
+
+ ("/Users/deangao/repos/rea/taper.nvim/lua/taper/" (25766 30439 185587 748000) "taper.lua" "window.lua" "config.lua" "old.lua" "init.lua" "../" "./")
+
+ ("/Users/deangao/org/" (25759 54276 473638 909000) ".git/" "pub/" ".github/" "foo/" ".gitignore" "spo/" "gen/" "sci/" "sch/" "web/" "pro/" ".DS_Store" "des/" "index.org" "chi/" "eng/" "../" "./")
+
+ ("/Users/deangao/repos/rea/taper.nvim/lua/" (25766 27360 410584 652000) "taper/" "../" "./")
+
+ ("/Users/deangao/repos/rea/taper.nvim/" (25766 27327 443170 694000) ".git/" "README.md" "lua/" "LICENSE" "../" "./")
+
+ ("/Users/deangao/repos/rea/" (25766 27056 722513 792000) "ttbl/" "sims/" "bloom-minimal/" "footnotes/" "fs-config/" "org-imgtog/" "autolist.nvim/" "bloom/" "org-remoteimg/" "taper.nvim/" "nspire/" "trone/" "scu/" "bloom-old/" "unused/" "emacs-pa/" "taper/" ".DS_Store" "electro/" "trone-zmk-config/" "nabla.nvim/" "../" "./")
+
+ ("/Users/deangao/repos/" (25661 11451 234635 783000) "oth/" "unu/" "per/" "bin/" ".DS_Store" "rea/" "../" "./")
+
+ ("/Users/deangao/.cache/" (25736 61169 982531 806000) "ttbl/" "aerc/" "msmtp/" "zsh/" "org-persist/" "mutt" "neomutt/" "dvisvgm/" "mutt-wizard/" "p10k-instant-prompt-deangao.zsh.zwc" "p10k-deangao/" "fontconfig/" "emacs/" "sc-iminfo" "yarn/" "timetable.json" "typescript/" "nvim/" "puppeteer/" "p10k-instant-prompt-deangao.zsh" ".DS_Store" "ccache/" "p10k-dump-deangao.zsh" "p10k-dump-deangao.zsh.zwc" "../" "./")
+
+ ("/Users/deangao/.local/share/gnupg/" (25692 55067 847988 975000) ".#lk0x000060000335c3c0.air.local.9217" ".#lk0x0000600000da0120.air.local.10054" "openpgp-revocs.d/" ".#lk0x00006000009bc3c0.air.local.13339" "trustdb.gpg" "gpg-agent.conf" "crls.d/" ".#lk0x0000600003df03c0.air.local.10025" "pubring.kbx" ".#lk0x0000600002decea0.air.local.33380" ".#lk0x00006000022b83f0.air.local.40053" "random_seed" ".#lk0x0000600001450ed0.air.local.33481" ".#lk0x0000600000534420.air.local.35035" ".#lk0x0000600000338000.air.local.25783" "pubring.kbx~" "sshcontrol" ".#lk0x0000600003b84ea0.air.local.33321" ".#lk0x00006000033103c0.air.local.39015" ".#lk0x000060000121c330.air.local.39275" "private-keys-v1.d/" "S.dirmngr" ".DS_Store" ".#lk0x00006000029a83c0.air.local.67022" ".#lk0x0000600000868150.air.local.33316" ".#lk0x0000600000d58420.air.local.35046" ".#lk0x00006000025183c0.air.local.10374" "../" "./")
+
+ ("/Users/deangao/.local/share/" (25766 27329 211340 44000) "oauth2ms/" "ttbl/" "easyeda/" "npm/" "gnupg/" "tt/" "zsh/" "history" "zathura/" "pa/" "icons-in-terminal/" "db.zo" "node_repl_history" "yarn/" "Trash/" "tetris/" "cargo/" "mail/" "nvim/" "pass/" "zsh-autocomplete/" "password-store/" ".DS_Store" "go/" "khal/" "yt-local/" "treesitter/" "tcal/" "locate/" "../" "./")
+
+ ("/Users/deangao/.local/" (25402 17166 206862 129000) "share/" "state/" "bin/" ".DS_Store" "../" "./")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

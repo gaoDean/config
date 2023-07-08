@@ -13,5 +13,7 @@ cfz	$ZDOTDIR/.zshrc
 cfa	${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
 cfp	${XDG_CONFIG_HOME:-$HOME/.config}/shell/profile
 bib ${XDG_CONFIG_HOME:-$HOME/.config}/roff/bib
-cft ${XDG_CONFIG_HOME:-$HOME/.config}/alacritty/alacritty.yml # terminal
+cft ${XDG_CONFIG_HOME:-$HOME/.config}/kitty/kitty.conf # terminal
+cfta ${XDG_CONFIG_HOME:-$HOME/.config}/alacritty/alacritty.yml # terminal
 bm  ${XDG_CONFIG_HOME:-$HOME/.config}/raycastscripts/bookmarks # bookmarks
+cfs  ${XDG_CONFIG_HOME:-$HOME/.config}/kitty/session.conf # session

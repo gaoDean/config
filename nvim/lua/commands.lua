@@ -15,9 +15,10 @@
 
 	-- au("VimEnter", "*.md", "ZenMode")
 	au("BufWritePost", "bm-files,bm-dirs", "!shortcuts")
+	au("BufWritePost", "sessions", "!shortcuts")
 	-- au("FileType", "*", "set fo-=c fo-=o fo-=r fo+=j") -- buffer only option
 	au("FileType", "*", "set fo=qlj") -- buffer only option
-	au("FileType", "lua", "set fo+=r")
+	au("FileType", "lua", "set fo+=r tabstop=2")
 	au("FileType", "mail", "set fo+=ta fo-=l")
 	au("FileType", "gitcommit", "set fo+=ta fo-=l")
 	au("FileType", "gitsendemail", "set fo+=ta fo-=l")

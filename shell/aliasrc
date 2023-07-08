@@ -12,6 +12,7 @@
 alias \
 	cp='cp -iv' \
 	mv='mv -iv' \
+	q='qlmanage -p' \
 	rm='rm -vI' \
 	bc='bc -ql' \
 	mkd='mkdir -pv' \
@@ -36,6 +37,7 @@ alias \
 alias \
 	so='du * .* | sort -h' \
 	ka='killall' \
+  icat='kitty +kitten icat' \
 	lsa='ls -A' \
 	gr='cd $(git rev-parse --show-toplevel)' \
 	gc='git commit -q -m' \
@@ -98,7 +100,20 @@ n ()
 		return
 	fi
 	export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
-	nnn -c "$@"
+	nnn -c -A "$@"
+	if [ -f "$NNN_TMPFILE" ]; then
+		. "$NNN_TMPFILE"
+		rm -f "$NNN_TMPFILE" > /dev/null
+	fi
+}
+nn ()
+{
+	if [ -n $NNNLVL ] && [ "${NNNLVL:-0}" -ge 1 ]; then
+		echo "nnn is already running"
+		return
+	fi
+	export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+	nnn -n -c -A "$@"
 	if [ -f "$NNN_TMPFILE" ]; then
 		. "$NNN_TMPFILE"
 		rm -f "$NNN_TMPFILE" > /dev/null
@@ -128,10 +143,6 @@ bi() {
 		echo "brew install ${full}" | pbcopy
 		brew info "$full"
 	fi
-}
-cfs() {
-	cd ~/.config
-	f
 }
 cfr() {
 	cd ~/.config/raycastscripts

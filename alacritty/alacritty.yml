@@ -2,7 +2,7 @@ window:
   #opacity: 0.3
   # opacity: 0.7
   # opacity: 0.8
-  opacity: 0.92
+  opacity: 0.3
   # opacity: 1.0
   decorations: none
   # padding:
@@ -64,9 +64,9 @@ font:
 import:
   # uncomment the flavour you want below:
   # - ~/.config/alacritty/catppuccin/catppuccin-mocha.yml
- - ~/.config/alacritty/catppuccin/catppuccin-macchiato.yml
+ # - ~/.config/alacritty/catppuccin/catppuccin-macchiato.yml
 #  - ~/.config/alacritty/catppuccin/catppuccin-frappe.yml
-#  - ~/.config/alacritty/catppuccin/catppuccin-latte.yml
+ - ~/.config/alacritty/catppuccin/catppuccin-latte.yml
 
   # Dim colors
   #
@@ -625,6 +625,8 @@ key_bindings:
   - { key: F,              mods: Command|Control,            action: ToggleFullscreen      }
   - { key: F,              mods: Command, mode: ~Search,     action: SearchForward         }
   - { key: B,              mods: Command, mode: ~Search,     action: SearchBackward        }
+  - { key: Back, mods: Alt, chars: "\x17" }
+
 
 #debug:
   # Display the time it takes to redraw each frame.

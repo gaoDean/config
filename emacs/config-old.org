@@ -473,6 +473,20 @@ adapted from rougier/nano-emacs/nano-session
 (setq ido-ignore-buffers '("^ " "\*"))
 #+end_src
 
+** Ripgrep
+#+begin_src elisp
+  (use-package rg
+    :commands (rg)
+    :config
+    (rg-enable-menu))
+#+end_src
+
+** Flycheck
+#+begin_src elisp
+  ;; (use-package flycheck
+  ;;   :hook (after-init . global-flycheck-mode))
+#+end_src
+
 ** hl-todo
 #+begin_src elisp
   (use-package hl-todo
@@ -825,6 +839,134 @@ Vim-like dual clipboard. One system, one application.
 
 #+end_src
 
+* Navigation
+** Avy
+#+begin_src elisp
+    (use-package avy
+      :custom
+      (avy-keys '(
+?n ?t ?e ?r ?a ?s ?h ?d ?f ?m ?o ?i ?w ?v ?u ?l ?c 
+))
+      :general
+      (:keymaps '(normal visual) ";" 'avy-goto-char-2)
+      (:keymaps '(insert visual normal) "C-;" 'avy-goto-char-2)
+  )
+#+end_src
+
+* Languages
+** yaml
+#+begin_src elisp
+  (use-package yaml-mode
+    :mode ("\\.ya?ml$'" . yaml-mode))
+#+end_src
+
+** lua
+#+begin_src elisp
+  (use-package lua-mode
+    :init
+    (setq lua-indent-level 4)
+    :mode ("\\.lua$" . lua-mode))
+#+end_src
+
+** csv
+#+begin_src elisp
+  (use-package csv-mode
+    :mode ("\\.csv$" . csv-mode))
+#+end_src
+** python
+#+begin_src elisp
+  (add-hook 'python-mode-hook (lambda() (setq-local font-lock-maximum-decoration t)))
+#+end_src
+** swift
+#+begin_src elisp
+  (use-package swift-mode
+    :mode "\\.swift")
+#+end_src
+** devicetree
+#+begin_src elisp
+  (use-package c-mode
+    :straight nil
+    :mode "\\.dtsi"
+    :mode "\\.overlay"
+    :mode "\\.keymap")
+#+end_src
+** scad
+#+begin_src elisp
+  (use-package scad-mode
+    :mode "\\.scad$")
+#+end_src
+** svelte mode
+#+begin_src elisp
+  (add-to-list 'auto-mode-alist '("\\.svelte\\'" . mhtml-mode))
+#+end_src
+** cjs
+#+begin_src elisp
+  (add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
+#+end_src
+
+** js
+#+begin_src elisp
+(setq js-indent-level 2)
+#+end_src
+* Treesitter
+[[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][guide]]
+#+begin_src elisp
+  (setq treesit-language-source-alist
+        '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+          (cmake "https://github.com/uyha/tree-sitter-cmake")
+          (css "https://github.com/tree-sitter/tree-sitter-css")
+          (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+          (go "https://github.com/tree-sitter/tree-sitter-go")
+          (html "https://github.com/tree-sitter/tree-sitter-html")
+          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+          (json "https://github.com/tree-sitter/tree-sitter-json")
+          (make "https://github.com/alemuller/tree-sitter-make")
+          (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+          (python "https://github.com/tree-sitter/tree-sitter-python")
+          (toml "https://github.com/tree-sitter/tree-sitter-toml")
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+          (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+  ;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  
+  (setq major-mode-remap-alist
+        '((yaml-mode . yaml-ts-mode)
+          (bash-mode . bash-ts-mode)
+          (js2-mode . js-ts-mode)
+          (c-mode . c-ts-mode)
+          (typescript-mode . typescript-ts-mode)
+          (json-mode . json-ts-mode)
+          (css-mode . css-ts-mode)
+          (python-mode . python-ts-mode)))
+#+end_src
+* Git
+** Magit
+#+begin_src elisp
+  (use-package magit
+    :general
+    (leader-def 'normal "g" 'magit))
+
+  (add-hook 'shell-mode-hook  'with-editor-export-editor)
+  (add-hook 'eshell-mode-hook 'with-editor-export-editor)
+  (add-hook 'term-exec-hook   'with-editor-export-editor)
+  (add-hook 'vterm-mode-hook  'with-editor-export-editor)
+#+end_src
+
+** Projectile
+#+begin_src elisp
+  (use-package projectile
+      :config
+      (projectile-mode)
+      :general
+      (leader-def 'normal
+          "p p" 'projectile-switch-project
+          "p g" 'projectile-ripgrep
+          "p e" 'projectile-run-eshell
+          "p c" 'projectile-run-async-shell-command-in-root
+          "SPC" 'projectile-find-file))
+#+end_src
+
 * Completion
 ** Vertico
 #+begin_src elisp
@@ -973,7 +1115,279 @@ Vim-like dual clipboard. One system, one application.
     :config (yas-global-mode 1))
 #+end_src
 
+* Terminal
+** Eshell
+*** Tools
+#+begin_src elisp
+  (advice-add 'eshell :before (lambda(&rest r)
+      (use-package shrink-path)
+      (use-package eshell-vterm
+        :config
+        (defalias 'eshell/v 'eshell-exec-visual))
+      (use-package eshell-up)
+
+  (setq eshell-prompt-regexp "^.* λ "
+        eshell-prompt-function #'+eshell/prompt)
+
+  (defun +eshell/prompt ()
+    (let ((base/dir (shrink-path-prompt default-directory)))
+          (concat (propertize (car base/dir)
+                              'face 'font-lock-comment-face)
+                  (propertize (cdr base/dir)
+                              'face 'font-lock-constant-face)
+                  (propertize (+eshell--current-git-branch)
+                              'face 'font-lock-function-name-face)
+                  (propertize " λ" 'face 'variable-pitch)
+                  ;; needed for the input text to not have prompt face
+                  (propertize " " 'face 'default))))
+
+  ;; for completeness sake
+  (defun +eshell--current-git-branch ()
+      (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                               when (string-match "^\*" match)
+                               collect match))))
+        (if (not (eq branch nil))
+            (concat " [" (substring branch 2) "]")
+          "")))
+  ))
+
+      (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
+
+
+  (defun update-cwd (&rest args)
+    (setq default-directory (eshell/pwd)))
+  (advice-add 'eshell/cd :after #'update-cwd)
+#+end_src
+*** Aliases
+#+begin_src elisp
+
+  (defun fzf (strings)
+    (completing-read "Filter: " strings))
+
+  (defun eshell/get-brew-formulae ()
+    (split-string (shell-command-to-string "brew formulae") "\n" t))
+
+  (defun eshell/bi ()
+                      (let ((selected (fzf (eshell/get-brew-formulae))))
+                        (insert (concat "brew install " selected))
+                        (eshell-command-result (concat "brew info " selected))))
+
+  (setq eshell-aliases-file "/Users/deangao/.config/emacs/eshell/alias")
+  ;; (setq my/eshell-alises '(
+  ;;                          ("f"  . "find-file")
+  ;;                          ("l"  . "ls -lh $*")
+  ;;                          ("la" . "ls -alh $*")
+  ;;                          ("gs" . "magit-status $*")
+  ;;                          ("g"  . "magit $*")
+  ;;                          ("n"  . "dirvish $*")
+  ;;                          ("ql"  . "qlmanage -p")
+  ;;                          ))
+
+
+
+  ;; (add-hook 'eshell-mode-hook (lambda ()
+  ;;                               (dolist (pair my/eshell-alises)
+  ;;                                 (eshell/alias (car pair) (cdr pair)))))
+
+
+#+end_src
+** Vterm
+#+begin_src elisp
+  (use-package vterm
+    :straight (vterm :type git :host github :repo "akermu/emacs-libvterm")
+    )
+
+  (defun vterm-directory-sync ()
+    "Synchronize current working directory."
+    (interactive)
+    (when vterm--process
+      (let* ((pid (process-id vterm--process))
+             (dir (file-truename (format "/proc/%d/cwd/" pid))))
+        (setq default-directory dir))))
+
+  (add-hook 'vterm-mode-hook 'vterm-directory-sync)
+
+#+end_src
 * Files
+** Dired
+*** dired-hacks
+#+begin_src elisp
+  ;; (use-package dired-collapse
+  ;;   :hook dired-mode)
+  (use-package dired-open)
+  (use-package dired-narrow)
+  (use-package dired-ranger)
+#+end_src
+*** opts
+#+begin_src elisp
+
+  (setq my/dired-listing-switches
+        "-g --human-readable --group-directories-first --no-group")
+  (setq my/dired-listing-switches-dotfiles
+        "-g --almost-all --human-readable --group-directories-first --no-group")
+
+  (setq dired-recursive-copies 'always
+        dired-recursive-deletes 'always
+        delete-by-moving-to-trash t
+        insert-directory-program "gls"
+        dired-use-ls-dired t
+        dired-listing-switches my/dired-listing-switches
+        )
+
+  (setq dired-open-extensions '(("gif" . "qlmanage -p")
+                                ("jpg" . "qlmanage -p")
+                                ("heic" . "qlmanage -p")
+                                ("svg" . "qlmanage -p")
+                                ("png" . "qlmanage -p")
+                                ("webp" . "qlmanage -p")
+                                ("tiff" . "qlmanage -p")
+                                ("tif" . "qlmanage -p")
+                                ("pdf" . "qlmanage -p")
+                                ("avif" . "qlmanage -p")
+                                ("mp4" . "qlmanage -p")))
+
+#+end_src
+*** functions
+#+begin_src elisp
+  (defun my/dired-up-directory-in-buffer ()
+    (interactive)
+    (find-alternate-file ".."))
+
+  (defun my/dired-get-size ()
+    "get size of current file"
+    (interactive)
+    (message (shell-command-to-string (concat "echo -n $(du -sh " (dired-get-filename) " | grep -o \"^\\s*\\S*\")"))))
+
+  (defun my/kill-all-dired-buffers-and-quit ()
+    "Kill all Dired buffers and quit the current Dired buffer."
+    (interactive)
+    (quit-window)
+    (cd dired-directory)
+  (dolist (buffer (buffer-list)) ; go through all buffers
+      (with-current-buffer buffer ; switch to current buffer in loop
+        (when (eq major-mode 'eshell-mode) ; check if it's eshell mode
+          (cd default-directory))))
+    (mapc (lambda (buffer)
+            (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+              (kill-buffer buffer)))
+          (buffer-list)))
+
+  (defun my/dired-xdg-open ()
+    (interactive)
+    (browse-url-xdg-open (dired-get-filename)))
+
+  (defun my/dired-toggle-mark-single-file ()
+    "Toggle mark of the single file under the cursor. Needs dired-ranger from dired-hacks"
+    (interactive)
+    (let ((current-line (buffer-substring-no-properties
+                         (line-beginning-position)
+                         (line-end-position))))
+      (if (string-match-p "^\\*" current-line)
+          (dired-unmark 1)
+        (dired-mark 1)))
+    (dired-ranger-copy nil))
+
+  (defun my/dired-quicklook ()
+    (interactive)
+    (async-start-process "quicklook"
+                         "qlmanage"
+                         nil
+                         "-p"
+                         (dired-get-filename)))
+
+  (defun my/encode-filepath (path)
+    "replace spaces with backslash + space"
+    (replace-regexp-in-string " "
+                              "\\\\ "
+                              path))
+  (defun my/encode-filepath-double (path)
+    "replace spaces with backslash + space"
+    (replace-regexp-in-string " "
+                              "\\\\\\\\ "
+                              path))
+
+  (defun my/dired-run-command (command)
+    "run a shell command but replace $s with current selected file"
+    (interactive (list (read-from-minibuffer "command: ")))
+    (async-shell-command
+     (replace-regexp-in-string "\$s"
+                               (my/encode-filepath-double (dired-get-filename))
+                               command)))
+
+  ;; (defun my/dired-convert-jpg (size)
+  ;;   (interactive (list (read-from-minibuffer "size: ")))
+  ;;   (my/dired-run-command (concat "convert $s -define jpeg:extent=" size " img-out.jpg")))
+
+  (defun my/dired-convert (extension quality)
+    (interactive (list (read-from-minibuffer "extension: ")
+                       (read-from-minibuffer "quality: ")))
+    (my/dired-run-command (concat "convert $s -quality "
+                                  quality
+                                  " "
+                                  (my/encode-filepath (file-name-sans-extension (dired-get-filename)))
+                                  "."
+                                  extension)))
+
+  (setq my/dired-dotfiles-toggled nil)
+  (defun my/dired-toggle-dotfiles ()
+    (interactive)
+    (if my/dired-dotfiles-toggled 
+        (progn (dired-sort-other my/dired-listing-switches)
+               (setq my/dired-dotfiles-toggled nil))
+      (dired-sort-other my/dired-listing-switches-dotfiles)
+      (setq my/dired-dotfiles-toggled t)))
+
+#+end_src
+*** bindings
+#+begin_src elisp
+  (use-package dired
+    :straight nil
+    :init
+    (add-hook 'dired-mode-hook
+              (lambda() 
+                (dired-hide-details-mode)
+                (nmap dired-mode-map
+                  "+" 'dired-create-directory
+                  "-" 'dired-narrow
+                  "." 'my/dired-toggle-dotfiles
+                  "?" 'helpful-key
+                  "B" 'dired-ranger-bookmark-visit
+                  "C-?" 'describe-keymap
+                  "F" 'dired-do-info
+                  "L" 'my/dired-quicklook
+                  "M" 'dired-do-rename
+                  "R" 'my/dired-run-command
+                  "RET" 'my/dired-xdg-open
+                  "SPC" 'my/dired-toggle-mark-single-file
+                  "b" 'dired-ranger-bookmark
+                  "c" 'my/dired-convert
+                  "C" 'magit-clone
+                  "f" 'find-file
+                  "G" 'magit
+                  "h" 'dired-up-directory
+                  "i" 'dired-do-info
+                  "l" 'dired-open-file
+                  "m" 'dired-do-chmod
+                  "o" 'my/dired-xdg-open
+                  "p" 'dired-ranger-paste
+                  "q" 'my/kill-all-dired-buffers-and-quit
+                  "r" 'dired-do-rename
+                  "e" 'eshell
+                  "s" 'my/dired-get-size
+                  "v" 'dired-ranger-move
+                  "w" 'wdired-change-to-wdired-mode
+                  "x" 'dired-do-delete
+                  "z" 'dired-do-compress
+                ))))
+
+#+end_src
+
+*** making deleted files go to trash can
+#+begin_src elisp
+(setq delete-by-moving-to-trash t
+      trash-directory "~/.Trash")
+#+end_src
+
 ** File Shortcuts
 #+begin_src elisp
   (set-register ?c (cons 'file "~/.config/emacs/config.org"))
