@@ -66,7 +66,6 @@ alias \
 	za='zathura' \
 	ms='mw -Y' \
 	mc='macchina' \
-	m='e ~/.reminders' \
 	pip='pip3' \
 	python='python3' \
 	hc='heif-convert' \

@@ -20,20 +20,16 @@ end
 -- make it echo the full path if not in a git repo
 function echo_git_root()
   local path = vim.api.nvim_buf_get_name(0)
-  local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
-  if git_root == "" then
-    vim.cmd("echo '" .. path .. "'")
-  else
-    local rel_path = vim.fn.fnamemodify(path, ":~:" .. git_root)
-    vim.cmd("echo '" .. rel_path .. "'")
-  end
+  local git_path = vim.fn.systemlist("relative_path_git " .. path)[1]
+  vim.cmd("echo '" .. git_path .. "'")
 end
 
 -- vim.keymap.set("n", "<leader>r", [[<cmd>w | !compiler "%"<cr> | <cmd>lua pdfview()<cr>]])
-vim.keymap.set("n", "<leader>w", ":bn<cr><cmd>lua echo_git_root()<cr>")
-vim.keymap.set("n", "<leader>q", ":bp<cr><cmd>lua echo_git_root()<cr>")
-vim.keymap.set("n", "<leader>bk", ":bd<cr><cmd>lua echo_git_root()<cr>")
-vim.keymap.set("n", "<leader>b!", ":bd!<cr><cmd>lua echo_git_root()<cr>")
+vim.keymap.set("n", "<leader>w",  ":bn<cr>")
+vim.keymap.set("n", "<leader>q",  ":bp<cr>")
+vim.keymap.set("n", "<leader>bk", ":bd<cr>")
+vim.keymap.set("n", "<leader>b!", ":bd!<cr>")
+vim.keymap.set({"n", "x", "v", "i"}, "<c-c>", "\"*y")
 -- vim.keymap.set("n", "<leader>l", "<c-w>w")
 -- vim.keymap.set("n", "<leader>h", "<c-w>W")
 vim.keymap.set("n", "<leader>y", "gg\"*yG")

@@ -89,11 +89,32 @@ export FZF_DEFAULT_COMMAND="fd . -t f --hidden --follow --exclude .git --strip-c
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd . -t d --follow --strip-cwd-prefix"
 export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
---color=fg:7,hl:11
---color=fg+:15,bg+:0,hl+:3
---color=info:14,prompt:12,pointer:11
---color=marker:4,spinner:#73d0ff,header:#d4bfff'
+
+local color00='#ffffff'
+local color01='#e0e0e0'
+local color02='#d6d6d6'
+local color03='#8e908c'
+local color04='#969896'
+local color05='#4d4d4c'
+local color06='#282a2e'
+local color07='#1d1f21'
+local color08='#c82829'
+local color09='#f5871f'
+local color0A='#eab700'
+local color0B='#718c00'
+local color0C='#3e999f'
+local color0D='#4271ae'
+local color0E='#8959a8'
+local color0F='#a3685a'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS"\
+" --color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$color0D"\
+" --color=fg:$color04,header:$color0D,info:$color0A,pointer:$color0C"\
+" --color=marker:$color0C,fg+:$color06,prompt:$color0A,hl+:$color0D"
+
+#  --color=fg:7,hl:11
+# --color=fg+:15,bg+:0,hl+:3
+# --color=info:14,prompt:12,pointer:11
+# --color=marker:4,spinner:#73d0ff,header:#d4bfff'
 
 # Other program settings:
 export LESS=-R

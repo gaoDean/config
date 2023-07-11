@@ -9,31 +9,40 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
+
+local function create_file_if_not_found(file_path)
+  if vim.fn.filereadable(file_path) == 0 then
+    -- Create the file here
+    -- You can use the `vim.api.nvim_command` function to execute a Vim command to create the file
+    vim.api.nvim_command('edit ' .. file_path)
+  end
+end
+
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
-  {
-    "mcchrish/zenbones.nvim",
-    dependencies = "rktjmp/lush.nvim",
-    config = function()
-      -- vim.cmd([[colorscheme zenbones]])
-    end
-  },
+  -- {
+  --   "mcchrish/zenbones.nvim",
+  --   dependencies = "rktjmp/lush.nvim",
+  --   config = function()
+  --     -- vim.cmd([[colorscheme zenbones]])
+  --   end
+  -- },
 	{
 	   "savq/melange-nvim",
 		config = function()
 			vim.cmd([[colorscheme melange]])
 	   end
-	 },
+  },
   {
     "nvim-telescope/telescope.nvim",
     tag = "0.1.2",
     keys = {
-      -- { "<leader>.", "<cmd>Telescope find_files<cr>" },
+      { "<leader>.", "<cmd>Telescope find_files<cr>" },
       { "<leader><leader>", "<cmd>Telescope git_files<cr>" },
       { "<leader>fr", "<cmd>Telescope oldfiles<cr>" },
       { "<leader>bb", "<cmd>Telescope buffers<cr>" },
       { "<leader>fs", "<cmd>Telescope git_status<cr>" },
-      { "<leader>.", "<cmd>Telescope file_browser hidden=true path=%:p:h select_buffer=true<cr>" },
+      -- { "<leader>.", "<cmd>Telescope file_browser hidden=true path=%:p:h select_buffer=true<cr>" },
       { "<leader>ff", "<cmd>Telescope<cr>" },
     },
     config = function()
@@ -67,17 +76,17 @@ local plugins = {
               match_filename = false,
             },
           },
-          file_browser = {
-            -- disables netrw and use telescope-file-browser in its place
-            theme = "viy",
-            mappings = {
-              i = {
-                ["<backspace>"] = fb_actions.goto_parent_dir,
-                ["~"] = fb_actions.goto_home_dir,
-                ["<c-w>"] = fb_actions.goto_parent_dir,
-              }
-            },
-          },
+          -- file_browser = {
+          --   -- disables netrw and use telescope-file-browser in its place
+          --   theme = "viy",
+          --   mappings = {
+          --     i = {
+          --       ["<backspace>"] = fb_actions.goto_parent_dir,
+          --       ["~"] = fb_actions.goto_home_dir,
+          --       ["<c-w>"] = fb_actions.goto_parent_dir,
+          --     }
+          --   },
+          -- },
         },
         defaults = {
           mappings = {
@@ -100,13 +109,19 @@ local plugins = {
     dependencies = {
       'nvim-lua/plenary.nvim',
       "natecraddock/telescope-zf-native.nvim",
-      "nvim-telescope/telescope-file-browser.nvim"
+      "nvim-telescope/telescope-file-browser.nvim",
     }
   },
   {
     "folke/flash.nvim",
     event = "VeryLazy",
-    opts = {},
+    opts = {
+      modes = {
+        char = {
+          enabled = false
+        }
+      }
+    },
     keys = {
       {
         "s",
@@ -132,6 +147,7 @@ local plugins = {
   },
   {
     "echasnovski/mini.nvim",
+    event = "VeryLazy",
     config = function()
       require('mini.comment').setup({
         options = {
@@ -178,10 +194,10 @@ local plugins = {
       picker = {
         cmd = "nnn -A -c",
         style = {
-          width = 0.6,     -- percentage relative to terminal size when < 1, absolute otherwise
-          height = 0.57,    -- ^
-          xoffset = 0.57,   -- ^
-          yoffset = 0.4,   -- ^
+          width = 0.8,     -- percentage relative to terminal size when < 1, absolute otherwise
+          height = 0.8,    -- ^
+          -- xoffset = 0.57,   -- ^
+          -- yoffset = 0.4,   -- ^
           border = "rounded",-- border decoration for example "rounded"(:h nvim_open_win)
         },
       },
@@ -223,10 +239,10 @@ local plugins = {
       vim.keymap.set("n", "<leader>t", "<cmd>TSJToggle<cr>")
     end,
   },
-  {
-    "nvim-treesitter/playground",
-    event = "VeryLazy",
-  },
+  -- {
+  --   "nvim-treesitter/playground",
+  --   event = "VeryLazy",
+  -- },
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
@@ -265,10 +281,12 @@ local plugins = {
   },
   {
     "windwp/nvim-autopairs",
+    event = "VeryLazy",
     priority = 2,
     opts = {
       check_ts = true,
       map_c_w = true,
+      map_cr = true,
     },
   },
   {
@@ -284,12 +302,12 @@ local plugins = {
     -- FIX: this needs fixing
     -- WARNING: ???
   },
-  -- {
-  --   "gaoDean/ido.nvim",
-  --   dev = true,
-  --   event = "VeryLazy",
-  --   opts = true
-  -- },
+  {
+    "gaoDean/fstatus.nvim",
+    dev = true,
+    event = "VeryLazy",
+    opts = true
+  },
   {
     "gaoDean/autolist.nvim",
     dev = true,
@@ -305,7 +323,16 @@ local plugins = {
       require("autolist").setup()
       vim.keymap.set("i", "<tab>", "<cmd>AutolistTab<cr>")
       vim.keymap.set("i", "<s-tab>", "<cmd>AutolistShiftTab<cr>")
-      vim.keymap.set("i", "<CR>", "<CR><cmd>AutolistNewBullet<cr>")
+      vim.keymap.set("i", "<CR>", function()
+        -- run autolist-new-bullet after the <cr> of nvim-autopairs-cr
+        -- timeout of 0ms delays enough for my computer but u might need to adjust
+        local timeoutms = 0
+        vim.loop.new_timer():start(timeoutms, 0, vim.schedule_wrap(function()
+          require("autolist").new_bullet()
+        end))
+
+        return require("nvim-autopairs").autopairs_cr()
+      end, { expr = true, noremap = true })
       vim.keymap.set("n", "o", "o<cmd>AutolistNewBullet<cr>")
       vim.keymap.set("n", "O", "O<cmd>AutolistNewBulletBefore<cr>")
       vim.keymap.set("n", "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>")
@@ -351,7 +378,7 @@ local plugins = {
   -- },
   {
     "keaising/im-select.nvim",
-    event = "BufEnter *.ch.md",
+    event = "VeryLazy",
     opts = {
       default_im_select = "com.apple.keylayout.Australian",
       default_command = "/usr/local/bin/im-select"
