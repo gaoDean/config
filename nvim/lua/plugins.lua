@@ -234,10 +234,12 @@ local plugins = {
   {
     "Wansmer/treesj",
     event = "VeryLazy",
-    config = function()
-      require("treesj").setup()
-      vim.keymap.set("n", "<leader>t", "<cmd>TSJToggle<cr>")
-    end,
+    keys = {
+      { "<leader>t", "<cmd>TSJToggle<cr>" }
+    },
+    opts = {
+      max_join_length = 500,
+    }
   },
   -- {
   --   "nvim-treesitter/playground",
